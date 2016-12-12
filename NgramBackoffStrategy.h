@@ -14,7 +14,7 @@ namespace SLM {
 
 class NgramBackoffStrategy: public BackoffStrategy {
 public:
-	NgramBackoffStrategy(SLM::LanguageModel& languageModel);
+	NgramBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 	virtual ~NgramBackoffStrategy();
 
 	std::string name() const;

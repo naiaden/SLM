@@ -105,4 +105,9 @@ void LanguageModel::extendClassEncoder(const std::vector<std::string>& inputFile
 	classDecoder.load(outputFile);
 }
 
+double LanguageModel::getProb(const Pattern& focus, const Pattern& context)
+{
+	return 0.5;
+}
+
 } /* namespace SLM */

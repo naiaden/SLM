@@ -26,6 +26,7 @@ public:
 
 	const std::vector<Pattern>& getVocabulary() const;
 
+	double getProb(const Pattern& focus, const Pattern& context);
 private:
 	void initialise(const ProgramOptions& programOptions);
 	void defaultPatternModelOptions();

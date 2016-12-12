@@ -20,7 +20,7 @@ enum InterpolationStrategy { UNIFORM, MLE, ENTROPY };
 BackoffStrategies::BackoffStrategies(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
 {
 	// TODO Auto-generated constructor stub
-	backoffStrategies.push_back(new NgramBackoffStrategy(lm));
+	backoffStrategies.push_back(new NgramBackoffStrategy(lm, programOptions.getTestModelName()));
 
 }
 

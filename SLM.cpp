@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 				Pattern context = lm.toPattern(contextStream.str());
 				Pattern focus = lm.toPattern(words[i]);
 
-				L_P << "SLM: [" << lm.toString(context) << "] " << lm.toString(focus) << std::endl;
+				L_P << "SLM: [" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
 				bo.prob(context, focus);
 			}
 		}

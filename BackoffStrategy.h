@@ -16,6 +16,10 @@
 
 namespace SLM {
 
+const std::string outputExtension = "output";
+const std::string probsExtension = "probs";
+const std::string sentencesExtension = "sentences";
+
 class BackoffStrategy {
 public:
 	virtual ~BackoffStrategy();
@@ -27,7 +31,9 @@ public:
 	int nextLine();
 	void done();
 protected:
-	BackoffStrategy(SLM::LanguageModel& languageModel);
+	BackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName);
+
+	void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 
 	double totalProb = 0.0;
 	unsigned long long totalCount = 0;
@@ -45,6 +51,7 @@ protected:
 	unsigned long long sentCount = 0;
 	unsigned long long sentOovs = 0;
 
+	std::ofstream outputFile;
 	std::ofstream probsFile;
 	std::ofstream sentsProbFile;
 

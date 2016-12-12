@@ -11,10 +11,10 @@
 
 namespace SLM {
 
-NgramBackoffStrategy::NgramBackoffStrategy(SLM::LanguageModel& languageModel)
- : BackoffStrategy(languageModel)
+NgramBackoffStrategy::NgramBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName)
+ : BackoffStrategy(languageModel, baseFileName)
 {
-	// TODO Auto-generated constructor stub
+	init(languageModel, baseFileName);
 
 }
 
@@ -29,9 +29,23 @@ std::string NgramBackoffStrategy::name() const
 
 double NgramBackoffStrategy::prob(const Pattern& context, const Pattern& focus)
 {
-	L_P << "NgramBackoffStrategy: Estimating prob for " << languageModel.toString(context)
+	L_S << "NgramBackoffStrategy: Estimating prob for " << languageModel.toString(context)
 			<< " " << languageModel.toString(focus) << "\n";
-	return 2.0;
+
+	double prob = languageModel.getProb(focus, context);
+	double logProb = log2(prob);
+
+	if(false /* oov */)
+	{
+		++sentOovs;
+	}
+
+	++sentCount;
+	sentProb -= logProb;
+
+	L_S << "NgramBackoffStrategy: \t\t" << logProb << "\n";
+
+	return logProb;
 }
 
 } /* namespace SLM */

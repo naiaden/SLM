@@ -11,15 +11,30 @@
 
 namespace SLM {
 
-BackoffStrategy::BackoffStrategy(SLM::LanguageModel& languageModel)
+BackoffStrategy::BackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName)
  : languageModel(languageModel)
 {
-	// TODO Auto-generated constructor stub
+}
 
+void BackoffStrategy::init(SLM::LanguageModel& languageModel, const std::string& baseFileName)
+{
+	std::string outputFileName = baseFileName + name() + "." + outputExtension;
+	L_V << "BackoffStrategy: " << std::setw(30) << "Output file:" << outputFileName << "\n";
+	outputFile.open(outputFileName);
+
+	std::string probsFileName = baseFileName + "." + probsExtension;
+	L_V << "BackoffStrategy: " << std::setw(30) << "Probs output file:" << probsFileName << "\n";
+	probsFile.open(probsFileName);
+
+	std::string sentenceFileName  = baseFileName + "." + sentencesExtension;
+	L_V << "BackoffStrategy: " << std::setw(30) << "Sentences output file:" << sentenceFileName << "\n";
+	sentsProbFile.open(sentenceFileName);
 }
 
 BackoffStrategy::~BackoffStrategy() {
-	// TODO Auto-generated destructor stub
+	outputFile.close();
+	probsFile.close();
+	sentsProbFile.close();
 }
 
 int BackoffStrategy::nextFile()
