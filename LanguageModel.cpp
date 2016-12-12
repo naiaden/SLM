@@ -25,7 +25,22 @@ LanguageModel::LanguageModel(const ProgramOptions& programOptions) {
 }
 
 LanguageModel::~LanguageModel() {
-	delete indexedCorpus;
+//	delete indexedCorpus;
+}
+
+const std::vector<Pattern>& LanguageModel::getVocabulary() const
+{
+	return vocabulary;
+}
+
+Pattern LanguageModel::toPattern(const std::string& patternString)
+{
+	return classEncoder.buildpattern(patternString);
+}
+
+std::string LanguageModel::toString(const Pattern& pattern)
+{
+	return pattern.tostring(classDecoder);
 }
 
 void LanguageModel::initialise(const ProgramOptions& programOptions)
@@ -52,6 +67,11 @@ void LanguageModel::initialise(const ProgramOptions& programOptions)
 
 	L_V << "LanguageModel: Loading language model\n";
 	loadLanguageModel(programOptions.getTrainLanguageModel());
+
+	L_V << "LanguageModel: Initialise vocabulary\n";
+	PatternSet<uint64_t> vocabularySet = patternModel.extractset(1,1);
+	vocabulary = std::vector<Pattern>(vocabularySet.begin(), vocabularySet.end());
+	L_V << "LanguageModel: Vocabulary contains " << vocabulary.size() << " items\n";
 }
 
 void LanguageModel::loadLanguageModel(const std::string& inputFile)

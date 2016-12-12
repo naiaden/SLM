@@ -47,16 +47,16 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	//
 
 	trainDirectory = clp.get<std::string>("traindirectory");
-	trainModelName = clp.get<std::string>("trainmodelname");
+	trainModelName = trainDirectory + "/" + clp.get<std::string>("trainmodelname");
 
 	trainCorpus = clp.get<std::string>("traincorpus");
 	trainPatternModel = clp.get<std::string>("trainpatternmodel");
 	trainVocabulary = clp.get<std::string>("trainvocabulary");
 	trainLanguageModel = clp.get<std::string>("trainlanguagemodel");
 
-	testModelName = clp.get<std::string>("testmodelname");
 	testInputDirectory = clp.get<std::string>("testinputdirectory");
 	testOutputDirectory = clp.get<std::string>("testoutputdirectory");
+	testModelName = testOutputDirectory + "/" + clp.get<std::string>("testmodelname");
 
 	testCorpus = testModelName + "." + corpusExtension;
 	testPatternModel = testModelName + "." + patternmodelExtension;

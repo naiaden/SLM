@@ -20,6 +20,12 @@ class LanguageModel {
 public:
 	LanguageModel(const ProgramOptions& programOptions);
 	virtual ~LanguageModel();
+
+	Pattern toPattern(const std::string& patternString);
+	std::string toString(const Pattern& pattern);
+
+	const std::vector<Pattern>& getVocabulary() const;
+
 private:
 	void initialise(const ProgramOptions& programOptions);
 	void defaultPatternModelOptions();
@@ -31,6 +37,8 @@ private:
 	IndexedCorpus* indexedCorpus;
 	PatternModel<uint32_t> patternModel;
 	PatternModelOptions patternModelOptions;
+
+	std::vector<Pattern> vocabulary;
 //	cpyp::PYLPM<4> lm;
 };
 
