@@ -6,6 +6,7 @@
  */
 
 #include "BackoffStrategies.h"
+#include "FullBackoffStrategy.h"
 #include "NgramBackoffStrategy.h"
 
 
@@ -65,6 +66,48 @@ void BackoffStrategies::done()
 	}
 }
 
+std::string toString(InterpolationStrategy is)
+{
+	switch (is) {
+		case SLM::InterpolationStrategy::UNIFORM:
+			return "uni";
+		case SLM::InterpolationStrategy::MLE:
+			return "mle";
+		case SLM::InterpolationStrategy::ENTROPY:
+			return "ent";
+	}
+}
+
+std::string toString(BackoffLevel bl)
+{
+	switch (bl) {
+		case SLM::BackoffLevel::NGRAM:
+			return "ngram";
+		case SLM::BackoffLevel::LIMITED:
+			return "lim";
+		case SLM::BackoffLevel::FULL:
+			return "full";
+	}
+}
+
+InterpolationStrategy stringToInterpolationStrategy(const std::string& is)
+{
+	if(is == "uni")	return SLM::InterpolationStrategy::UNIFORM;
+	if(is == "mle")	return SLM::InterpolationStrategy::MLE;
+	if(is == "ent")	return SLM::InterpolationStrategy::ENTROPY;
+
+	return SLM::InterpolationStrategy::UNIFORM;
+}
+
+BackoffLevel stringToBackoffLevel(const std::string& bl)
+{
+	if(bl == "uni")	return SLM::BackoffLevel::NGRAM;
+	if(bl == "mle")	return SLM::BackoffLevel::LIMITED;
+	if(bl == "ent")	return SLM::BackoffLevel::FULL;
+
+	return SLM::BackoffLevel::NGRAM;
+}
+
 std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
 {
 	std::vector<BackoffStrategy*> backoffStrategies;
@@ -76,6 +119,13 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			BackoffStrategy* bos = createNgramBackoffStrategy(programOptions, lm);
 			if(bos) backoffStrategies.push_back(bos);
 		}
+
+		if(startsWith(token, "full"))
+		{
+			BackoffStrategy* bos = createFullBackoffStrategy(programOptions, lm);
+			if(bos) backoffStrategies.push_back(bos);
+		}
+
 	}
 
 	return backoffStrategies;
@@ -91,6 +141,12 @@ BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(const SL
 {
 	// limited cache option in program options?
 	return nullptr;
+}
+
+BackoffStrategy* BackoffStrategiesFactory::createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
+{
+	// full cache option in program options?
+	return new FullBackoffStrategy(lm, programOptions.getTestModelName());
 }
 
 } /* namespace SLM */
