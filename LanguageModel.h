@@ -12,6 +12,8 @@
 #include <classdecoder.h>
 #include <patternmodel.h>
 
+#include "hpyplm.h"
+
 #include "ProgramOptions.h"
 
 namespace SLM {
@@ -25,6 +27,7 @@ public:
 	std::string toString(const Pattern& pattern);
 
 	const std::vector<Pattern>& getVocabulary() const;
+	bool isOOV(const Pattern& word);
 
 	double getProb(const Pattern& focus, const Pattern& context);
 private:
@@ -40,7 +43,7 @@ private:
 	PatternModelOptions patternModelOptions;
 
 	std::vector<Pattern> vocabulary;
-//	cpyp::PYLPM<4> lm;
+	::cpyp::PYPLM<4> lm;
 };
 
 } /* namespace SLM */

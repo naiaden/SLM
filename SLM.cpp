@@ -15,7 +15,7 @@
 
 #include "BackoffStrategies.h"
 #include "LanguageModel.h"
-#include "Utils.cpp"
+#include "Utils.h"
 
 int main(int argc, char** argv) {
 

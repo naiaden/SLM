@@ -9,6 +9,11 @@
 
 #include "Logging.h"
 
+#include "cpyp/m.h"
+#include "cpyp/random.h"
+#include "cpyp/crp.h"
+#include "cpyp/tied_parameter_resampler.h"
+
 namespace SLM {
 
 NgramBackoffStrategy::NgramBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName)

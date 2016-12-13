@@ -11,6 +11,8 @@
 #include <classdecoder.h>
 #include <patternmodel.h>
 
+#include "cpyp/boost_serializers.h"
+#include <boost/serialization/vector.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 
 #include "Logging.h"
@@ -82,6 +84,8 @@ void LanguageModel::loadLanguageModel(const std::string& inputFile)
 		std::cerr << "Something went wrong with loading the language model: " << inputFile << std::endl;
 	}
 	boost::archive::binary_iarchive ia(ifs);
+
+	ia& lm;
 }
 
 void LanguageModel::defaultPatternModelOptions()
@@ -107,7 +111,12 @@ void LanguageModel::extendClassEncoder(const std::vector<std::string>& inputFile
 
 double LanguageModel::getProb(const Pattern& focus, const Pattern& context)
 {
-	return 0.5;
+	return lm.prob(focus, context);
+}
+
+bool LanguageModel::isOOV(const Pattern& word)
+{
+	return true;
 }
 
 } /* namespace SLM */

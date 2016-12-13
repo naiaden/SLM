@@ -62,7 +62,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	testPatternModel = testModelName + "." + patternmodelExtension;
 	testVocabulary = testModelName + "." + vocabularyExtension;
 
-	clp.get<std::string>("backoff");
+	backoffOptions = clp.get<std::string>("backoff");
 
 	char hostname[128];
 	gethostname(hostname, sizeof hostname);
@@ -101,7 +101,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 			<< "\n"
 			<< std::setw(30) << "Number of test input files: " << testInputFiles.size() << "\n"
 			<< "\n"
-			<< std::setw(30) << "Backoff strategies: " << clp.get<std::string>("backoff") << "\n";
+			<< std::setw(30) << "Backoff strategies: " << backoffOptions << "\n";
 
 	//
 
@@ -178,6 +178,11 @@ int ProgramOptions::getOrder() const
 std::string ProgramOptions::getHostName() const
 {
 	return hostName;
+}
+
+std::string ProgramOptions::getBackoffOptions() const
+{
+	return backoffOptions;
 }
 
 } /* namespace SLM */
