@@ -30,6 +30,7 @@ public:
 	bool isOOV(const Pattern& word);
 
 	double getProb(const Pattern& focus, const Pattern& context);
+	double getProb4(const Pattern& focus, const Pattern& context);
 private:
 	void initialise(const ProgramOptions& programOptions);
 	void defaultPatternModelOptions();

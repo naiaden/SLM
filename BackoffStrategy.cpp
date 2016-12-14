@@ -39,16 +39,20 @@ BackoffStrategy::~BackoffStrategy() {
 
 int BackoffStrategy::nextFile()
 {
-	L_V << "BackoffStrategy: next file\n";
+	done();
 
 	++files;
-	totalCount += fileCount;
-	totalOovs += fileOovs;
-	totalProb += fileProb;
+	L_V << "BackoffStrategy: next file\n";
+
 
 	fileCount = 0;
 	fileOovs = 0;
 	fileProb = 0.0;
+
+	sentences = 0;
+	sentCount = 0;
+	sentOovs = 0;
+	sentProb = 0.0;
 
 
 	return files;
@@ -72,7 +76,15 @@ int BackoffStrategy::nextLine()
 
 void BackoffStrategy::done()
 {
-	L_V << "BackoffStrategy: done\n";
+//	L_V << "BackoffStrategy: done\n";
+	if(files)
+	{
+		L_I << "BackoffStrategy: " << name() << " #" << fileCount << "/" << fileOovs << "[" << sentences << "]:" << fileProb << "\n";
+	}
+
+	totalCount += fileCount;
+	totalOovs += fileOovs;
+	totalProb += fileProb;
 }
 
 } /* namespace SLM */

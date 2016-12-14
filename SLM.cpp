@@ -56,6 +56,7 @@ int main(int argc, char** argv) {
 		}
 
 	}
+	bo.done();
 
 	return EXIT_SUCCESS;
 }

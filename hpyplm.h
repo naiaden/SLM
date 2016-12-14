@@ -420,8 +420,92 @@ template<unsigned N> struct PYPLM {
 
 
 
+	double prob4(const Pattern& w, const Pattern& context) const
+	{
+
+		// backoff 3
+		// backoff.backoff 2
+		// backoff.backoff.backoff 1
+		// backoff.backoff.backoff.backoff 0
+
+		double p_0 = backoff.backoff.backoff.backoff.p0; // -
+		double p_1 = backoff.backoff.backoff.prob(w, p_0); // d
+
+		double p_2_1; // cd
+		{
+			Pattern lookup = (N==1) ? Pattern() : Pattern(context.reverse(), 0, N-3);
+
+			auto it = p.find(lookup);
+			if (it == p.end()) { // if the pattern is not in the train data
+				p_2_1 = p_1;
+			}
+			p_2_1 = backoff.backoff.prob(w, p_1);
+		}
+
+		double p_3_1; // bcd
+		{
+			Pattern lookup = (N==1) ? Pattern() : Pattern(context.reverse(), 0, N-2);
+
+			auto it = p.find(lookup);
+			if (it == p.end()) { // if the pattern is not in the train data
+				p_3_1 = p_2_1;
+			}
+			p_3_1 = backoff.prob(w, p_2_1);
+		}
+
+		double p_4_1; // abcd
+		{
+			Pattern lookup = (N==1) ? Pattern() : Pattern(context.reverse(), 0, N-1);
+
+			auto it = p.find(lookup);
+			if (it == p.end()) { // if the pattern is not in the train data
+				p_4_1 = p_3_1;
+			}
+			p_4_1 = prob(w, p_3_1);
+		}
+
+		return p_4_1;
+
+		/*
+	    //
+	    {0} UniformVocabulary -> p0 = 1.0/vocabularySize
+
+	    //     d
+	    {1} prob(d) = cpyp::prob(d, {0})
+
+	    //   c d
+	    {2.1.1}  c prob(cd) = cpyp::prob(d, {1})
+	    {2.1.2} !c prob(cd) = {1}
+
+	    //  b* d
+	    {2.2.1}  b* prob(b*d) = cpyp::prob(d, {1})
+	    {2.2.2} !b* prob(b*d) = {1}
+
+	    // a** d
+	    {2.3.1}  a** prob(a**d) = cpyp::prob(d, {1})
+	    {2.3.2} !a** prob(a**d) = {1}
 
 
+	    //  bc d
+	    {3.1.1}  bc prob(bcd) = cpyp::prob(d, ({2.1.-}+{2.2.-})/2)
+	    {3.1.2} !bc prob(bcd) = ({2.1.-}+{2.2.-})/2
+
+	    // a*c d
+	    {3.2.1}  a*c prob(a*cd) = cpyp::prob(d, ({2.1.-}+{2.3.-})/2)
+	    {3.2.2} !a*c prob(a*cd) = ({2.1.-}+{2.3.-})/2
+
+	    // ab* d
+	    {3.3.1}  ab* prob(ab*d) = cpyp::prob(d, ({2.2.-}+{2.3.-})/2)
+	    {3.3.2} !ab* prob(ab*d) = ({2.2.-}+{2.3.-})/2
+
+
+	    // abc d
+	    {4.1}  abc prob(abcd) = cpyp::prob(d, ({3.1.-}+{3.2.-}+{3.3.-})/3)
+	    {4.2} !abc prob(abcd) = ({3.1.-}+{3.2.-}+{3.3.-})/3
+
+	    return {4.-}
+	    */
+	}
 
 
 
