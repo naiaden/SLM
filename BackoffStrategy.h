@@ -35,6 +35,8 @@ protected:
 
 	void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 
+	void writeProbToFile(const Pattern& focus, const Pattern& context, double logProb);
+
 	double totalProb = 0.0;
 	unsigned long long totalCount = 0;
 	unsigned long long totalOovs = 0;

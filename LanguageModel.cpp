@@ -119,14 +119,15 @@ double LanguageModel::getProb4(const Pattern& focus, const Pattern& context)
 	return lm.prob4(focus, context);
 }
 
-double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy)
+double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache)
 {
-	return lm.probS4(focus, context, interpolationStrategy);
+	return lm.probS4(focus, context, interpolationStrategy, cache);
 }
 
 bool LanguageModel::isOOV(const Pattern& word)
 {
-	return true;
+	auto it = std::find(vocabulary.begin(), vocabulary.end(), word);
+	return it == vocabulary.end();
 }
 
 } /* namespace SLM */

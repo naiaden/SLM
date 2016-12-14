@@ -34,7 +34,7 @@ double FullBackoffStrategy::prob(const Pattern& context, const Pattern& focus)
 			<< " " << languageModel.toString(focus) << "\n";
 
 	// implement skipgrams from layer 3 on
-	double prob = languageModel.getProbS4(focus, context, interpolationStrategy);
+	double prob = languageModel.getProbS4(focus, context, interpolationStrategy, cache);
 	double logProb = log2(prob);
 
 	if(false /* oov */)
@@ -46,6 +46,8 @@ double FullBackoffStrategy::prob(const Pattern& context, const Pattern& focus)
 	sentProb -= logProb;
 
 	L_S << "FullBackoffStrategy: \t\t" << logProb << "\n";
+
+	writeProbToFile(focus, context, logProb);
 
 	return logProb;
 }

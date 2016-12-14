@@ -19,15 +19,15 @@ BackoffStrategy::BackoffStrategy(SLM::LanguageModel& languageModel, const std::s
 void BackoffStrategy::init(SLM::LanguageModel& languageModel, const std::string& baseFileName)
 {
 	std::string outputFileName = baseFileName + name() + "." + outputExtension;
-	L_V << "BackoffStrategy: " << std::setw(30) << "Output file:" << outputFileName << "\n";
+	L_V << "BackoffStrategy: (" << name() << ")" << std::setw(30) << "Output file:" << outputFileName << "\n";
 	outputFile.open(outputFileName);
 
-	std::string probsFileName = baseFileName + "." + probsExtension;
-	L_V << "BackoffStrategy: " << std::setw(30) << "Probs output file:" << probsFileName << "\n";
+	std::string probsFileName = baseFileName + name() + "." + probsExtension;
+	L_V << "BackoffStrategy: (" << name() << ")" << std::setw(30) << "Probs output file:" << probsFileName << "\n";
 	probsFile.open(probsFileName);
 
-	std::string sentenceFileName  = baseFileName + "." + sentencesExtension;
-	L_V << "BackoffStrategy: " << std::setw(30) << "Sentences output file:" << sentenceFileName << "\n";
+	std::string sentenceFileName  = baseFileName + name() + "." + sentencesExtension;
+	L_V << "BackoffStrategy: (" << name() << ")" << std::setw(30) << "Sentences output file:" << sentenceFileName << "\n";
 	sentsProbFile.open(sentenceFileName);
 }
 
@@ -42,7 +42,7 @@ int BackoffStrategy::nextFile()
 	done();
 
 	++files;
-	L_V << "BackoffStrategy: next file\n";
+	L_V << "BackoffStrategy: (" << name() << ") next file\n";
 
 
 	fileCount = 0;
@@ -60,7 +60,7 @@ int BackoffStrategy::nextFile()
 
 int BackoffStrategy::nextLine()
 {
-	L_V << "BackoffStrategy: next sentence\n";
+	L_V << "BackoffStrategy: (" << name() << ") next sentence\n";
 
 	++sentences;
 
@@ -85,6 +85,19 @@ void BackoffStrategy::done()
 	totalCount += fileCount;
 	totalOovs += fileOovs;
 	totalProb += fileProb;
+}
+
+void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& context, double logProb)
+{
+	if(languageModel.isOOV(focus))
+	{
+		probsFile << "***";
+	}
+
+	probsFile << "p(" << languageModel.toString(focus) << " |"
+			  << languageModel.toString(context) << ") = "
+			  << std::fixed << std::setprecision(20) << logProb
+			  << "\n";
 }
 
 } /* namespace SLM */

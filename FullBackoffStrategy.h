@@ -25,6 +25,8 @@ public:
 	double prob(const Pattern& context, const Pattern& focus);
 private:
 	SLM::InterpolationStrategy* interpolationStrategy;
+
+	std::map<Pattern, double> cache;
 };
 
 } /* namespace SLM */
