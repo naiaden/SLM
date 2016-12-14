@@ -9,12 +9,15 @@
 #include "FullBackoffStrategy.h"
 #include "NgramBackoffStrategy.h"
 
+#include "InterpolationStrategy.h"
+#include "UniformInterpolationStrategy.h"
+
 
 
 namespace SLM {
 
 enum BackoffLevel { NGRAM, LIMITED, FULL };
-enum InterpolationStrategy { UNIFORM, MLE, ENTROPY };
+enum InterpolationFactor { UNIFORM, MLE, ENTROPY };
 
 
 
@@ -66,14 +69,14 @@ void BackoffStrategies::done()
 	}
 }
 
-std::string toString(InterpolationStrategy is)
+std::string toString(InterpolationFactor is)
 {
 	switch (is) {
-		case SLM::InterpolationStrategy::UNIFORM:
+		case SLM::InterpolationFactor::UNIFORM:
 			return "uni";
-		case SLM::InterpolationStrategy::MLE:
+		case SLM::InterpolationFactor::MLE:
 			return "mle";
-		case SLM::InterpolationStrategy::ENTROPY:
+		case SLM::InterpolationFactor::ENTROPY:
 			return "ent";
 	}
 }
@@ -90,13 +93,13 @@ std::string toString(BackoffLevel bl)
 	}
 }
 
-InterpolationStrategy stringToInterpolationStrategy(const std::string& is)
+InterpolationFactor stringToInterpolationStrategy(const std::string& is)
 {
-	if(is == "uni")	return SLM::InterpolationStrategy::UNIFORM;
-	if(is == "mle")	return SLM::InterpolationStrategy::MLE;
-	if(is == "ent")	return SLM::InterpolationStrategy::ENTROPY;
+	if(is == "uni")	return SLM::InterpolationFactor::UNIFORM;
+	if(is == "mle")	return SLM::InterpolationFactor::MLE;
+	if(is == "ent")	return SLM::InterpolationFactor::ENTROPY;
 
-	return SLM::InterpolationStrategy::UNIFORM;
+	return SLM::InterpolationFactor::UNIFORM;
 }
 
 BackoffLevel stringToBackoffLevel(const std::string& bl)
@@ -122,7 +125,9 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 
 		if(startsWith(token, "full"))
 		{
-			BackoffStrategy* bos = createFullBackoffStrategy(programOptions, lm);
+			InterpolationStrategy* is = new UniformInterpolationStrategy();
+
+			BackoffStrategy* bos = createFullBackoffStrategy(programOptions, lm, is);
 			if(bos) backoffStrategies.push_back(bos);
 		}
 
@@ -143,10 +148,10 @@ BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(const SL
 	return nullptr;
 }
 
-BackoffStrategy* BackoffStrategiesFactory::createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
+BackoffStrategy* BackoffStrategiesFactory::createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
 {
 	// full cache option in program options?
-	return new FullBackoffStrategy(lm, programOptions.getTestModelName());
+	return new FullBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy);
 }
 
 } /* namespace SLM */

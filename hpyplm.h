@@ -18,6 +18,8 @@
 
 #include <pattern.h>
 
+#include "InterpolationStrategy.h"
+
 // A not very memory-efficient implementation of an N-gram LM based on PYPs
 // as described in Y.-W. Teh. (2006) A Hierarchical Bayesian Language Model
 // based on Pitman-Yor Processes. In Proc. ACL.
@@ -423,11 +425,6 @@ template<unsigned N> struct PYPLM {
 	double prob4(const Pattern& w, const Pattern& context) const
 	{
 
-		// backoff 3
-		// backoff.backoff 2
-		// backoff.backoff.backoff 1
-		// backoff.backoff.backoff.backoff 0
-
 		double p_0 = backoff.backoff.backoff.backoff.p0; // -
 		double p_1 = backoff.backoff.backoff.prob(w, p_0); // d
 
@@ -513,7 +510,151 @@ template<unsigned N> struct PYPLM {
 	    */
 	}
 
+	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is) const
+		{
 
+			double p_0 = backoff.backoff.backoff.backoff.p0; // -
+			double p_1 = backoff.backoff.backoff.prob(w, p_0); // d
+
+			double p_2_1; // cd
+			{
+				Pattern lookup = Pattern(context, 2, 1).reverse();
+
+				auto it = backoff.backoff.p.find(lookup);
+				if (it == backoff.backoff.p.end()) { // if the pattern is not in the train data
+					p_2_1 = p_1;
+				} else
+				{
+					p_2_1 = it->second.prob(w, p_1);
+				}
+			}
+
+			double p_2_2; // b*d
+			{
+				Pattern lookup = Pattern(context, 1, 2).addskip(std::pair<int, int>(1,1)).reverse();
+
+				auto it = backoff.backoff.p.find(lookup);
+				if (it == backoff.backoff.p.end()) { // if the pattern is not in the train data
+					p_2_2 = p_1;
+				} else
+				{
+					p_2_2 = it->second.prob(w, p_1);
+				}
+			}
+
+			double p_2_3; // a**d
+			{
+				Pattern lookup = context.addskip(std::pair<int, int>(1,2)).reverse();
+
+				auto it = backoff.backoff.p.find(lookup);
+				if (it == backoff.backoff.p.end()) { // if the pattern is not in the train data
+					p_2_3 = p_1;
+				} else
+				{
+					p_2_3 = it->second.prob(w, p_1);
+				}
+			}
+
+			//////
+
+			double p_3_1; // bcd
+			{
+				Pattern lookup = Pattern(context, 1, 2).reverse();
+
+				double backoffProb = (p_2_1 + p_2_2)/2;
+
+				auto it = backoff.p.find(lookup);
+				if (it == backoff.p.end()) { // if the pattern is not in the train data
+					p_3_1 = backoffProb;
+				} else
+				{
+					p_3_1 = it->second.prob(w, backoffProb);
+				}
+			}
+
+			double p_3_2; // a*cd
+			{
+				Pattern lookup = context.addskip(std::pair<int, int>(1,1)).reverse();
+
+				double backoffProb = (p_2_1 + p_2_3)/2;
+
+				auto it = backoff.p.find(lookup);
+				if (it == backoff.p.end()) { // if the pattern is not in the train data
+					p_3_2 = backoffProb;
+				} else
+				{
+					p_3_2 = it->second.prob(w, backoffProb);
+				}
+			}
+
+			double p_3_3; // ab*d
+			{
+				Pattern lookup = context.addskip(std::pair<int, int>(2,1)).reverse();
+
+				double backoffProb = (p_2_1 + p_2_3)/2;
+
+				auto it = backoff.p.find(lookup);
+				if (it == backoff.p.end()) { // if the pattern is not in the train data
+					p_3_3 = backoffProb;
+				} else
+				{
+					p_3_3 = it->second.prob(w, backoffProb);
+				}
+			}
+
+			//////
+
+			double p_4_1; // abcd
+			{
+				Pattern lookup = context.reverse();
+
+				double backoffProb = (p_3_1 + p_3_2 + p_3_3)/3;
+
+				auto it = p.find(lookup);
+				if (it == p.end()) { // if the pattern is not in the train data
+					p_4_1 = backoffProb;
+				} else
+				{
+					p_4_1 = it->second.prob(w, backoffProb);
+				}
+			}
+
+			return p_4_1;
+
+			/*
+		    //
+		    {0} UniformVocabulary -> p0 = 1.0/vocabularySize
+
+		    //     d
+		    {1} prob(d) = cpyp::prob(d, {0})
+
+		    //   c d
+		    {2.1.1}  c prob(cd) = cpyp::prob(d, {1})
+		    {2.1.2} !c prob(cd) = {1}
+
+
+
+
+		    //  bc d
+		    {3.1.1}  bc prob(bcd) = cpyp::prob(d, ({2.1.-}+{2.2.-})/2)
+		    {3.1.2} !bc prob(bcd) = ({2.1.-}+{2.2.-})/2
+
+		    // a*c d
+		    {3.2.1}  a*c prob(a*cd) = cpyp::prob(d, ({2.1.-}+{2.3.-})/2)
+		    {3.2.2} !a*c prob(a*cd) = ({2.1.-}+{2.3.-})/2
+
+		    // ab* d
+		    {3.3.1}  ab* prob(ab*d) = cpyp::prob(d, ({2.2.-}+{2.3.-})/2)
+		    {3.3.2} !ab* prob(ab*d) = ({2.2.-}+{2.3.-})/2
+
+
+		    // abc d
+		    {4.1}  abc prob(abcd) = cpyp::prob(d, ({3.1.-}+{3.2.-}+{3.3.-})/3)
+		    {4.2} !abc prob(abcd) = ({3.1.-}+{3.2.-}+{3.3.-})/3
+
+		    return {4.-}
+		    */
+		}
 
 
 

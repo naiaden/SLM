@@ -16,6 +16,8 @@
 
 namespace SLM {
 
+class InterpolationStrategy;
+
 class BackoffStrategies
 {
 public:
@@ -39,7 +41,7 @@ public:
 	static std::vector<BackoffStrategy*> fromProgramOptions(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
 	static BackoffStrategy* createNgramBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
 	static BackoffStrategy* createLimitedBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
-	static BackoffStrategy* createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
+	static BackoffStrategy* createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy);
 };
 
 } /* namespace SLM */

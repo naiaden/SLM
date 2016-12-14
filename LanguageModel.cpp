@@ -119,6 +119,11 @@ double LanguageModel::getProb4(const Pattern& focus, const Pattern& context)
 	return lm.prob4(focus, context);
 }
 
+double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy)
+{
+	return lm.probS4(focus, context, interpolationStrategy);
+}
+
 bool LanguageModel::isOOV(const Pattern& word)
 {
 	return true;

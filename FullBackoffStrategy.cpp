@@ -8,11 +8,12 @@
 #include "FullBackoffStrategy.h"
 
 #include "Logging.h"
+#include "InterpolationStrategy.h"
 
 namespace SLM {
 
-FullBackoffStrategy::FullBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName)
- : BackoffStrategy(languageModel, baseFileName)
+FullBackoffStrategy::FullBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy)
+ : BackoffStrategy(languageModel, baseFileName), interpolationStrategy(interpolationStrategy)
 {
 	init(languageModel, baseFileName);
 
@@ -33,7 +34,7 @@ double FullBackoffStrategy::prob(const Pattern& context, const Pattern& focus)
 			<< " " << languageModel.toString(focus) << "\n";
 
 	// implement skipgrams from layer 3 on
-	double prob = languageModel.getProb4(focus, context);
+	double prob = languageModel.getProbS4(focus, context, interpolationStrategy);
 	double logProb = log2(prob);
 
 	if(false /* oov */)

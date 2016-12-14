@@ -16,7 +16,11 @@
 
 #include "ProgramOptions.h"
 
+
+
 namespace SLM {
+
+class InterpolationStrategy;
 
 class LanguageModel {
 public:
@@ -31,6 +35,7 @@ public:
 
 	double getProb(const Pattern& focus, const Pattern& context);
 	double getProb4(const Pattern& focus, const Pattern& context);
+	double getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy);
 private:
 	void initialise(const ProgramOptions& programOptions);
 	void defaultPatternModelOptions();
