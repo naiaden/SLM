@@ -435,22 +435,26 @@ template<unsigned N> struct PYPLM {
 		{
 			Pattern lookup = (N==1) ? Pattern() : Pattern(context.reverse(), 0, N-3);
 
-			auto it = p.find(lookup);
-			if (it == p.end()) { // if the pattern is not in the train data
+			auto it = backoff.backoff.p.find(lookup);
+			if (it == backoff.backoff.p.end()) { // if the pattern is not in the train data
 				p_2_1 = p_1;
+			} else
+			{
+				p_2_1 = it->second.prob(w, p_1);
 			}
-			p_2_1 = backoff.backoff.prob(w, p_1);
 		}
 
 		double p_3_1; // bcd
 		{
 			Pattern lookup = (N==1) ? Pattern() : Pattern(context.reverse(), 0, N-2);
 
-			auto it = p.find(lookup);
-			if (it == p.end()) { // if the pattern is not in the train data
+			auto it = backoff.p.find(lookup);
+			if (it == backoff.p.end()) { // if the pattern is not in the train data
 				p_3_1 = p_2_1;
+			} else
+			{
+				p_3_1 = it->second.prob(w, p_2_1);
 			}
-			p_3_1 = backoff.prob(w, p_2_1);
 		}
 
 		double p_4_1; // abcd
@@ -460,8 +464,10 @@ template<unsigned N> struct PYPLM {
 			auto it = p.find(lookup);
 			if (it == p.end()) { // if the pattern is not in the train data
 				p_4_1 = p_3_1;
+			} else
+			{
+				p_4_1 = it->second.prob(w, p_3_1);
 			}
-			p_4_1 = prob(w, p_3_1);
 		}
 
 		return p_4_1;
