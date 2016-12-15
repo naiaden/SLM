@@ -32,8 +32,11 @@ void BackoffStrategy::init(SLM::LanguageModel& languageModel, const std::string&
 }
 
 BackoffStrategy::~BackoffStrategy() {
+	outputFile.flush();
 	outputFile.close();
+	probsFile.flush();
 	probsFile.close();
+	sentsProbFile.flush();
 	sentsProbFile.close();
 }
 
@@ -47,12 +50,12 @@ int BackoffStrategy::nextFile()
 
 	fileCount = 0;
 	fileOovs = 0;
-	fileProb = 0.0;
+	fileLLH = 0.0;
 
 	sentences = 0;
 	sentCount = 0;
 	sentOovs = 0;
-	sentProb = 0.0;
+	sentLLH = 0.0;
 
 
 	return files;
@@ -62,29 +65,38 @@ int BackoffStrategy::nextLine()
 {
 	L_V << "BackoffStrategy: (" << name() << ") next sentence\n";
 
+	if(sentences)
+	{
+		double sentPerplexity = pow(2, sentLLH/(sentCount-sentOovs));
+		sentsProbFile << sentences << "\t" << sentPerplexity << "\t" << (sentCount-sentOovs) << "\t" << sentOovs << "\t" << sentLLH << std::endl;
+	}
+
 	++sentences;
 
 	fileCount += sentCount;
 	fileOovs += sentOovs;
-	fileProb += sentProb;
+	fileLLH += sentLLH;
 
 	sentCount = 0;
 	sentOovs = 0;
-	sentProb = 0.0;
+	sentLLH = 0.0;
 
+	return sentences;
 }
 
 void BackoffStrategy::done()
 {
 //	L_V << "BackoffStrategy: done\n";
+	nextLine();
+
 	if(files)
 	{
-		L_I << "BackoffStrategy: " << name() << " #" << fileCount << "/" << fileOovs << "[" << sentences << "]:" << fileProb << "\n";
+		L_I << "BackoffStrategy: " << name() << " #" << fileCount << "/" << fileOovs << "[" << sentences << "]:" << fileLLH << "\n";
 	}
 
 	totalCount += fileCount;
 	totalOovs += fileOovs;
-	totalProb += fileProb;
+	totalLLH += fileLLH;
 }
 
 void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& context, double logProb)
@@ -97,7 +109,7 @@ void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& conte
 	probsFile << "p(" << languageModel.toString(focus) << " |"
 			  << languageModel.toString(context) << ") = "
 			  << std::fixed << std::setprecision(20) << logProb
-			  << "\n";
+			  << std::endl;
 }
 
 } /* namespace SLM */

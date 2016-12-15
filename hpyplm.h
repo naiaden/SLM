@@ -176,8 +176,6 @@ template<unsigned N> struct PYPLM {
 			w_cd = is->get(lookup);
 		}
 
-
-
 		double w_b_d;
 		double p_b_d;
 		{

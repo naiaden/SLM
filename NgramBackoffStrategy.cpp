@@ -41,7 +41,7 @@ double NgramBackoffStrategy::prob(const Pattern& context, const Pattern& focus)
 	}
 
 	++sentCount;
-	sentProb -= logProb;
+	sentLLH -= logProb;
 
 	L_S << "NgramBackoffStrategy: \t\t" << logProb << "\n";
 

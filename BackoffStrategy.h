@@ -37,19 +37,19 @@ protected:
 
 	void writeProbToFile(const Pattern& focus, const Pattern& context, double logProb);
 
-	double totalProb = 0.0;
+	double totalLLH = 0.0;
 	unsigned long long totalCount = 0;
 	unsigned long long totalOovs = 0;
 	unsigned long totalSentences = 0;
 
 	int files = 0;
-	double fileProb = 0.0;
+	double fileLLH = 0.0;
 	unsigned long long fileCount = 0;
 	unsigned long long fileOovs = 0;
 	unsigned long fileSentences = 0;
 
 	unsigned long sentences = 0;
-	double sentProb = 0.0;
+	double sentLLH = 0.0;
 	unsigned long long sentCount = 0;
 	unsigned long long sentOovs = 0;
 
