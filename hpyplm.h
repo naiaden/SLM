@@ -18,6 +18,7 @@
 
 #include <pattern.h>
 
+#include "Logging.h"
 #include "InterpolationStrategy.h"
 
 // A not very memory-efficient implementation of an N-gram LM based on PYPs
@@ -142,16 +143,18 @@ template<unsigned N> struct PYPLM {
 
 	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
 	{
-
 		double p__ = backoff.backoff.backoff.backoff.p0; // -
+		L_S << "HPYPLM: probS4: fresh      " << p__ << "\n";
+
 		double p_d = backoff.backoff.backoff.prob(w, p__); // d
+		L_S << "HPYPLM: probS4: fresh    d " << p_d << "\n";
 
 		double w_cd;
 		double p_cd;
 		{
 			Pattern lookup = Pattern(context, 2, 1);
 
-			auto i_cd = cache.find(lookup);
+			std::map<Pattern,double>::const_iterator i_cd = cache.find(lookup+w);
 			if(i_cd == cache.end())
 			{
 				auto it = backoff.backoff.p.find(lookup.reverse());
@@ -162,14 +165,17 @@ template<unsigned N> struct PYPLM {
 				{
 					p_cd = it->second.prob(w, p_d);
 				}
-				cache[lookup] = p_cd;
+				L_S << "HPYPLM: probS4: fresh   cd " << p_cd << "\n";
+				cache.emplace(lookup+w, p_cd);
 			} else
 			{
 				p_cd = i_cd->second;
+				L_S << "HPYPLM: probS4: cache   cd " << p_cd << "\n";
 			}
 
 			w_cd = is->get(lookup);
 		}
+
 
 
 		double w_b_d;
@@ -221,9 +227,9 @@ template<unsigned N> struct PYPLM {
 
 			w_a__d = is->get(lookup);
 		}
-
-		//////
-
+//
+//		//////
+//
 		double w_bcd;
 		double p_bcd;
 		{
@@ -304,9 +310,9 @@ template<unsigned N> struct PYPLM {
 
 			w_ab_d = is->get(lookup);
 		}
-
-		//////
-
+//
+//		//////
+//
 		double p_abcd;
 		auto i_abcd = cache.find(context);
 		if(i_abcd == cache.end())
