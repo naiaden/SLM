@@ -10,13 +10,12 @@
 
 #include "BackoffStrategy.h"
 
-
-
 namespace SLM {
 
 class InterpolationStrategy;
 
-class FullBackoffStrategy: public BackoffStrategy {
+class FullBackoffStrategy: public BackoffStrategy
+{
 public:
 	FullBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy);
 	virtual ~FullBackoffStrategy();

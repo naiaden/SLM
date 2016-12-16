@@ -42,7 +42,10 @@ BackoffStrategy::~BackoffStrategy() {
 
 int BackoffStrategy::nextFile()
 {
-	done();
+	if(files)
+	{
+		done();
+	}
 
 	++files;
 	L_V << "BackoffStrategy: (" << name() << ") next file\n";
@@ -97,6 +100,9 @@ void BackoffStrategy::done()
 	totalCount += fileCount;
 	totalOovs += fileOovs;
 	totalLLH += fileLLH;
+
+	double totalPerplexity = pow(2, totalLLH/(totalCount-totalOovs));
+	L_I << "BackoffStrategy: " << name() << "\t" << sentences-1 << "\t" << totalPerplexity << "\t" << (totalCount-totalOovs) << "\t" << totalOovs << "\t" << totalLLH << std::endl;
 }
 
 void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& context, double logProb)
