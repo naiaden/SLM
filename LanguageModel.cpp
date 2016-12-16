@@ -124,6 +124,11 @@ double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SL
 	return lm.probS4(focus, context, interpolationStrategy, cache);
 }
 
+double LanguageModel::getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache)
+{
+	return lm.probLS4(focus, context, *this, interpolationStrategy, cache);
+}
+
 bool LanguageModel::isOOV(const Pattern& word)
 {
 	auto it = std::find(vocabulary.begin(), vocabulary.end(), word);
