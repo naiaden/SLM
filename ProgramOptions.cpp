@@ -41,6 +41,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	clp.add<std::string>("testoutputdirectory", 'O', "test output directory", true);
 
 	clp.add<std::string>("backoff", 'B', "backoff method", false);
+	clp.add<bool>("ignorecache", '\0', "ignore cache", false);
 	clp.add<std::string>("debug", '\0', "debug setting", false, "none");
 	clp.parse_check(argc, argv);
 
@@ -173,6 +174,11 @@ std::vector<std::string> ProgramOptions::getTestInputFiles() const
 int ProgramOptions::getOrder() const
 {
 	return order;
+}
+
+bool ProgramOptions::isIgnoreCache() const
+{
+	return ignoreCache;
 }
 
 std::string ProgramOptions::getHostName() const

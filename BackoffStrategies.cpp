@@ -151,7 +151,9 @@ BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(const SL
 BackoffStrategy* BackoffStrategiesFactory::createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
 {
 	// full cache option in program options?
-	return new FullBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy);
+	FullBackoffStrategy* fbs = new FullBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy);
+	fbs->setIgnoreCache(programOptions.isIgnoreCache());
+	return fbs;
 }
 
 } /* namespace SLM */

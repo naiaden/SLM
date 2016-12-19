@@ -22,10 +22,17 @@ public:
 
 	std::string name() const;
 	double prob(const Pattern& context, const Pattern& focus);
+
+	bool setIgnoreCache(bool setting);
 private:
+	void writeCache();
+
 	SLM::InterpolationStrategy* interpolationStrategy;
 
+	std::ofstream cacheOutputFile;
+
 	std::map<Pattern, double> cache;
+	bool ignoreCache = false;
 };
 
 } /* namespace SLM */

@@ -41,6 +41,7 @@ public:
 	std::vector<std::string> getTestInputFiles() const;
 
 	int getOrder() const;
+	bool isIgnoreCache() const;
 
 	std::string getHostName() const;
 
@@ -68,6 +69,8 @@ private:
 	std::vector<std::string> testInputFiles;
 
 	int order = 0;
+
+	bool ignoreCache = false;
 
 	std::string backoffOptions;
 	// backoff

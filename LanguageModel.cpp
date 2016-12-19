@@ -90,7 +90,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	double cpyp::PYPLM<N>::probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache, bool ignoreCache) const
 	{
 		double p__ = backoff.backoff.backoff.backoff.p0; // -
 		L_S << "HPYPLM: probS4: fresh      " << p__ << "\n";
@@ -103,7 +103,7 @@ namespace cpyp
 		{
 			Pattern lookup = Pattern(context, 2, 1);
 
-			std::map<Pattern,double>::const_iterator i_cd = cache.find(lookup+w);
+			std::map<Pattern,double>::const_iterator i_cd = ignoreCache ? cache.end() : cache.find(lookup+w);
 			if(i_cd == cache.end())
 			{
 				auto it = backoff.backoff.p.find(lookup.reverse());
@@ -130,7 +130,7 @@ namespace cpyp
 		{
 			Pattern lookup = Pattern(context, 1, 2).addskip(std::pair<int, int>(1,1));
 
-			auto i_b_d = cache.find(lookup);
+			auto i_b_d =  ignoreCache ? cache.end() : cache.find(lookup+w);
 			if(i_b_d == cache.end())
 			{
 				auto it = backoff.backoff.p.find(lookup.reverse());
@@ -155,7 +155,7 @@ namespace cpyp
 		{
 			Pattern lookup = context.addskip(std::pair<int, int>(1,2));
 
-			auto i_a__d = cache.find(lookup);
+			auto i_a__d =  ignoreCache ? cache.end() : cache.find(lookup+w);
 			if(i_a__d == cache.end())
 			{
 				auto it = backoff.backoff.p.find(lookup.reverse());
@@ -182,7 +182,7 @@ namespace cpyp
 		{
 			Pattern lookup = Pattern(context, 1, 2);
 
-			auto i_bcd = cache.find(lookup);
+			auto i_bcd =  ignoreCache ? cache.end() : cache.find(lookup+w);
 			if(i_bcd == cache.end())
 			{
 				double backoffProb = (w_cd*p_cd + w_b_d*p_b_d)/(w_cd + w_b_d);
@@ -209,7 +209,7 @@ namespace cpyp
 		{
 			Pattern lookup = context.addskip(std::pair<int, int>(1,1));
 
-			auto i_a_cd = cache.find(lookup);
+			auto i_a_cd = ignoreCache ? cache.end() :  cache.find(lookup+w);
 			if(i_a_cd == cache.end())
 			{
 				double backoffProb = (w_cd*p_cd + w_a__d*p_a__d)/(w_cd + w_a__d);
@@ -236,7 +236,7 @@ namespace cpyp
 		{
 			Pattern lookup = context.addskip(std::pair<int, int>(2,1));
 
-			auto i_ab_d = cache.find(lookup);
+			auto i_ab_d =  ignoreCache ? cache.end() : cache.find(lookup +w);
 			if(i_ab_d == cache.end())
 			{
 				double backoffProb = (w_b_d*p_b_d + w_a__d*p_a__d)/(w_b_d + w_a__d);
@@ -261,7 +261,7 @@ namespace cpyp
 //		//////
 //
 		double p_abcd;
-		auto i_abcd = cache.find(context);
+		auto i_abcd =  ignoreCache ? cache.end() : cache.find(context+w);
 		if(i_abcd == cache.end())
 		{
 			double backoffProb = (w_bcd*p_bcd + w_a_cd*p_a_cd + w_ab_d*p_ab_d)/(w_bcd + w_a_cd + w_ab_d);
@@ -590,9 +590,9 @@ double LanguageModel::getProb4(const Pattern& focus, const Pattern& context)
 	return lm.prob4(focus, context);
 }
 
-double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache)
+double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache, bool ignoreCache)
 {
-	return lm.probS4(focus, context, interpolationStrategy, cache);
+	return lm.probS4(focus, context, interpolationStrategy, cache, ignoreCache);
 }
 
 double LanguageModel::getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache)

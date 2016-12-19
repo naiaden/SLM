@@ -108,7 +108,7 @@ template<unsigned N> struct PYPLM {
 
 	double prob4(const Pattern& w, const Pattern& context) const;
 
-	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache, bool ignoreCache) const;
 
 	double probLS4(const Pattern& w, const Pattern& context, const SLM::LanguageModel& lm, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
 
@@ -152,7 +152,7 @@ public:
 
 	double getProb(const Pattern& focus, const Pattern& context);
 	double getProb4(const Pattern& focus, const Pattern& context);
-	double getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache);
+	double getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache, bool ignoreCache);
 	double getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache);
 private:
 	void initialise(const ProgramOptions& programOptions);

@@ -32,7 +32,7 @@ double NgramBackoffStrategy::prob(const Pattern& context, const Pattern& focus)
 	L_S << "NgramBackoffStrategy: Estimating prob for " << languageModel.toString(context)
 			<< " " << languageModel.toString(focus) << "\n";
 
-	double prob = languageModel.getProb(focus, context);
+	double prob = languageModel.getProb4(focus, context);
 	double logProb = log2(prob);
 
 	if(false /* oov */)

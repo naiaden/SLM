@@ -18,15 +18,15 @@ BackoffStrategy::BackoffStrategy(SLM::LanguageModel& languageModel, const std::s
 
 void BackoffStrategy::init(SLM::LanguageModel& languageModel, const std::string& baseFileName)
 {
-	std::string outputFileName = baseFileName + name() + "." + outputExtension;
+	std::string outputFileName = baseFileName + "_" + name() + "." + outputExtension;
 	L_V << "BackoffStrategy: (" << name() << ")" << std::setw(30) << "Output file:" << outputFileName << "\n";
 	outputFile.open(outputFileName);
 
-	std::string probsFileName = baseFileName + name() + "." + probsExtension;
+	std::string probsFileName = baseFileName + "_" + name() + "." + probsExtension;
 	L_V << "BackoffStrategy: (" << name() << ")" << std::setw(30) << "Probs output file:" << probsFileName << "\n";
 	probsFile.open(probsFileName);
 
-	std::string sentenceFileName  = baseFileName + name() + "." + sentencesExtension;
+	std::string sentenceFileName  = baseFileName + "_" + name() + "." + sentencesExtension;
 	L_V << "BackoffStrategy: (" << name() << ")" << std::setw(30) << "Sentences output file:" << sentenceFileName << "\n";
 	sentsProbFile.open(sentenceFileName);
 }
