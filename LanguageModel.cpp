@@ -297,12 +297,21 @@ namespace cpyp
 		auto i_abcd = cache.find(context+w);
 		if(i_abcd == cache.end())
 		{
-			std::pair <double,double> x_ab_d = prob_ab_d(w, context, is, cache);
-			std::pair <double,double> x_a_cd = prob_a_cd(w, context, is, cache);
-			std::pair <double,double> x_bcd = prob_bcd(w, context, is, cache);
-			double backoffProb = (x_ab_d.first*x_ab_d.second + x_a_cd.first*x_a_cd.second + x_bcd.first*x_bcd.second)/(x_ab_d.first + x_a_cd.first + x_bcd.first);
+			double backoffProb = 0.0;
 
 			auto it = p.find(context.reverse());
+
+			if(it == p.end() || it->second.num_customers(w) == 0)
+			{
+				std::pair <double,double> x_ab_d = prob_ab_d(w, context, is, cache);
+				std::pair <double,double> x_a_cd = prob_a_cd(w, context, is, cache);
+				std::pair <double,double> x_bcd = prob_bcd(w, context, is, cache);
+				backoffProb = (x_ab_d.first*x_ab_d.second + x_a_cd.first*x_a_cd.second + x_bcd.first*x_bcd.second)/(x_ab_d.first + x_a_cd.first + x_bcd.first);
+			} else
+			{
+				backoffProb = 1.0;
+			}
+
 			if (it == p.end())
 			{
 				p_abcd = backoffProb;
