@@ -19,6 +19,8 @@ public:
 
 	virtual double get(const Pattern& context) const = 0;
 	virtual std::string name() const = 0;
+protected:
+//	std::map<Pattern, double> weights;
 };
 
 } /* namespace SLM */

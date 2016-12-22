@@ -102,6 +102,16 @@ template<unsigned N> struct PYPLM {
 		}
 	}
 
+	std::pair <double,double> prob_() const;
+	std::pair <double,double> prob_d(const Pattern& w, SLM::InterpolationStrategy* is) const;
+	std::pair <double,double> prob_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_b_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_a__d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_bcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_a_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_ab_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_abcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+
 	double prob(const Pattern& w, const Pattern& context) const;
 
 	double prob(const Pattern& w, const Pattern& context, double boProb) const;
@@ -110,7 +120,7 @@ template<unsigned N> struct PYPLM {
 
 	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache, bool ignoreCache) const;
 
-	double probLS4(const Pattern& w, const Pattern& context, const SLM::LanguageModel& lm, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
 
 
 	double log_likelihood() const {

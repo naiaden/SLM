@@ -222,16 +222,6 @@ public:
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
 	template<typename F>
 	F prob(const Dish& dish, const F& p0) const {
 		if (num_tables_ == 0)
@@ -245,97 +235,6 @@ public:
 			return (F(it->second.num_customers() - discount_ * it->second.num_tables()) + r * p0) / F(num_customers_ + strength_);
 		}
 	}
-
-
-
-
-
-
-//
-//
-//	template<typename F>
-//	F probNaive(const Pattern& context, const Dish& dish, const F& p0 = 0.0, const double S = 1.0 ) const {
-//		bool debug = false;
-//
-//		bool backoff = (S > 0.5) ? true : false;
-//
-//		if (num_tables_ == 0)
-//		{
-//			if(debug) std::cout << "NUM TABLES = 0";
-//			return p0;
-//		}
-//
-//		double div = 1.0 / (strength_ + num_customers_);
-//
-//		if(debug) std::cout << " strength: " << strength_ << " num_cust: " << num_customers_ << "\t\t-->" << div << std::endl;
-//
-//		auto it = dish_locs_.find(dish);
-//		if (it == dish_locs_.end()) {
-//
-//			double prob = (strength_ + discount_ * num_tables_) * div * p0;
-//			if(debug) std::cout << "1. discount: " << discount_ << " num_tables: " << num_tables_ << " S: " << S << " p0: " << p0 << "\t\t-->" << prob << std::endl;
-//
-//			 return prob;
-//		} else {
-//
-//			double prob = (it->second.num_customers() - discount_ * it->second.num_tables()) * div + (strength_ + discount_ * num_tables_) * div * p0;
-//			if(debug) std::cout << "2. discount: " << discount_ << " custw: " << it->second.num_customers() << " tablesw: " << it->second.num_tables() << " S: " << S << " p0: " << p0 << "\t\t-->" << prob << std::endl;
-//			return prob;
-//		}
-//
-//	}
-//
-//
-//	template<typename F>
-//	F probLimited(const Dish& dish, const F& p0, const long int invDelta) const {
-//		bool debug = true;
-//
-//		if (num_tables_ == 0)
-//		{
-//			if(debug) std::cout << "SITUATION 1:\tp0:" << p0 << std::endl; // does not occur
-//			return p0;
-//		}
-//		auto it = dish_locs_.find(dish);
-//
-//		const F divisor = F(num_customers_ +  strength_);
-//
-//		if (it == dish_locs_.end()) { //
-//			if(debug) std::cout << "SITUATION 1\tt:" << strength_ << " d:" << discount_ << " numTa:" << num_tables_ << " numCu:" << num_customers_  << " p0:" << p0 << std::endl;
-//			const F r = F( num_tables_ * discount_ + strength_);
-//			return F(r * p0 / divisor);
-//		} else {
-//
-//			const F pr = F(it->second.num_customers() - discount_ * it->second.num_tables());
-//			if(invDelta > 0)
-//			{
-//				if(debug) std::cout << "SITUATION 2\tt:" << strength_ << " d:" << discount_ << " numTa:" << num_tables_ << " numCu:" << num_customers_  << " p0:" << p0 << "s>numCu:" << it->second.num_customers() << "s>numTa:" << it->second.num_tables() << std::endl;
-//
-//				const F r = F( num_tables_ / invDelta * discount_ + strength_/invDelta);
-//				return (pr + r * p0) / divisor;
-//			} else
-//			{
-//				if(debug) std::cout << "SITUATION 3\tt:" << strength_ << " d:" << discount_ << " numCu:" << num_customers_  << "s>numCu:" << it->second.num_customers() << "s>numTa:" << it->second.num_tables() << std::endl;
-//				return (pr) / divisor;
-//			}
-//
-//		}
-//	}
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	double log_likelihood() const {
 		return llh_;

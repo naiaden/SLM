@@ -24,7 +24,7 @@ public:
 	double prob(const Pattern& context, const Pattern& focus);
 
 	bool setIgnoreCache(bool setting);
-private:
+protected:
 	void writeCache();
 
 	SLM::InterpolationStrategy* interpolationStrategy;
