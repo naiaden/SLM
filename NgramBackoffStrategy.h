@@ -17,6 +17,8 @@ public:
 	NgramBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 	virtual ~NgramBackoffStrategy();
 
+	virtual void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
+
 	std::string name() const;
 	double prob(const Pattern& context, const Pattern& focus);
 };

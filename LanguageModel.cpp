@@ -336,9 +336,23 @@ namespace cpyp
 		return p_abcd;
 	}
 
+	double getNormalisationFactor(const Pattern& context, std::map<Pattern, double>& normalisationCache)
+	{
+		std::map<Pattern, double>::const_iterator i = normalisationCache.find(context);
+		if(i == normalisationCache.end())
+		{
+			return 2.0;
+		} else
+		{
+			return i->second;
+		}
+	}
+
 	template<unsigned N>
 	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
 	{
+
+		std::map<Pattern, double> normalisationCache;
 
 		double p__ = backoff.backoff.backoff.backoff.p0; // -
 		L_S << "HPYPLM: probS4: fresh      " << p__ << "\n";
@@ -346,7 +360,6 @@ namespace cpyp
 		double p_d = backoff.backoff.backoff.prob(w, p__); // d   ---  p__ = 1.0?
 		L_S << "HPYPLM: probS4: fresh    d " << p_d << "\n";
 
-		double normalisationFactor = 1.0;
 		bool ignoreCache = false;
 
 		double w_cd;
@@ -365,7 +378,7 @@ namespace cpyp
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_cd = it->second.prob(w, normalisationFactor);
+						p_cd = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -397,7 +410,7 @@ namespace cpyp
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_b_d = it->second.prob(w, normalisationFactor);
+						p_b_d = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -429,7 +442,7 @@ namespace cpyp
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_a__d = it->second.prob(w, normalisationFactor);
+						p_a__d = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -465,7 +478,7 @@ namespace cpyp
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_bcd = it->second.prob(w, normalisationFactor);
+						p_bcd = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -499,7 +512,7 @@ namespace cpyp
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_a_cd = it->second.prob(w, normalisationFactor);
+						p_a_cd = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -533,7 +546,7 @@ namespace cpyp
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_ab_d = it->second.prob(w, normalisationFactor);
+						p_ab_d = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -565,7 +578,7 @@ namespace cpyp
 			{
 				if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 				{
-					p_abcd = it->second.prob(w, normalisationFactor);
+					p_abcd = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
 				}
 				else // we have not seen uw, but seen u -> backoff
 				{

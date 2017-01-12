@@ -14,17 +14,22 @@ namespace SLM {
 
 class InterpolationStrategy;
 
+const std::string cacheExtension = "cache";
+
 class FullBackoffStrategy: public BackoffStrategy
 {
 public:
 	FullBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy);
 	virtual ~FullBackoffStrategy();
 
-	std::string name() const;
+	virtual void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
+
+	virtual std::string name() const;
 	double prob(const Pattern& context, const Pattern& focus);
 
 	bool setIgnoreCache(bool setting);
 protected:
+
 	void writeCache();
 
 	SLM::InterpolationStrategy* interpolationStrategy;

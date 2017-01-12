@@ -30,7 +30,6 @@ public:
 	void nextFile();
 	void nextLine();
 	void done();
-
 private:
 	std::vector<BackoffStrategy*> backoffStrategies;
 };
@@ -40,7 +39,7 @@ class BackoffStrategiesFactory
 public:
 	static std::vector<BackoffStrategy*> fromProgramOptions(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
 	static BackoffStrategy* createNgramBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
-	static BackoffStrategy* createLimitedBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
+	static BackoffStrategy* createLimitedBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy);
 	static BackoffStrategy* createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy);
 };
 

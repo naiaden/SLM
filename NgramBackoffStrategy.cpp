@@ -14,8 +14,12 @@ namespace SLM {
 NgramBackoffStrategy::NgramBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName)
  : BackoffStrategy(languageModel, baseFileName)
 {
-	init(languageModel, baseFileName);
 
+}
+
+void NgramBackoffStrategy::init(SLM::LanguageModel& languageModel, const std::string& baseFileName)
+{
+	openFiles(languageModel, baseFileName);
 }
 
 NgramBackoffStrategy::~NgramBackoffStrategy() {

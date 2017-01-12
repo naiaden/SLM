@@ -5,7 +5,7 @@
 // save CRPs / MFCRPs with the boost serialization framework
 
 #include <unordered_map>
-#include "cpyp/msparse_vector.h"
+#include "msparse_vector.h"
 
 #include <boost/config.hpp>
 

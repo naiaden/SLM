@@ -14,9 +14,15 @@ namespace SLM {
 BackoffStrategy::BackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName)
  : languageModel(languageModel)
 {
+
 }
 
-void BackoffStrategy::init(SLM::LanguageModel& languageModel, const std::string& baseFileName)
+void BackoffStrategy::init() const
+{
+
+}
+
+void BackoffStrategy::openFiles(SLM::LanguageModel& languageModel, const std::string& baseFileName)
 {
 	std::string outputFileName = baseFileName + "_" + name() + "." + outputExtension;
 	L_V << "BackoffStrategy: (" << name() << ")" << std::setw(30) << "Output file:" << outputFileName << "\n";

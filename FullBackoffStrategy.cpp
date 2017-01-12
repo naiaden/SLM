@@ -12,17 +12,26 @@
 
 namespace SLM {
 
-const std::string cacheExtension = "cache";
+
 
 FullBackoffStrategy::FullBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy)
  : BackoffStrategy(languageModel, baseFileName), interpolationStrategy(interpolationStrategy)
 {
-	init(languageModel, baseFileName);
+//	init(languageModel, baseFileName);
+
+//	std::string cacheFileName  = baseFileName + "_" + name() + "." + cacheExtension;
+//	L_V << "FullBackoffStrategy: (" << name() << ")" << std::setw(30) << "Cache output file:" << cacheFileName << "\n";
+//	cacheOutputFile.open(cacheFileName);
+
+}
+
+void FullBackoffStrategy::init(SLM::LanguageModel& languageModel, const std::string& baseFileName)
+{
+	openFiles(languageModel, baseFileName);
 
 	std::string cacheFileName  = baseFileName + "_" + name() + "." + cacheExtension;
 	L_V << "FullBackoffStrategy: (" << name() << ")" << std::setw(30) << "Cache output file:" << cacheFileName << "\n";
 	cacheOutputFile.open(cacheFileName);
-
 }
 
 FullBackoffStrategy::~FullBackoffStrategy() {

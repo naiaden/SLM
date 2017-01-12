@@ -24,6 +24,9 @@ class BackoffStrategy {
 public:
 	virtual ~BackoffStrategy();
 
+	void openFiles(SLM::LanguageModel& languageModel, const std::string& baseFileName);
+	virtual void init() const;
+
 	virtual std::string name() const = 0;
 
 	virtual double prob(const Pattern& context, const Pattern& focus) = 0;
@@ -33,7 +36,7 @@ public:
 protected:
 	BackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 
-	void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
+//	void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 
 	void writeProbToFile(const Pattern& focus, const Pattern& context, double logProb);
 

@@ -7,6 +7,7 @@
 
 #include "BackoffStrategies.h"
 #include "FullBackoffStrategy.h"
+#include "LimitedBackoffStrategy.h"
 #include "NgramBackoffStrategy.h"
 
 #include "InterpolationStrategy.h"
@@ -131,6 +132,14 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			if(bos) backoffStrategies.push_back(bos);
 		}
 
+		if(startsWith(token, "lim"))
+		{
+			InterpolationStrategy* is = new UniformInterpolationStrategy();
+
+			BackoffStrategy* bos = createLimitedBackoffStrategy(programOptions, lm, is);
+			if(bos) backoffStrategies.push_back(bos);
+		}
+
 	}
 
 	return backoffStrategies;
@@ -139,13 +148,18 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 BackoffStrategy* BackoffStrategiesFactory::createNgramBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
 {
 	// ngram cache option in program options?
-	return new NgramBackoffStrategy(lm, programOptions.getTestModelName());
+	NgramBackoffStrategy* nbs = new NgramBackoffStrategy(lm, programOptions.getTestModelName());
+	nbs->init(lm, programOptions.getTestModelName());
+	return nbs;
 }
 
-BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
+BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
 {
 	// limited cache option in program options?
-	return nullptr;
+	LimitedBackoffStrategy* lbs = new LimitedBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy);
+	lbs->setIgnoreCache(programOptions.isIgnoreCache());
+	lbs->init(lm, programOptions.getTestModelName());
+	return lbs;
 }
 
 BackoffStrategy* BackoffStrategiesFactory::createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
@@ -153,6 +167,7 @@ BackoffStrategy* BackoffStrategiesFactory::createFullBackoffStrategy(const SLM::
 	// full cache option in program options?
 	FullBackoffStrategy* fbs = new FullBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy);
 	fbs->setIgnoreCache(programOptions.isIgnoreCache());
+	fbs->init(lm, programOptions.getTestModelName());
 	return fbs;
 }
 

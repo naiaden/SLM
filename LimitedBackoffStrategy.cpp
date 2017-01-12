@@ -15,17 +15,26 @@ namespace SLM {
 LimitedBackoffStrategy::LimitedBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy)
  : FullBackoffStrategy(languageModel, baseFileName, interpolationStrategy)
 {
-	// TODO Auto-generated constructor stub
 
 }
 
+void LimitedBackoffStrategy::init(SLM::LanguageModel& languageModel, const std::string& baseFileName)
+{
+	openFiles(languageModel, baseFileName);
+
+	std::string cacheFileName  = baseFileName + "_" + name() + "." + cacheExtension;
+	L_V << "LimitedBackoffStrategy: (" << name() << ")" << std::setw(30) << "Cache output file:" << cacheFileName << "\n";
+	cacheOutputFile.open(cacheFileName);
+}
+
 LimitedBackoffStrategy::~LimitedBackoffStrategy() {
-	// TODO Auto-generated destructor stub
+	cacheOutputFile.flush();
+	cacheOutputFile.close();
 }
 
 std::string LimitedBackoffStrategy::name() const
 {
-	return "limited";
+	return "limited" + interpolationStrategy->name();
 }
 
 double LimitedBackoffStrategy::prob(const Pattern& context, const Pattern& focus)

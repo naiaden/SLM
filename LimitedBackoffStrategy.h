@@ -20,6 +20,8 @@ public:
 	LimitedBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy);
 	virtual ~LimitedBackoffStrategy();
 
+	virtual void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
+
 	std::string name() const;
 	double prob(const Pattern& context, const Pattern& focus);
 
