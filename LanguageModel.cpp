@@ -336,11 +336,34 @@ namespace cpyp
 		return p_abcd;
 	}
 
-	double getNormalisationFactor(const Pattern& context, std::map<Pattern, double>& normalisationCache)
+	template<unsigned N>
+	double cpyp::PYPLM<N>::getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, std::map<Pattern, double>& normalisationCache)
 	{
+		L_S << "LanguageModel: getNormalisationFactor: context length: "  << " " << context.size() << "\n";
+
 		std::map<Pattern, double>::const_iterator i = normalisationCache.find(context);
 		if(i == normalisationCache.end())
 		{
+			L_S << "LanguageModel: getNormalisationFactor: generating fresh: \n";
+
+			int i  = 0;
+			for(auto dish = restaurant.begin(); dish != restaurant.end(); dish++)
+			{
+				++i;
+				// if contextlength = 1
+				// c dish.first
+
+				// if contextlength = 2
+				// bc dish.first
+
+				// if contextlength = 3
+				// abc dish.first
+			}
+
+			L_S << "LanguageModel: getNormalisationFactor: number of words after context: " << i << "\n";
+
+			int numberOfWordsAfterContext;
+
 			return 2.0;
 		} else
 		{
@@ -349,7 +372,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache)
 	{
 
 		std::map<Pattern, double> normalisationCache;
@@ -373,15 +396,18 @@ namespace cpyp
 				auto it = backoff.backoff.p.find(lookup.reverse());
 				if (it == backoff.backoff.p.end())
 				{
+					L_S << "LanguageModel: probLS4: c NOT in model --> backoff \n";
 					p_cd = p_d;
 				} else
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_cd = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
+						L_S << "LanguageModel: probLS4: cd in model --> no backoff \n";
+						p_cd = it->second.prob(w, getNormalisationFactor(lookup, it->second, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
+						L_S << "LanguageModel: probLS4: c* in model --> backoff \n";
 						p_cd = it->second.prob(w, p_d);
 					}
 				}
@@ -405,15 +431,18 @@ namespace cpyp
 				auto it = backoff.backoff.p.find(lookup.reverse());
 				if (it == backoff.backoff.p.end())
 				{
+					L_S << "LanguageModel: probLS4: b_ NOT in model --> backoff \n";
 					p_b_d = p_d;
 				} else
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_b_d = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
+						L_S << "LanguageModel: probLS4: b_d in model --> no backoff \n";
+						p_b_d = it->second.prob(w, getNormalisationFactor(lookup, it->second, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
+						L_S << "LanguageModel: probLS4: b_* in model --> backoff \n";
 						p_b_d = it->second.prob(w, p_d);
 					}
 				}
@@ -437,15 +466,18 @@ namespace cpyp
 				auto it = backoff.backoff.p.find(lookup.reverse());
 				if (it == backoff.backoff.p.end())
 				{
+					L_S << "LanguageModel: probLS4: a__ NOT in model --> backoff \n";
 					p_a__d = p_d;
 				} else
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_a__d = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
+						L_S << "LanguageModel: probLS4: a__d in model --> no backoff \n";
+						p_a__d = it->second.prob(w, getNormalisationFactor(lookup, it->second, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
+						L_S << "LanguageModel: probLS4: a__* in model --> backoff \n";
 						p_a__d = it->second.prob(w, p_d);
 					}
 				}
@@ -473,15 +505,18 @@ namespace cpyp
 				auto it = backoff.p.find(lookup.reverse());
 				if (it == backoff.p.end())
 				{
+					L_S << "LanguageModel: probLS4: bc NOT in model --> backoff \n";
 					p_bcd = backoffProb;
 				} else
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_bcd = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
+						L_S << "LanguageModel: probLS4: bcd in model --> no backoff \n";
+						p_bcd = it->second.prob(w, getNormalisationFactor(lookup, it->second, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
+						L_S << "LanguageModel: probLS4: bc* in model --> backoff \n";
 						p_bcd = it->second.prob(w, backoffProb);
 					}
 				}
@@ -507,15 +542,18 @@ namespace cpyp
 				auto it = backoff.p.find(lookup.reverse());
 				if (it == backoff.p.end())
 				{
+					L_S << "LanguageModel: probLS4: a_c NOT in model --> backoff \n";
 					p_a_cd = backoffProb;
 				} else
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_a_cd = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
+						L_S << "LanguageModel: probLS4: a_cd in model --> no backoff \n";
+						p_a_cd = it->second.prob(w, getNormalisationFactor(lookup, it->second, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
+						L_S << "LanguageModel: probLS4: a_c* in model --> backoff \n";
 						p_a_cd = it->second.prob(w, backoffProb);
 					}
 				}
@@ -541,15 +579,18 @@ namespace cpyp
 				auto it = backoff.p.find(lookup.reverse());
 				if (it == backoff.p.end())
 				{
+					L_S << "LanguageModel: probLS4: ab_ NOT in model --> backoff \n";
 					p_ab_d = backoffProb;
 				} else
 				{
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
-						p_ab_d = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
+						L_S << "LanguageModel: probLS4: ab_d in model --> no backoff \n";
+						p_ab_d = it->second.prob(w, getNormalisationFactor(lookup, it->second, normalisationCache));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
+						L_S << "LanguageModel: probLS4: a_* in model --> backoff \n";
 						p_ab_d = it->second.prob(w, backoffProb);
 					}
 				}
@@ -573,15 +614,18 @@ namespace cpyp
 			auto it = p.find(context.reverse());
 			if (it == p.end())
 			{
+				L_S << "LanguageModel: probLS4: abc NOT in model --> backoff \n";
 				p_abcd = backoffProb;
 			} else
 			{
 				if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 				{
-					p_abcd = it->second.prob(w, getNormalisationFactor(context, normalisationCache));
+					L_S << "LanguageModel: probLS4: abcd in model --> no backoff \n";
+					p_abcd = it->second.prob(w, getNormalisationFactor(context, it->second, normalisationCache));
 				}
 				else // we have not seen uw, but seen u -> backoff
 				{
+					L_S << "LanguageModel: probLS4: abc* in model --> backoff \n";
 					p_abcd = it->second.prob(w, backoffProb);
 				}
 			}

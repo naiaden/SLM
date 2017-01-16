@@ -62,6 +62,8 @@ int main(int argc, char** argv) {
 
 				pt.toString();
 			}
+
+			return 1;
 		}
 
 	}

@@ -120,8 +120,9 @@ template<unsigned N> struct PYPLM {
 
 	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache, bool ignoreCache) const;
 
-	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache);
 
+	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, std::map<Pattern, double>& normalisationCache);
 
 	double log_likelihood() const {
 		return backoff.log_likelihood() + tr.log_likelihood();
@@ -169,6 +170,8 @@ private:
 	void defaultPatternModelOptions();
 	void extendClassEncoder(const std::vector<std::string>& inputFiles, const std::string& outputFile);
 	void loadLanguageModel(const std::string& inputFile);
+
+
 
 	ClassEncoder classEncoder;
 	ClassDecoder classDecoder;
