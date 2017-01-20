@@ -41,8 +41,11 @@ public:
 	std::vector<std::string> getTestInputFiles() const;
 
 	int getOrder() const;
+	bool isIgnoreCache() const;
 
 	std::string getHostName() const;
+
+	std::string getBackoffOptions() const;
 private:
 	cmdline::parser clp;
 
@@ -66,6 +69,10 @@ private:
 	std::vector<std::string> testInputFiles;
 
 	int order = 0;
+
+	bool ignoreCache = false;
+
+	std::string backoffOptions;
 	// backoff
 
 	std::string hostName;

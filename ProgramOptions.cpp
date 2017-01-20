@@ -41,28 +41,29 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	clp.add<std::string>("testoutputdirectory", 'O', "test output directory", true);
 
 	clp.add<std::string>("backoff", 'B', "backoff method", false);
+	clp.add<bool>("ignorecache", '\0', "ignore cache", false);
 	clp.add<std::string>("debug", '\0', "debug setting", false, "none");
 	clp.parse_check(argc, argv);
 
 	//
 
 	trainDirectory = clp.get<std::string>("traindirectory");
-	trainModelName = clp.get<std::string>("trainmodelname");
+	trainModelName = trainDirectory + "/" + clp.get<std::string>("trainmodelname");
 
 	trainCorpus = clp.get<std::string>("traincorpus");
 	trainPatternModel = clp.get<std::string>("trainpatternmodel");
 	trainVocabulary = clp.get<std::string>("trainvocabulary");
 	trainLanguageModel = clp.get<std::string>("trainlanguagemodel");
 
-	testModelName = clp.get<std::string>("testmodelname");
 	testInputDirectory = clp.get<std::string>("testinputdirectory");
 	testOutputDirectory = clp.get<std::string>("testoutputdirectory");
+	testModelName = testOutputDirectory + "/" + clp.get<std::string>("testmodelname");
 
 	testCorpus = testModelName + "." + corpusExtension;
 	testPatternModel = testModelName + "." + patternmodelExtension;
 	testVocabulary = testModelName + "." + vocabularyExtension;
 
-	clp.get<std::string>("backoff");
+	backoffOptions = clp.get<std::string>("backoff");
 
 	char hostname[128];
 	gethostname(hostname, sizeof hostname);
@@ -101,7 +102,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 			<< "\n"
 			<< std::setw(30) << "Number of test input files: " << testInputFiles.size() << "\n"
 			<< "\n"
-			<< std::setw(30) << "Backoff strategies: " << clp.get<std::string>("backoff") << "\n";
+			<< std::setw(30) << "Backoff strategies: " << backoffOptions << "\n";
 
 	//
 
@@ -175,9 +176,19 @@ int ProgramOptions::getOrder() const
 	return order;
 }
 
+bool ProgramOptions::isIgnoreCache() const
+{
+	return ignoreCache;
+}
+
 std::string ProgramOptions::getHostName() const
 {
 	return hostName;
+}
+
+std::string ProgramOptions::getBackoffOptions() const
+{
+	return backoffOptions;
 }
 
 } /* namespace SLM */
