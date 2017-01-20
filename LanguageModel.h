@@ -120,9 +120,9 @@ template<unsigned N> struct PYPLM {
 
 	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache, bool ignoreCache) const;
 
-	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache);
+	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& probCache, std::map<Pattern, double>& normalisationCache);
 
-	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, std::map<Pattern, double>& normalisationCache);
+	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::map<Pattern, double>& probCache, std::map<Pattern, double>& normalisationCache);
 
 	double log_likelihood() const {
 		return backoff.log_likelihood() + tr.log_likelihood();
@@ -164,7 +164,7 @@ public:
 	double getProb(const Pattern& focus, const Pattern& context);
 	double getProb4(const Pattern& focus, const Pattern& context);
 	double getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache, bool ignoreCache);
-	double getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache);
+	double getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache, std::map<Pattern, double>& normalisationCache);
 private:
 	void initialise(const ProgramOptions& programOptions);
 	void defaultPatternModelOptions();

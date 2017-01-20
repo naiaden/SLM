@@ -27,7 +27,7 @@ public:
 
 	double getNormalisationFactor(const Pattern& context);
 private:
-
+	std::map<Pattern, double> normalisationCache;
 };
 
 } /* namespace SLM */
