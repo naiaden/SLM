@@ -118,7 +118,7 @@ void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& conte
 		probsFile << "***";
 	}
 
-	probsFile << "p(" << languageModel.toString(focus) << " |"
+	/*probsFile*/ std::cout << "p(" << languageModel.toString(focus) << " |"
 			  << languageModel.toString(context) << ") = "
 			  << std::fixed << std::setprecision(20) << logProb
 			  << std::endl;
