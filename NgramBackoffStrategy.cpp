@@ -49,6 +49,8 @@ double NgramBackoffStrategy::prob(const Pattern& context, const Pattern& focus)
 
 	L_S << "NgramBackoffStrategy: \t\t" << logProb << "\n";
 
+	writeProbToFile(focus, context, logProb);
+
 	return logProb;
 }
 
