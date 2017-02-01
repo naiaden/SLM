@@ -150,8 +150,8 @@ namespace cpyp
 		std::map<Pattern,double>::const_iterator i_b_d =  cache.find(lookup+w);
 		if(i_b_d == cache.end())
 		{
-			auto it = backoff.backoff.p.find(lookup.reverse());
-			if (it == backoff.backoff.p.end())
+			auto it = /*backoff.*/backoff.p.find(lookup.reverse());
+			if (it == /*backoff.*/backoff.p.end())
 			{
 				p_b_d = prob_d(w, is).second;
 			} else
@@ -178,8 +178,8 @@ namespace cpyp
 		auto i_a__d = cache.find(lookup+w);
 		if(i_a__d == cache.end())
 		{
-			auto it = backoff.backoff.p.find(lookup.reverse());
-			if (it == backoff.backoff.p.end())
+			auto it = /*backoff.backoff.*/p.find(lookup.reverse());
+			if (it == /*backoff.backoff.*/p.end())
 			{
 				p_a__d = prob_d(w, is).second;
 			} else
