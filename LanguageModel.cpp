@@ -44,6 +44,8 @@ namespace cpyp
 	double cpyp::PYPLM<N>::prob4(const Pattern& w, const Pattern& context) const
 	{
 
+		std::cout << "N=" << N << std::endl;
+
 		double p_0 = backoff.backoff.backoff.backoff.p0; // -
 		double p_1 = backoff.backoff.backoff.prob(w, p_0); // d
 
@@ -206,7 +208,7 @@ namespace cpyp
 		{
 			std::pair <double,double> x_cd = prob_cd(w, originalContext, is, cache);
 			std::pair <double,double> x_b_d = prob_b_d(w, originalContext, is, cache);
-			double backoffProb = (x_cd.first*x_cd.second +x_b_d.first*x_b_d.second)/(x_cd.first + x_b_d.first);
+			double backoffProb = (x_cd.first*x_cd.second + x_b_d.first*x_b_d.second)/(x_cd.first + x_b_d.first);
 
 			auto it = backoff.p.find(lookup.reverse());
 			if (it == backoff.p.end())
@@ -240,8 +242,8 @@ namespace cpyp
 			std::pair <double,double> x_a__d = prob_a__d(w, originalContext, is, cache);
 			double backoffProb = (x_cd.first*x_cd.second + x_a__d.first*x_a__d.second)/(x_cd.first + x_a__d.first);
 
-			auto it = backoff.p.find(lookup.reverse());
-			if (it == backoff.p.end())
+			auto it = /*backoff.*/p.find(lookup.reverse());
+			if (it == /*backoff.*/p.end())
 			{
 				p_a_cd = backoffProb;
 			} else
@@ -272,8 +274,8 @@ namespace cpyp
 			std::pair <double,double> x_a__d = prob_a__d(w, originalContext, is, cache);
 			double backoffProb = (x_b_d.first*x_b_d.second + x_a__d.first*x_a__d.second)/(x_b_d.first + x_a__d.first);
 
-			auto it = backoff.p.find(lookup.reverse());
-			if (it == backoff.p.end())
+			auto it = /*backoff.*/p.find(lookup.reverse());
+			if (it == /*backoff.*/p.end())
 			{
 				p_ab_d = backoffProb;
 			} else
@@ -380,11 +382,11 @@ namespace cpyp
 				{
 					if(context.isgap(1))
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 2: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 2: \n";
 						ps += prob_b_d(dish->first, context, is, probCache).second;
 					} else
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 3: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 3: \n";
 						ps += prob_bcd(dish->first, context, is, probCache).second;
 					}
 				}
@@ -393,19 +395,19 @@ namespace cpyp
 				{
 					if(context.isgap(1))
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 4: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 4: \n";
 						ps += prob_a_cd(dish->first, context, is, probCache).second;
 					} else if(context.isgap(2))
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 5: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 5: \n";
 						ps += prob_ab_d(dish->first, context, is, probCache).second;
 					} else if(context.isgap(1) && context.isgap(2))
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 6: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 6: \n";
 						ps += prob_a__d(dish->first, context, is, probCache).second;
 					} else
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 71: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 71: \n";
 						ps += prob_abcd(dish->first, context, is, probCache).second;
 					}
 				}
@@ -413,6 +415,8 @@ namespace cpyp
 
 			L_S << "LanguageModel: getNormalisationFactor: number of words after context: " << i << "\n";
 			L_S << "LanguageModel: getNormalisationFactor: with probability sum: " << ps << "\n";
+			if(ps > 1.0)
+				L_S << "LanguageModel: getNormalisationFactor: [" << context.size() << "]!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
 
 			int numberOfWordsAfterContext;
 

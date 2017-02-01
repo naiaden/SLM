@@ -115,10 +115,10 @@ void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& conte
 {
 	if(languageModel.isOOV(focus))
 	{
-		/*probsFile*/ std::cout << "***";
+		/*std::cout*/ probsFile << "***";
 	}
 
-	/*probsFile*/ std::cout << "p(" << languageModel.toString(focus) << " |"
+	/*std::cout*/ probsFile << "p(" << languageModel.toString(focus) << " |"
 			  << languageModel.toString(context) << ") = "
 			  << std::fixed << std::setprecision(20) << logProb
 			  << std::endl;
