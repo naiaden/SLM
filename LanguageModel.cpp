@@ -208,7 +208,7 @@ namespace cpyp
 		{
 			std::pair <double,double> x_cd = prob_cd(w, originalContext, is, cache);
 			std::pair <double,double> x_b_d = prob_b_d(w, originalContext, is, cache);
-			double backoffProb = (x_cd.first*x_cd.second +x_b_d.first*x_b_d.second)/(x_cd.first + x_b_d.first);
+			double backoffProb = (x_cd.first*x_cd.second + x_b_d.first*x_b_d.second)/(x_cd.first + x_b_d.first);
 
 			auto it = backoff.p.find(lookup.reverse());
 			if (it == backoff.p.end())
@@ -242,8 +242,8 @@ namespace cpyp
 			std::pair <double,double> x_a__d = prob_a__d(w, originalContext, is, cache);
 			double backoffProb = (x_cd.first*x_cd.second + x_a__d.first*x_a__d.second)/(x_cd.first + x_a__d.first);
 
-			auto it = backoff.p.find(lookup.reverse());
-			if (it == backoff.p.end())
+			auto it = /*backoff.*/p.find(lookup.reverse());
+			if (it == /*backoff.*/p.end())
 			{
 				p_a_cd = backoffProb;
 			} else
@@ -274,8 +274,8 @@ namespace cpyp
 			std::pair <double,double> x_a__d = prob_a__d(w, originalContext, is, cache);
 			double backoffProb = (x_b_d.first*x_b_d.second + x_a__d.first*x_a__d.second)/(x_b_d.first + x_a__d.first);
 
-			auto it = backoff.p.find(lookup.reverse());
-			if (it == backoff.p.end())
+			auto it = /*backoff.*/p.find(lookup.reverse());
+			if (it == /*backoff.*/p.end())
 			{
 				p_ab_d = backoffProb;
 			} else
