@@ -80,8 +80,8 @@ int main(int argc, char** argv) {
 //			pt.nextLine();
 //
 			std::vector<std::string> words = whitespaceTokeniser(sentenceString);
-			L_V << "SLMr: Reading " << sentenceString << "\n";
-			L_V << "SLMr: Contains " << words.size() << " words (incl. sentence markers)\n";
+			L_P << "SLMr: Reading " << sentenceString << "\n";
+			L_P << "SLMr: Contains " << words.size() << " words (incl. sentence markers)\n";
 
 			double lprob = 0.0;
 			int numberOfUsedPatterns = 0;

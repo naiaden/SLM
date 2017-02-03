@@ -16,6 +16,10 @@
 #include <string>
 #include <regex>
 
+#include "Logging.h"
+
+#include "Utils.h"
+
 namespace SLM {
 
 NBestItem::NBestItem(const std::string& aSentence, int cRank, double aScore, double lScore, double words) :
@@ -68,7 +72,10 @@ std::string FileRenamer::rename(const std::string& original, const std::string& 
 //
 ////                      std::cout << "Renaming " << original << " to " << ss.str() << std::endl;
 //                    return ss.str();
-	return "hoi";
+	std::vector<std::string> tokens = delimiterTokeniser(original, '/');
+
+
+	return outputDir + "/" + tokens.back();
 }
 
 
@@ -98,9 +105,9 @@ void NBestList::print(bool fileFormat)
 
 void NBestList::printToFile(const std::string& originalFileName, const std::string& directory)
 {
-      std::cout << "Processing " << originalFileName << std::endl;
+	L_I << "NBestList: Processing " << originalFileName << std::endl;
         std::string newName = fr.rename(originalFileName, directory);
-      std::cout << "  into " << newName << std::endl;
+        L_I << "NBestList:  into " << newName << std::endl;
 
         std::ofstream myfile;
           myfile.open (newName);
