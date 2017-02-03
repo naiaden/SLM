@@ -29,14 +29,11 @@ int main(int argc, char** argv) {
 	SLM::NgramBackoffStrategy bos(lm, po.getTestModelName());
 	bos.init(lm, po.getTestModelName());
 
-	SLM::ProgressTimer pt;
-
 	for(std::string inputFile : po.getTestInputFiles())
 	{
 		L_V << "SLMr: Reading " << inputFile << "\n";
 		std::ifstream file(inputFile);
-		bos.nextFile();
-		pt.nextFile();
+//		bos.nextFile();
 
 		int currentRank = 0;
 		SLM::NBestList nbestList;
@@ -113,11 +110,6 @@ int main(int argc, char** argv) {
 					lprob += pr;
 				}
 
-
-
-//				pt.nextPattern();
-//
-//				pt.toString();
 			}
 			nbi->setRescore(pow(2, lprob/numberOfUsedPatterns));
 
