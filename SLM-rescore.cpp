@@ -103,12 +103,23 @@ int main(int argc, char** argv) {
 				double pr = bos.prob(context, focus);
 				L_P << "SLMr: {" << pr << "}\n";
 
-				lprob += pr;
+				if(lm.isOOV(focus))
+				{
+					//++oovs;
+				}
+				else
+				{
+					++numberOfUsedPatterns;
+					lprob += pr;
+				}
+
+
+
 //				pt.nextPattern();
 //
 //				pt.toString();
 			}
-			nbi->setRescore(lprob);
+			nbi->setRescore(pow(2, lprob/numberOfUsedPatterns));
 
 		}
 
