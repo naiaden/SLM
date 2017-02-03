@@ -44,8 +44,6 @@ namespace cpyp
 	double cpyp::PYPLM<N>::prob4(const Pattern& w, const Pattern& context) const
 	{
 
-		std::cout << "N=" << N << std::endl;
-
 		double p_0 = backoff.backoff.backoff.backoff.p0; // -
 		double p_1 = backoff.backoff.backoff.prob(w, p_0); // d
 
