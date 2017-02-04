@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <tuple>
+#include <stdexcept>
 
 #include "Logging.h"
 #include "ProgramOptions.h"
@@ -33,7 +34,6 @@ int main(int argc, char** argv) {
 	{
 		L_V << "SLMr: Reading " << inputFile << "\n";
 		std::ifstream file(inputFile);
-//		bos.nextFile();
 
 		int currentRank = 0;
 		SLM::NBestList nbestList;
@@ -46,25 +46,28 @@ int main(int argc, char** argv) {
 
 			std::string acousticModelScoreString;
 			double acousticModelScore;
-
 			std::string languageModelScoreString;
 			double languageModelScore;
-
 			std::string numberOfWordsString;
 			int numberOfWords;
-
 			std::string sentenceString;
 
-			std::getline(linestream, acousticModelScoreString, ' ');
-			acousticModelScore = std::stod(acousticModelScoreString);
-
-			std::getline(linestream, languageModelScoreString, ' ');
-			languageModelScore = std::stod(languageModelScoreString);
-
-			std::getline(linestream, numberOfWordsString, ' ');
-			numberOfWords = std::stoi(numberOfWordsString);
-
-			std::getline(linestream, sentenceString);
+			try
+			{
+				std::getline(linestream, acousticModelScoreString, ' ');
+				acousticModelScore = std::stod(acousticModelScoreString);
+				std::getline(linestream, languageModelScoreString, ' ');
+				languageModelScore = std::stod(languageModelScoreString);
+				std::getline(linestream, numberOfWordsString, ' ');
+				numberOfWords = std::stoi(numberOfWordsString);
+				std::getline(linestream, sentenceString);
+			} catch (const std::invalid_argument& ia)
+			{
+				std::cerr << "Invalid argument: " << ia.what() << '\n';
+				std::cerr << "In file: " << inputFile << std::endl;
+				std::cerr << "For line (" << currentRank << "): " << retrievedString << std::endl;
+				continue;
+			}
 
 			SLM::NBestItem* nbi = new SLM::NBestItem(sentenceString, ++currentRank, acousticModelScore, languageModelScore, numberOfWords);
 			nbestList.add(nbi);
