@@ -60,6 +60,7 @@ private:
 
 	std::string testModelName;
 	std::string testInputDirectory;
+	std::string testInputFilesList;
 	std::string testOutputDirectory;
 
 	std::string testCorpus;

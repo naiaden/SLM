@@ -10,6 +10,10 @@
 #include <unistd.h>
 #include <iomanip>
 
+#include <fstream>
+#include <iterator>
+#include <algorithm>
+
 #include "Logging.h"
 #include "ProgramOptions.h"
 
@@ -38,6 +42,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 
 	clp.add<std::string>("testmodelname", 'M', "test model name", true);
 	clp.add<std::string>("testinputdirectory", 'I', "test input directory", false);
+	clp.add<std::string>("testinputfiles", '\0', "file with filename per line", false);
 	clp.add<std::string>("testoutputdirectory", 'O', "test output directory", true);
 
 	clp.add<std::string>("backoff", 'B', "backoff method", false);
@@ -56,6 +61,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	trainLanguageModel = clp.get<std::string>("trainlanguagemodel");
 
 	testInputDirectory = clp.get<std::string>("testinputdirectory");
+	testInputFilesList = clp.get<std::string>("testinputfiles");
 	testOutputDirectory = clp.get<std::string>("testoutputdirectory");
 	testModelName = testOutputDirectory + "/" + clp.get<std::string>("testmodelname");
 
@@ -68,6 +74,15 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	char hostname[128];
 	gethostname(hostname, sizeof hostname);
 	hostName = std::string(hostname);
+
+	if(!testInputFilesList.empty())
+	{
+		std::ifstream inputFiles(testInputFilesList);
+
+		std::copy(std::istream_iterator<std::string>(inputFiles),
+				std::istream_iterator<std::string>(),
+		         back_inserter(testInputFiles));
+	}
 
 	testInputFiles.insert(std::end(testInputFiles), std::begin(clp.rest()), std::end(clp.rest()));
 
