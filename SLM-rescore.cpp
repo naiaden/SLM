@@ -96,21 +96,31 @@ int main(int argc, char** argv) {
 					contextStream << " " << words[i-(4-1)+ii];
 				}
 
-				Pattern context = lm.toPattern(contextStream.str());
-				Pattern focus = lm.toPattern(words[i]);
-
-				L_P << "SLMr: [" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
-				double pr = bos.prob(context, focus);
-				L_P << "SLMr: {" << pr << "}\n";
-
-				if(lm.isOOV(focus))
+				try
 				{
-					//++oovs;
-				}
-				else
+					Pattern context = lm.toPattern(contextStream.str());
+					Pattern focus = lm.toPattern(words[i]);
+
+					L_P << "SLMr: [" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
+					double pr = bos.prob(context, focus);
+					L_P << "SLMr: {" << pr << "}\n";
+
+					if(lm.isOOV(focus))
+					{
+						//++oovs;
+					}
+					else
+					{
+						++numberOfUsedPatterns;
+						lprob += pr;
+					}
+				} catch (const UnknownTokenError &e)
 				{
-					++numberOfUsedPatterns;
-					lprob += pr;
+//					std::cerr << "Invalid argument: " << e.what() << '\n';
+					std::cerr << "Unknown token error in file: " << inputFile << std::endl;
+					std::cerr << "For line (" << currentRank << "): " << retrievedString << std::endl;
+					std::cerr << "In pattern: " << contextStream.str() << " " << words[i] << std::endl;
+					continue;
 				}
 
 			}
