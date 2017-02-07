@@ -17,7 +17,7 @@ public:
 	UniformInterpolationStrategy();
 	virtual ~UniformInterpolationStrategy();
 
-	double get(const Pattern& context) const;
+	double get(const Pattern& context);
 	std::string name() const;
 };
 

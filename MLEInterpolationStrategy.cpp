@@ -24,7 +24,7 @@ MLEInterpolationStrategy::~MLEInterpolationStrategy() {
 	// TODO Auto-generated destructor stub
 }
 
-double MLEInterpolationStrategy::get(const Pattern& context) const
+double MLEInterpolationStrategy::get(const Pattern& context)
 {
 	Pattern contextContext;
 	Pattern contextFocus;

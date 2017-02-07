@@ -18,7 +18,7 @@ public:
 	MLEInterpolationStrategy(SLM::LanguageModel& lm);
 	virtual ~MLEInterpolationStrategy();
 
-	double get(const Pattern& context) const;
+	double get(const Pattern& context);
 	std::string name() const;
 protected:
 	std::map<Pattern, double> weights;
