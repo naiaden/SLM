@@ -13,6 +13,7 @@
 #include "InterpolationStrategy.h"
 #include "UniformInterpolationStrategy.h"
 #include "MLEInterpolationStrategy.h"
+#include "EntropyInterpolationStrategy.h"
 
 
 
@@ -131,6 +132,9 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			if(endsWith(token, "mle"))
 			{
 				is = new MLEInterpolationStrategy(lm);
+			} else if(endsWith(token, "ent"))
+			{
+				is = new EntropyInterpolationStrategy(lm);
 			} else
 			{
 				is = new UniformInterpolationStrategy();
