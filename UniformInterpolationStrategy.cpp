@@ -18,7 +18,7 @@ UniformInterpolationStrategy::~UniformInterpolationStrategy() {
 	// TODO Auto-generated destructor stub
 }
 
-double UniformInterpolationStrategy::get(const Pattern& context) const
+double UniformInterpolationStrategy::get(const Pattern& context)
 {
 	return 1.0;
 }

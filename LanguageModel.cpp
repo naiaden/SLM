@@ -349,9 +349,132 @@ namespace cpyp
 
 
 
+//	for(auto dish = restaurant.begin(); dish != restaurant.end(); dish++)
 
+	template<unsigned N>
+	std::vector<unsigned int> cpyp::PYPLM<N>::getCounts(const Pattern& context) const
+	{
+		int contextSize = context.size();
+		std::vector<unsigned int> returnVector;
 
+		if(contextSize == 0)
+		{
+			auto it = backoff.backoff.backoff.p.find(context.reverse());
+			if (it == backoff.backoff.backoff.p.end())
+			{
+				return returnVector;
+			} else
+			{
+				for(auto dish = it->second.begin(); dish != it->second.end(); dish++)
+				{
+					returnVector.push_back(dish->second.num_customers());
+				}
+			}
+		}
 
+		if(contextSize == 1)
+		{
+			auto it = backoff.backoff.p.find(context.reverse());
+			if (it == backoff.backoff.p.end())
+			{
+				return returnVector;
+			} else
+			{
+				for(auto dish = it->second.begin(); dish != it->second.end(); dish++)
+				{
+					returnVector.push_back(dish->second.num_customers());
+				}
+			}
+		}
+
+		if(contextSize == 2)
+		{
+			auto it = backoff.p.find(context.reverse());
+			if (it == backoff.p.end())
+			{
+				return returnVector;
+			} else
+			{
+				for(auto dish = it->second.begin(); dish != it->second.end(); dish++)
+				{
+					returnVector.push_back(dish->second.num_customers());
+				}
+			}
+		}
+
+		if(contextSize == 3)
+		{
+			auto it = p.find(context.reverse());
+			if (it == p.end())
+			{
+				return returnVector;
+			} else
+			{
+				for(auto dish = it->second.begin(); dish != it->second.end(); dish++)
+				{
+					returnVector.push_back(dish->second.num_customers());
+				}
+			}
+		}
+
+		return returnVector;
+	}
+
+	template<unsigned N>
+	unsigned int cpyp::PYPLM<N>::getCount(const Pattern& w, const Pattern& context) const
+	{
+		int contextSize = context.size();
+
+		if(contextSize == 0)
+		{
+			auto it = backoff.backoff.backoff.p.find(context.reverse());
+			if (it == backoff.backoff.backoff.p.end())
+			{
+				return 0;
+			} else
+			{
+				return it->second.num_customers(w);
+			}
+		}
+
+		if(contextSize == 1)
+		{
+			auto it = backoff.backoff.p.find(context.reverse());
+			if (it == backoff.backoff.p.end())
+			{
+				return 0;
+			} else
+			{
+				return it->second.num_customers(w);
+			}
+		}
+
+		if(contextSize == 2)
+		{
+			auto it = backoff.p.find(context.reverse());
+			if (it == backoff.p.end())
+			{
+				return 0;
+			} else
+			{
+				return it->second.num_customers(w);
+			}
+		}
+
+		if(contextSize == 3)
+		{
+			auto it = p.find(context.reverse());
+			if (it == p.end())
+			{
+				return 0;
+			} else
+			{
+				return it->second.num_customers(w);
+			}
+		}
+
+		return 0;
+	}
 
 	template<unsigned N>
 	double cpyp::PYPLM<N>::getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::map<Pattern, double>& probCache, std::map<Pattern, double>& normalisationCache)
@@ -780,6 +903,16 @@ void LanguageModel::extendClassEncoder(const std::vector<std::string>& inputFile
 
 	classEncoder.save(outputFile);
 	classDecoder.load(outputFile);
+}
+
+unsigned int LanguageModel::getCount(const Pattern& focus, const Pattern& context) const
+{
+	return lm.getCount(focus, context);
+}
+
+std::vector<unsigned int> LanguageModel::getCounts(const Pattern& context) const
+{
+	return lm.getCounts(context);
 }
 
 double LanguageModel::getProb(const Pattern& focus, const Pattern& context)
