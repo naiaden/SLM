@@ -63,7 +63,7 @@ double MLEInterpolationStrategy::get(const Pattern& context)
 		L_S << "MLEi: get(" << contextSize << ") sum:" << sum << " count:" << lm->getCount(contextFocus, contextContext) << " MLE:" << mle << "\n";
 
 
-		weights[context] = mle;
+//		weights[context] = mle;
 
 		return mle;
 
