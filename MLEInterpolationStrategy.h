@@ -9,6 +9,7 @@
 #define MLEINTERPOLATIONSTRATEGY_H_
 
 #include "InterpolationStrategy.h"
+#include "LanguageModel.h"
 
 namespace SLM {
 
@@ -21,6 +22,7 @@ public:
 	std::string name() const;
 protected:
 	std::map<Pattern, double> weights;
+	SLM::LanguageModel* lm;
 };
 
 } /* namespace SLM */

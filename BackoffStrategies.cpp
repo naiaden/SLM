@@ -12,6 +12,7 @@
 
 #include "InterpolationStrategy.h"
 #include "UniformInterpolationStrategy.h"
+#include "MLEInterpolationStrategy.h"
 
 
 
@@ -126,7 +127,14 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 
 		if(startsWith(token, "full"))
 		{
-			InterpolationStrategy* is = new UniformInterpolationStrategy();
+			InterpolationStrategy* is;
+			if(endsWith(token, "mle"))
+			{
+				is = new MLEInterpolationStrategy(lm);
+			} else
+			{
+				is = new UniformInterpolationStrategy();
+			}
 
 			BackoffStrategy* bos = createFullBackoffStrategy(programOptions, lm, is);
 			if(bos) backoffStrategies.push_back(bos);

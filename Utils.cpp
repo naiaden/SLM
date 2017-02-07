@@ -36,7 +36,7 @@ bool startsWith(const std::string& s1, const std::string& s2)
     return s2.size() <= s1.size() && s1.compare(0, s2.size(), s2) == 0;
 }
 
-bool ends_with(std::string const & value, std::string const & ending)
+bool endsWith(std::string const & value, std::string const & ending)
 {
     if (ending.size() > value.size()) return false;
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());

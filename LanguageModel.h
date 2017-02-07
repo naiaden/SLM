@@ -112,6 +112,9 @@ template<unsigned N> struct PYPLM {
 	std::pair <double,double> prob_ab_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
 	std::pair <double,double> prob_abcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
 
+	unsigned int getCount(const Pattern& w, const Pattern& context) const;
+	std::vector<unsigned int> getCounts(const Pattern& context) const;
+
 	double prob(const Pattern& w, const Pattern& context) const;
 
 	double prob(const Pattern& w, const Pattern& context, double boProb) const;
@@ -160,6 +163,9 @@ public:
 	const std::vector<Pattern>& getVocabulary() const;
 	bool isOOV(const Pattern& word);
 	unsigned int count(const Pattern& pattern);
+
+	unsigned int getCount(const Pattern& focus, const Pattern& context) const;
+	std::vector<unsigned int> getCounts(const Pattern& context) const;
 
 	double getProb(const Pattern& focus, const Pattern& context);
 	double getProb4(const Pattern& focus, const Pattern& context);
