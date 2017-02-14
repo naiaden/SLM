@@ -46,7 +46,7 @@ double CountInterpolationStrategy::get(const Pattern& context)
 //	if(i == weights.end())
 //	{
 //		weights[context] = mle;
-		return lm->getCount(contextFocus, contextContext);
+		return 1.0 + lm->getCount(contextFocus, contextContext);
 //	} else
 //	{
 //		return i->second;
