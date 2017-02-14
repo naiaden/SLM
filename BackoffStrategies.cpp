@@ -14,13 +14,16 @@
 #include "UniformInterpolationStrategy.h"
 #include "MLEInterpolationStrategy.h"
 #include "EntropyInterpolationStrategy.h"
+#include "CountInterpolationStrategy.h"
+#include "RandomInterpolationStrategy.h"
+#include "NprefInterpolationStrategy.h"
 
 
 
 namespace SLM {
 
 enum BackoffLevel { NGRAM, LIMITED, FULL };
-enum InterpolationFactor { UNIFORM, MLE, ENTROPY };
+enum InterpolationFactor { UNIFORM, MLE, ENTROPY, COUNT, RANDOM, NPREF };
 
 
 
@@ -81,6 +84,12 @@ std::string toString(InterpolationFactor is)
 			return "mle";
 		case SLM::InterpolationFactor::ENTROPY:
 			return "ent";
+		case SLM::InterpolationFactor::COUNT:
+			return "count";
+		case SLM::InterpolationFactor::RANDOM:
+			return "random";
+		case SLM::InterpolationFactor::NPREF:
+			return "npref";
 	}
 }
 
@@ -98,18 +107,21 @@ std::string toString(BackoffLevel bl)
 
 InterpolationFactor stringToInterpolationStrategy(const std::string& is)
 {
-	if(is == "uni")	return SLM::InterpolationFactor::UNIFORM;
-	if(is == "mle")	return SLM::InterpolationFactor::MLE;
-	if(is == "ent")	return SLM::InterpolationFactor::ENTROPY;
+	if(is == "uni")		return SLM::InterpolationFactor::UNIFORM;
+	if(is == "mle")		return SLM::InterpolationFactor::MLE;
+	if(is == "ent")		return SLM::InterpolationFactor::ENTROPY;
+	if(is == "count")	return SLM::InterpolationFactor::COUNT;
+	if(is == "random")	return SLM::InterpolationFactor::RANDOM;
+	if(is == "npref")	return SLM::InterpolationFactor::NPREF;
 
 	return SLM::InterpolationFactor::UNIFORM;
 }
 
 BackoffLevel stringToBackoffLevel(const std::string& bl)
 {
-	if(bl == "uni")	return SLM::BackoffLevel::NGRAM;
-	if(bl == "mle")	return SLM::BackoffLevel::LIMITED;
-	if(bl == "ent")	return SLM::BackoffLevel::FULL;
+	if(bl == "ngram")	return SLM::BackoffLevel::NGRAM;
+	if(bl == "lim")		return SLM::BackoffLevel::LIMITED;
+	if(bl == "full")	return SLM::BackoffLevel::FULL;
 
 	return SLM::BackoffLevel::NGRAM;
 }
@@ -135,6 +147,15 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			} else if(endsWith(token, "ent"))
 			{
 				is = new EntropyInterpolationStrategy(lm);
+			} else if(endsWith(token, "count"))
+			{
+				is = new CountInterpolationStrategy(lm);
+			} else if(endsWith(token, "random"))
+			{
+				is = new RandomInterpolationStrategy();
+			} else if(endsWith(token, "npref"))
+			{
+				is = new NprefInterpolationStrategy();
 			} else
 			{
 				is = new UniformInterpolationStrategy();
