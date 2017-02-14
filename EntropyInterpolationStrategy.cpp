@@ -55,7 +55,7 @@ double EntropyInterpolationStrategy::get(const Pattern& context)
 		L_S << "Entropyi: get(" << contextSize << ") sum:" << sum << " entropysum:" << entropySum << " entropy:" << entropy << "\n";
 
 //		weights[context] = entropy;
-//		weights.insert(std::make_pair(context, entropy));
+		weights.emplace(std::make_pair(context, entropy));
 
 		return entropy;
 
