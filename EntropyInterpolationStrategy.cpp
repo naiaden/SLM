@@ -28,8 +28,12 @@ double EntropyInterpolationStrategy::get(const Pattern& context)
 {
 	int contextSize = context.size();
 
-	std::map<Pattern, double>::const_iterator i = weights.find(context);
-	if(i == weights.end())
+	auto it = weights.find(context);
+	if(it != weights.end())
+	{
+		return it->second;
+	}
+	else
 	{
 		double entropySum = 0.0;
 
@@ -54,15 +58,9 @@ double EntropyInterpolationStrategy::get(const Pattern& context)
 
 		L_S << "Entropyi: get(" << contextSize << ") sum:" << sum << " entropysum:" << entropySum << " entropy:" << entropy << "\n";
 
-//		weights[context] = entropy;
-		weights.emplace(std::make_pair(context, entropy));
+		weights[context] = entropy;
 
 		return entropy;
-
-		// add to map
-	} else
-	{
-		return i->second;
 	}
 }
 
