@@ -30,10 +30,14 @@ int main(int argc, char** argv) {
 	SLM::NgramBackoffStrategy bos(lm, po.getTestModelName());
 	bos.init(lm, po.getTestModelName());
 
+	SLM::ProgressTimer pt;
+
 	for(std::string inputFile : po.getTestInputFiles())
 	{
 		L_V << "SLMr: Reading " << inputFile << "\n";
 		std::ifstream file(inputFile);
+
+		pt.nextFile();
 
 		int currentRank = 0;
 		SLM::NBestList nbestList;
@@ -41,6 +45,7 @@ int main(int argc, char** argv) {
 		std::string retrievedString;
 		while(std::getline(file, retrievedString))
 		{
+			pt.nextLine();
 
 			std::stringstream linestream(retrievedString);
 
@@ -105,15 +110,15 @@ int main(int argc, char** argv) {
 					double pr = bos.prob(context, focus);
 					L_P << "SLMr: {" << pr << "}\n";
 
-					if(lm.isOOV(focus))
-					{
-						//++oovs;
-					}
-					else
-					{
+//					if(lm.isOOV(focus))
+//					{
+//						//++oovs;
+//					}
+//					else
+//					{
 						++numberOfUsedPatterns;
 						lprob += pr;
-					}
+//					}
 				} catch (const UnknownTokenError &e)
 				{
 //					std::cerr << "Invalid argument: " << e.what() << '\n';
@@ -122,6 +127,10 @@ int main(int argc, char** argv) {
 					std::cerr << "In pattern: " << contextStream.str() << " " << words[i] << std::endl;
 					continue;
 				}
+
+				pt.nextPattern();
+
+				pt.toString();
 
 			}
 			nbi->setRescore(pow(2, lprob/numberOfUsedPatterns));

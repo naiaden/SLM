@@ -116,8 +116,9 @@ namespace cpyp
 		double p_cd = 0.0;
 
 		//std::map<Pattern,double>::const_iterator i_cd = cache.find(lookup+w);
-		//if(i_cd == cache.end())
-		//{
+		auto i_cd = cache.find(lookup+w);
+		if(i_cd == cache.end())
+		{
 			auto it = backoff.backoff.p.find(lookup.reverse());
 			if (it == backoff.backoff.p.end())
 			{
@@ -127,12 +128,12 @@ namespace cpyp
 				p_cd = it->second.prob(w, prob_d(w, is).second);
 			}
 //			L_S << "HPYPLM: probS4: fresh   cd " << p_cd << "\n";
-		//	cache.emplace(lookup+w, p_cd);
-		//} else
-		//{
-		//	p_cd = i_cd->second;
+			cache[lookup+w] = p_cd;
+		} else
+		{
+			p_cd = i_cd->second;
 //			L_S << "HPYPLM: probS4: cache   cd " << p_cd << "\n";
-		//}
+		}
 
 		double w_cd = is->get(lookup);
 		return std::pair <double,double> (w_cd, p_cd);
@@ -145,22 +146,22 @@ namespace cpyp
 
 		double p_b_d = 0.0;
 
-		//std::map<Pattern,double>::const_iterator i_b_d =  cache.find(lookup+w);
-		//if(i_b_d == cache.end())
-		//{
-			auto it = /*backoff.*/backoff.p.find(lookup.reverse());
-			if (it == /*backoff.*/backoff.p.end())
+		auto i_b_d =  cache.find(lookup+w);
+		if(i_b_d == cache.end())
+		{
+			auto it = backoff.p.find(lookup.reverse());
+			if (it == backoff.p.end())
 			{
 				p_b_d = prob_d(w, is).second;
 			} else
 			{
 				p_b_d = it->second.prob(w, prob_d(w, is).second);
 			}
-		//	cache[lookup] = p_b_d;
-		//} else
-		//{
-		//	p_b_d = i_b_d->second;
-		//}
+			cache[lookup] = p_b_d;
+		} else
+		{
+			p_b_d = i_b_d->second;
+		}
 
 		double w_b_d = is->get(lookup);
 		return std::pair <double,double> (w_b_d, p_b_d);
@@ -173,22 +174,22 @@ namespace cpyp
 
 		double p_a__d = 0.0;
 
-		//auto i_a__d = cache.find(lookup+w);
-		//if(i_a__d == cache.end())
-		//{
-			auto it = /*backoff.backoff.*/p.find(lookup.reverse());
-			if (it == /*backoff.backoff.*/p.end())
+		auto i_a__d = cache.find(lookup+w);
+		if(i_a__d == cache.end())
+		{
+			auto it = p.find(lookup.reverse());
+			if (it == p.end())
 			{
 				p_a__d = prob_d(w, is).second;
 			} else
 			{
 				p_a__d = it->second.prob(w, prob_d(w, is).second);
 			}
-		//	cache[lookup] = p_a__d;
-		//} else
-		//{
-		//	p_a__d = i_a__d->second;
-		//}
+			cache[lookup] = p_a__d;
+		} else
+		{
+			p_a__d = i_a__d->second;
+		}
 
 		double w_a__d = is->get(lookup);
 		return std::pair <double,double> (w_a__d, p_a__d);
@@ -201,9 +202,9 @@ namespace cpyp
 
 		double p_bcd = 0.0;
 
-		//auto i_bcd = cache.find(lookup+w);
-		//if(i_bcd == cache.end())
-		//{
+		auto i_bcd = cache.find(lookup+w);
+		if(i_bcd == cache.end())
+		{
 			std::pair <double,double> x_cd = prob_cd(w, originalContext, is, cache);
 			std::pair <double,double> x_b_d = prob_b_d(w, originalContext, is, cache);
 			double backoffProb = (x_cd.first*x_cd.second + x_b_d.first*x_b_d.second)/(x_cd.first + x_b_d.first);
@@ -216,11 +217,11 @@ namespace cpyp
 			{
 				p_bcd = it->second.prob(w, backoffProb);
 			}
-		//	cache[lookup] = p_bcd;
-		//} else
-		//{
-		//	p_bcd = i_bcd->second;
-		//}
+			cache[lookup] = p_bcd;
+		} else
+		{
+			p_bcd = i_bcd->second;
+		}
 
 		double w_bcd = is->get(lookup);
 		return std::pair <double,double> (w_bcd, p_bcd);
@@ -233,26 +234,26 @@ namespace cpyp
 
 		double p_a_cd = 0.0;
 
-		//auto i_a_cd = cache.find(lookup+w);
-		//if(i_a_cd == cache.end())
-		//{
+		auto i_a_cd = cache.find(lookup+w);
+		if(i_a_cd == cache.end())
+		{
 			std::pair <double,double> x_cd = prob_cd(w, originalContext, is, cache);
 			std::pair <double,double> x_a__d = prob_a__d(w, originalContext, is, cache);
 			double backoffProb = (x_cd.first*x_cd.second + x_a__d.first*x_a__d.second)/(x_cd.first + x_a__d.first);
 
-			auto it = /*backoff.*/p.find(lookup.reverse());
-			if (it == /*backoff.*/p.end())
+			auto it = p.find(lookup.reverse());
+			if (it == p.end())
 			{
 				p_a_cd = backoffProb;
 			} else
 			{
 				p_a_cd = it->second.prob(w, backoffProb);
 			}
-		//	cache[lookup] = p_a_cd;
-		//} else
-		//{
-		//	p_a_cd = i_a_cd->second;
-		//}
+			cache[lookup] = p_a_cd;
+		} else
+		{
+			p_a_cd = i_a_cd->second;
+		}
 
 		double w_a_cd = is->get(lookup);
 		return std::pair <double,double> (w_a_cd, p_a_cd);
@@ -265,26 +266,26 @@ namespace cpyp
 
 		double p_ab_d = 0.0;
 
-		//auto i_ab_d = cache.find(lookup +w);
-		//if(i_ab_d == cache.end())
-		//{
+		auto i_ab_d = cache.find(lookup +w);
+		if(i_ab_d == cache.end())
+		{
 			std::pair <double,double> x_b_d = prob_b_d(w, originalContext, is, cache);
 			std::pair <double,double> x_a__d = prob_a__d(w, originalContext, is, cache);
 			double backoffProb = (x_b_d.first*x_b_d.second + x_a__d.first*x_a__d.second)/(x_b_d.first + x_a__d.first);
 
-			auto it = /*backoff.*/p.find(lookup.reverse());
-			if (it == /*backoff.*/p.end())
+			auto it = p.find(lookup.reverse());
+			if (it == p.end())
 			{
 				p_ab_d = backoffProb;
 			} else
 			{
 				p_ab_d = it->second.prob(w, backoffProb);
 			}
-		//	cache[lookup] = p_ab_d;
-		//} else
-		//{
-		//	p_ab_d = i_ab_d->second;
-		//}
+			cache[lookup] = p_ab_d;
+		} else
+		{
+			p_ab_d = i_ab_d->second;
+		}
 
 		double w_ab_d = is->get(lookup);
 		return std::pair <double,double> (w_ab_d, p_ab_d);
@@ -294,9 +295,10 @@ namespace cpyp
 	std::pair <double,double>  cpyp::PYPLM<N>::prob_abcd(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
 	{
 		double p_abcd;
-		//auto i_abcd = cache.find(context+w);
-		//if(i_abcd == cache.end())
-		//{
+
+		auto i_abcd = cache.find(context+w);
+		if(i_abcd == cache.end())
+		{
 			double backoffProb = 0.0;
 
 			auto it = p.find(context.reverse());
@@ -318,11 +320,11 @@ namespace cpyp
 			{
 				p_abcd = it->second.prob(w, backoffProb);
 			}
-		//	cache[context] = p_abcd;
-		//} else
-		//{
-		//	p_abcd = i_abcd->second;
-		//}
+			cache[context] = p_abcd;
+		} else
+		{
+			p_abcd = i_abcd->second;
+		}
 
 		return std::pair <double,double> (1.0, p_abcd);
 	}
