@@ -27,8 +27,7 @@ int main(int argc, char** argv) {
 
 	SLM::ProgramOptions po(argc, argv);
 	SLM::LanguageModel lm(po);
-	SLM::NgramBackoffStrategy bos(lm, po.getTestModelName());
-	bos.init(lm, po.getTestModelName());
+	SLM::BackoffStrategies bo(po, lm);
 
 	SLM::ProgressTimer pt;
 
@@ -37,6 +36,7 @@ int main(int argc, char** argv) {
 		L_V << "SLMr: Reading " << inputFile << "\n";
 		std::ifstream file(inputFile);
 
+		bo.nextFile();
 		pt.nextFile();
 
 		int currentRank = 0;
@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
 		std::string retrievedString;
 		while(std::getline(file, retrievedString))
 		{
+			bo.nextLine();
 			pt.nextLine();
 
 			std::stringstream linestream(retrievedString);
@@ -107,8 +108,9 @@ int main(int argc, char** argv) {
 					Pattern focus = lm.toPattern(words[i]);
 
 					L_P << "SLMr: [" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
-					double pr = bos.prob(context, focus);
-					L_P << "SLMr: {" << pr << "}\n";
+					bo.prob(context, focus);
+//					double pr = bo.prob(context, focus);
+//					L_P << "SLMr: {" << pr << "}\n";
 
 //					if(lm.isOOV(focus))
 //					{

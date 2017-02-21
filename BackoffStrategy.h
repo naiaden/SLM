@@ -33,6 +33,9 @@ public:
 	int nextFile();
 	int nextLine();
 	void done();
+
+	unsigned long long getTotalCount() const;
+	unsigned long long getTotalOovs() const;
 protected:
 	BackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 
