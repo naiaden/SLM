@@ -72,7 +72,7 @@ int BackoffStrategy::nextFile()
 
 int BackoffStrategy::nextLine()
 {
-	L_V << "BackoffStrategy: (" << name() << ") next sentence\n";
+	L_P << "BackoffStrategy: (" << name() << ") next sentence\n";
 
 	if(sentences)
 	{
@@ -111,9 +111,9 @@ void BackoffStrategy::done()
 	L_I << "BackoffStrategy: " << name() << "\t" << sentences-1 << "\t" << totalPerplexity << "\t" << (totalCount-totalOovs) << "\t" << totalOovs << "\t" << totalLLH << std::endl;
 }
 
-void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& context, double logProb)
+void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& context, double logProb, bool isOOV)
 {
-	if(languageModel.isOOV(focus))
+	if(isOOV)
 	{
 		/*std::cout*/ probsFile << "***";
 	}

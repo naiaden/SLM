@@ -29,7 +29,7 @@ public:
 
 	virtual std::string name() const = 0;
 
-	virtual double prob(const Pattern& context, const Pattern& focus) = 0;
+	virtual double prob(const Pattern& context, const Pattern& focus, bool isOOV) = 0;
 	int nextFile();
 	int nextLine();
 	void done();
@@ -41,7 +41,7 @@ protected:
 
 //	void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 
-	void writeProbToFile(const Pattern& focus, const Pattern& context, double logProb);
+	void writeProbToFile(const Pattern& focus, const Pattern& context, double logProb, bool isOOV);
 
 	double totalLLH = 0.0;
 	unsigned long long totalCount = 0;
