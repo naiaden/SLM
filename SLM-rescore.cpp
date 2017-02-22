@@ -22,12 +22,17 @@
 #include "Timer.h"
 
 #include "NBestList.h"
+#include "RescoreModule.h"
 
 int main(int argc, char** argv) {
 
 	SLM::ProgramOptions po(argc, argv);
 	SLM::LanguageModel lm(po);
-	SLM::BackoffStrategies bo(po, lm);
+
+	std::vector<SLM::BackoffStrategy*> bos = SLM::BackoffStrategiesFactory::fromProgramOptions(po, lm);
+	SLM::BackoffStrategy* bo = SLM::BackoffStrategiesFactory::fromProgramOptions(po, lm)[0];
+
+	SLM::RescoreModule rm(bo, po.getTestOutputDirectory());
 
 	SLM::ProgressTimer pt;
 
@@ -36,16 +41,19 @@ int main(int argc, char** argv) {
 		L_V << "SLMr: Reading " << inputFile << "\n";
 		std::ifstream file(inputFile);
 
-		bo.nextFile();
+		bo->nextFile();
 		pt.nextFile();
-
+		rm.nextFile(inputFile);
+//
 		int currentRank = 0;
-		SLM::NBestList nbestList;
-
+		int lineNumber = 0;
+//		SLM::NBestList nbestList;
+//
 		std::string retrievedString;
 		while(std::getline(file, retrievedString))
 		{
-			bo.nextLine();
+			++lineNumber;
+			bo->nextLine();
 			pt.nextLine();
 
 			std::stringstream linestream(retrievedString);
@@ -71,26 +79,19 @@ int main(int argc, char** argv) {
 			{
 				std::cerr << "Invalid argument: " << ia.what() << '\n';
 				std::cerr << "In file: " << inputFile << std::endl;
-				std::cerr << "For line (" << currentRank << "): " << retrievedString << std::endl;
+				std::cerr << "For line (" << lineNumber << "): " << retrievedString << std::endl;
 				continue;
 			}
 
-			SLM::NBestItem* nbi = new SLM::NBestItem(sentenceString, ++currentRank, acousticModelScore, languageModelScore, numberOfWords);
-			nbestList.add(nbi);
+			rm.addLine(sentenceString, ++currentRank, acousticModelScore, languageModelScore, numberOfWords);
 
-
-
-//			// hack
+			// hack
 			sentenceString = "<s> <s> " + sentenceString;
-//			bos.nextLine();
-//			pt.nextLine();
-//
+
 			std::vector<std::string> words = whitespaceTokeniser(sentenceString);
 			L_P << "SLMr: Reading " << sentenceString << "\n";
 			L_P << "SLMr: Contains " << words.size() << " words (incl. sentence markers)\n";
 
-			double lprob = 0.0;
-			int numberOfUsedPatterns = 0;
 
 			for(int i = (4-1); i < words.size(); ++i)
 			{
@@ -108,42 +109,31 @@ int main(int argc, char** argv) {
 					Pattern focus = lm.toPattern(words[i]);
 
 					L_P << "SLMr: [" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
-					bo.prob(context, focus);
-//					double pr = bo.prob(context, focus);
-//					L_P << "SLMr: {" << pr << "}\n";
 
-//					if(lm.isOOV(focus))
-//					{
-//						//++oovs;
-//					}
-//					else
-//					{
-						++numberOfUsedPatterns;
-						lprob += pr;
-//					}
+					bool isOOV = lm.isOOV(focus);
+
+					rm.evaluatePattern(focus, context, isOOV);
+
 				} catch (const UnknownTokenError &e)
 				{
 //					std::cerr << "Invalid argument: " << e.what() << '\n';
 					std::cerr << "Unknown token error in file: " << inputFile << std::endl;
-					std::cerr << "For line (" << currentRank << "): " << retrievedString << std::endl;
+					std::cerr << "For line (" << lineNumber << "): " << retrievedString << std::endl;
 					std::cerr << "In pattern: " << contextStream.str() << " " << words[i] << std::endl;
 					continue;
 				}
-
+//
 				pt.nextPattern();
-
+//
 				pt.toString();
-
+//
 			}
-			nbi->setRescore(pow(2, lprob/numberOfUsedPatterns));
-
+			rm.rescoreLine();
 		}
-
-		nbestList.determineNewRanks();
-		nbestList.printToFile(inputFile, po.getTestOutputDirectory());
+		rm.rescoreFile();
 
 	}
-//	bo.done();
+	bo->done();
 
 	return EXIT_SUCCESS;
 }

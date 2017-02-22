@@ -37,27 +37,30 @@ std::string LimitedBackoffStrategy::name() const
 	return "limited" + interpolationStrategy->name();
 }
 
-double LimitedBackoffStrategy::prob(const Pattern& context, const Pattern& focus)
+double LimitedBackoffStrategy::prob(const Pattern& context, const Pattern& focus, bool isOOV)
 {
 	L_S << "LimitedBackoffStrategy: Estimating prob for " << languageModel.toString(context)
 			<< " " << languageModel.toString(focus) << "\n";
 
-	// implement skipgrams from layer 3 on
-	double prob = languageModel.getProbLS4(focus, context, interpolationStrategy, cache, normalisationCache);
+	double logProb = 0.0;
 
-	double logProb = log2(prob);
+	if(!isOOV)
+	{
+		// implement skipgrams from layer 3 on
+		double prob = languageModel.getProbLS4(focus, context, interpolationStrategy, cache, normalisationCache);
 
-	if(false /* oov */)
+		logProb = log2(prob);
+
+		++sentCount;
+		sentLLH -= logProb;
+	} else
 	{
 		++sentOovs;
 	}
 
-	++sentCount;
-	sentLLH -= logProb;
-
 	L_S << "LimitedBackoffStrategy: \t\t" << logProb << "\n";
 
-	writeProbToFile(focus, context, logProb);
+	writeProbToFile(focus, context, logProb, isOOV);
 
 	return logProb;
 }

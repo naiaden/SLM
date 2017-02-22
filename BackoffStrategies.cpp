@@ -38,11 +38,11 @@ BackoffStrategies::~BackoffStrategies()
 }
 
 
-void BackoffStrategies::prob(const Pattern& context, const Pattern& focus)
+void BackoffStrategies::prob(const Pattern& context, const Pattern& focus, bool isOOV)
 {
 	for(BackoffStrategy* bs: backoffStrategies)
 	{
-		bs->prob(context, focus);
+		bs->prob(context, focus, isOOV);
 	}
 }
 
