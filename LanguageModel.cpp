@@ -941,7 +941,7 @@ bool LanguageModel::isOOV(const Pattern& word)
 {
 //	auto it = std::find(vocabulary.begin(), vocabulary.end(), word);
 //	return it == vocabulary.end();
-	vocabulary.has(word);
+	return !vocabulary.has(word);
 }
 
 unsigned int LanguageModel::count(const Pattern& pattern)

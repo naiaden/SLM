@@ -60,7 +60,7 @@ int BackoffStrategy::nextFile()
 		L_I << "BackoffStrategy: " << name() << "\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
 
 		double totalPerplexity = pow(2, totalLLH/(totalCount/*-totalOovs*/));
-		L_I << "BackoffStrategy: " << name() << "\tS" << sentences-1 << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
+		L_I << "BackoffStrategy: " << name() << "\tS" << sentences << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
 
 	}
 
@@ -110,7 +110,7 @@ int BackoffStrategy::nextLine()
 void BackoffStrategy::done()
 {
 	double filePerplexity = pow(2, fileLLH/(fileCount/*-totalOovs*/));
-	L_I << "BackoffStrategy: " << name() << "\tF" << sentences-1 << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
+	L_I << "BackoffStrategy: " << name() << "\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
 
 
 	//	L_V << "BackoffStrategy: done\n";
@@ -119,7 +119,7 @@ void BackoffStrategy::done()
 
 	if(files)
 	{
-		L_I << "BackoffStrategy: " << name() << " #C" << fileCount << "/O" << fileOovs << "[S" << sentences-1 << "]:L" << fileLLH << "\n";
+		L_I << "BackoffStrategy: " << name() << " #C" << fileCount << "/O" << fileOovs << "[S" << sentences << "]:L" << fileLLH << "\n";
 	}
 
 //	totalCount += fileCount;
@@ -127,7 +127,7 @@ void BackoffStrategy::done()
 //	totalLLH += fileLLH;
 
 	double totalPerplexity = pow(2, totalLLH/(totalCount/*-totalOovs*/));
-	L_I << "BackoffStrategy: " << name() << "\tS" << sentences-1 << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
+	L_I << "BackoffStrategy: " << name() << "\tS" << sentences << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
 }
 
 void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& context, double logProb, bool isOOV)
