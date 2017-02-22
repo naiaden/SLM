@@ -10,6 +10,8 @@
 
 #include "BackoffStrategy.h"
 
+#include <unordered_map>
+
 namespace SLM {
 
 class InterpolationStrategy;
@@ -36,7 +38,7 @@ protected:
 
 	std::ofstream cacheOutputFile;
 
-	std::map<Pattern, double> cache;
+	std::unordered_map<Pattern, double> cache;
 	bool ignoreCache = false;
 };
 

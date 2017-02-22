@@ -29,9 +29,7 @@ int main(int argc, char** argv) {
 	SLM::ProgramOptions po(argc, argv);
 	SLM::LanguageModel lm(po);
 
-	std::vector<SLM::BackoffStrategy*> bos = SLM::BackoffStrategiesFactory::fromProgramOptions(po, lm);
 	SLM::BackoffStrategy* bo = SLM::BackoffStrategiesFactory::fromProgramOptions(po, lm)[0];
-
 	SLM::RescoreModule rm(bo, po.getTestOutputDirectory());
 
 	SLM::ProgressTimer pt;
@@ -44,11 +42,10 @@ int main(int argc, char** argv) {
 		bo->nextFile();
 		pt.nextFile();
 		rm.nextFile(inputFile);
-//
+
 		int currentRank = 0;
 		int lineNumber = 0;
-//		SLM::NBestList nbestList;
-//
+
 		std::string retrievedString;
 		while(std::getline(file, retrievedString))
 		{

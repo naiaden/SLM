@@ -109,7 +109,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
 	{
 		Pattern lookup = Pattern(originalContext, 2, 1);
 
@@ -140,7 +140,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_b_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_b_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
 	{
 		Pattern lookup = Pattern(originalContext, 1, 2).addskip(std::pair<int, int>(1,1));
 
@@ -168,7 +168,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_a__d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_a__d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
 	{
 		Pattern lookup = originalContext.addskip(std::pair<int, int>(1,2));
 
@@ -196,7 +196,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_bcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_bcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
 	{
 		Pattern lookup = Pattern(originalContext, 1, 2);
 
@@ -228,7 +228,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_a_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_a_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
 	{
 		Pattern lookup = originalContext.addskip(std::pair<int, int>(1,1));
 
@@ -260,7 +260,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_ab_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_ab_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
 	{
 		Pattern lookup = originalContext.addskip(std::pair<int, int>(2,1));
 
@@ -292,7 +292,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_abcd(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_abcd(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
 	{
 		double p_abcd;
 
@@ -330,7 +330,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache, bool ignoreCache) const
+	double cpyp::PYPLM<N>::probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache, bool ignoreCache) const
 	{
 
 		double p_abcd = prob_abcd(w, context, is, cache).second;
@@ -479,12 +479,12 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::map<Pattern, double>& probCache, std::map<Pattern, double>& normalisationCache)
+	double cpyp::PYPLM<N>::getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache)
 	{
 		L_S << "LanguageModel: getNormalisationFactor: context length: "  << " " << context.size() << "\n";
 		int contextSize = context.size();
 
-		std::map<Pattern, double>::const_iterator i = normalisationCache.find(context);
+		auto i = normalisationCache.find(context);
 		if(i == normalisationCache.end())
 		{
 			L_S << "LanguageModel: getNormalisationFactor: generating fresh: \n";
@@ -550,7 +550,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& probCache, std::map<Pattern, double>& normalisationCache)
+	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache)
 	{
 
 		double p__ = backoff.backoff.backoff.backoff.p0; // -
@@ -566,7 +566,7 @@ namespace cpyp
 		{
 			Pattern lookup = Pattern(context, 2, 1);
 
-			std::map<Pattern,double>::const_iterator i_cd = probCache.find(lookup+w);
+			auto i_cd = probCache.find(lookup+w);
 			if(i_cd == probCache.end())
 			{
 				auto it = backoff.backoff.p.find(lookup.reverse());
@@ -828,7 +828,7 @@ LanguageModel::~LanguageModel() {
 //	delete indexedCorpus;
 }
 
-const std::vector<Pattern>& LanguageModel::getVocabulary() const
+const PatternSet<uint64_t>& LanguageModel::getVocabulary() const
 {
 	return vocabulary;
 }
@@ -869,8 +869,8 @@ void LanguageModel::initialise(const ProgramOptions& programOptions)
 	loadLanguageModel(programOptions.getTrainLanguageModel());
 
 	L_V << "LanguageModel: Initialise vocabulary\n";
-	PatternSet<uint64_t> vocabularySet = patternModel.extractset(1,1);
-	vocabulary = std::vector<Pattern>(vocabularySet.begin(), vocabularySet.end());
+	vocabulary = patternModel.extractset(1,1);
+//	vocabulary = std::unordered_set<Pattern>(vocabularySet.begin(), vocabularySet.end());
 	L_V << "LanguageModel: Vocabulary contains " << vocabulary.size() << " items\n";
 }
 
@@ -927,20 +927,21 @@ double LanguageModel::getProb4(const Pattern& focus, const Pattern& context)
 	return lm.prob4(focus, context);
 }
 
-double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache, bool ignoreCache)
+double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, bool ignoreCache)
 {
 	return lm.probS4(focus, context, interpolationStrategy, cache, ignoreCache);
 }
 
-double LanguageModel::getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache, std::map<Pattern, double>& normalisationCache)
+double LanguageModel::getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, std::unordered_map<Pattern, double>& normalisationCache)
 {
 	return lm.probLS4(focus, context, interpolationStrategy, cache, normalisationCache);
 }
 
 bool LanguageModel::isOOV(const Pattern& word)
 {
-	auto it = std::find(vocabulary.begin(), vocabulary.end(), word);
-	return it == vocabulary.end();
+//	auto it = std::find(vocabulary.begin(), vocabulary.end(), word);
+//	return it == vocabulary.end();
+	vocabulary.has(word);
 }
 
 unsigned int LanguageModel::count(const Pattern& pattern)
