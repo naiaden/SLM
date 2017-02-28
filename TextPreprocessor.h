@@ -26,9 +26,9 @@ public:
 
 	std::vector<std::string> removeFillers(std::vector<std::string>& words);
 protected:
-	bool isFiller(const std::string& word);
+	static bool isFiller(const std::string& word);
 
-	std::vector<std::string> fillers;
+	static std::vector<std::string> fillers;
 
 };
 

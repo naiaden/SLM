@@ -11,6 +11,8 @@
 
 namespace SLM {
 
+std::vector<std::string> CGNTextPreprocessor::fillers ={"ggg", "ah", "bah", "goh", "ha", "hej", "hï¿½", "joh", "mm-hu", "oeh", "oh", "pff", "tiens", "tja", "uh", "wauw", "weh", "zuh", "zulle", "<UNK>", "<sil>"};
+
 TextPreprocessor::TextPreprocessor() {
 	// TODO Auto-generated constructor stub
 
@@ -21,27 +23,7 @@ TextPreprocessor::~TextPreprocessor() {
 }
 
 CGNTextPreprocessor::CGNTextPreprocessor() {
-	fillers = {"ggg",
-			   "ah",
-			   "bah",
-			   "goh",
-			   "ha",
-			   "hej",
-			   "hè",
-			   "joh",
-			   "mm-hu",
-			   "oeh",
-			   "oh",
-			   "pff",
-			   "tiens",
-			   "tja",
-			   "uh",
-			   "wauw",
-			   "weh",
-			   "zuh",
-			   "zulle",
-			   "<UNK>",
-			   "<sil>"};
+
 }
 
 CGNTextPreprocessor::~CGNTextPreprocessor() {
@@ -50,16 +32,16 @@ CGNTextPreprocessor::~CGNTextPreprocessor() {
 
 bool CGNTextPreprocessor::isFiller(const std::string& w)
 {
-	auto it = std::find(fillers.begin(), fillers.end(), w);
-	return it != fillers.end();
+	auto it = std::find(SLM::CGNTextPreprocessor::fillers.begin(), SLM::CGNTextPreprocessor::fillers.end(), w);
+	return it != SLM::CGNTextPreprocessor::fillers.end();
 }
 
 std::vector<std::string> CGNTextPreprocessor::removeFillers(std::vector<std::string>& words)
 {
 	words.erase(std::remove_if(words.begin(),
 							   words.end(),
-	                           [](std::string x){return isFiller(x);}),
-			words.end());
+	                           [](const std::string& x){return SLM::CGNTextPreprocessor::isFiller(x);}),
+				words.end());
 
 	return words;
 }
