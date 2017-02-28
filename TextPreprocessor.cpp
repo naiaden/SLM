@@ -7,6 +7,8 @@
 
 #include "TextPreprocessor.h"
 
+#include <algorithm>
+
 namespace SLM {
 
 TextPreprocessor::TextPreprocessor() {
