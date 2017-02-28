@@ -23,6 +23,7 @@
 
 #include "NBestList.h"
 #include "RescoreModule.h"
+#include "TextPreprocessor.h"
 
 int main(int argc, char** argv) {
 
