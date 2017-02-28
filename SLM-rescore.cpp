@@ -34,6 +34,8 @@ int main(int argc, char** argv) {
 
 	SLM::ProgressTimer pt;
 
+	SLM::TextPreprocessor tp;
+
 	for(std::string inputFile : po.getTestInputFiles())
 	{
 		L_V << "SLMr: Reading " << inputFile << "\n";
@@ -85,7 +87,7 @@ int main(int argc, char** argv) {
 			// hack
 			sentenceString = "<s> <s> " + sentenceString;
 
-			std::vector<std::string> words = whitespaceTokeniser(sentenceString);
+			std::vector<std::string> words = tp.removeFillers(whitespaceTokeniser(sentenceString));
 			L_P << "SLMr: Reading " << sentenceString << "\n";
 			L_P << "SLMr: Contains " << words.size() << " words (incl. sentence markers)\n";
 
