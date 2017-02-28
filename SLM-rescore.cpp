@@ -83,15 +83,19 @@ int main(int argc, char** argv) {
 				continue;
 			}
 
-			rm.addLine(sentenceString, ++currentRank, acousticModelScore, languageModelScore, numberOfWords);
+//			rm.addLine(sentenceString, ++currentRank, acousticModelScore, languageModelScore, numberOfWords);
 
 			// hack
 			sentenceString = "<s> <s> " + sentenceString;
 
-			std::vector<std::string> words = cgnTP.removeFillers(whitespaceTokeniser(sentenceString));
+			std::vector<std::string> tokens = whitespaceTokeniser(sentenceString);
+			std::vector<std::string> words = cgnTP.removeFillers(tokens);
 			L_P << "SLMr: Reading " << sentenceString << "\n";
 			L_P << "SLMr: Contains " << words.size() << " words (incl. sentence markers)\n";
 
+			sentenceString = join(words, " ");
+			L_P << "SLMr: Normalised to " << sentenceString << "\n";
+			rm.addLine(sentenceString, ++currentRank, acousticModelScore, languageModelScore, numberOfWords);
 
 			for(int i = (4-1); i < words.size(); ++i)
 			{
