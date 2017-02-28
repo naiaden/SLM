@@ -11,7 +11,6 @@
 #include "InterpolationStrategy.h"
 #include "LanguageModel.h"
 
-#include <patternstore.h>
 #include <unordered_map>
 
 namespace SLM {
@@ -24,7 +23,6 @@ public:
 	double get(const Pattern& context);
 	std::string name() const;
 protected:
-	//std::map<const Pattern, double> weights;
 	std::unordered_map<Pattern, double> weights;
 	SLM::LanguageModel* lm;
 };

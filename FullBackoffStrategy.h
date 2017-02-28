@@ -10,6 +10,8 @@
 
 #include "BackoffStrategy.h"
 
+#include <unordered_map>
+
 namespace SLM {
 
 class InterpolationStrategy;
@@ -25,7 +27,7 @@ public:
 	virtual void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 
 	virtual std::string name() const;
-	double prob(const Pattern& context, const Pattern& focus);
+	double prob(const Pattern& context, const Pattern& focus, bool isOOV);
 
 	bool setIgnoreCache(bool setting);
 protected:
@@ -36,7 +38,7 @@ protected:
 
 	std::ofstream cacheOutputFile;
 
-	std::map<Pattern, double> cache;
+	std::unordered_map<Pattern, double> cache;
 	bool ignoreCache = false;
 };
 

@@ -24,7 +24,7 @@ public:
 	BackoffStrategies(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
 	virtual ~BackoffStrategies();
 
-	void prob(const Pattern& context, const Pattern& focus);
+	void prob(const Pattern& context, const Pattern& focus, bool isOOV);
 	void addBackoffStrategy(BackoffStrategy* strategy);
 
 	void nextFile();

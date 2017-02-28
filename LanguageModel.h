@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <map>
 #include <set>
 
@@ -104,13 +105,13 @@ template<unsigned N> struct PYPLM {
 
 	std::pair <double,double> prob_() const;
 	std::pair <double,double> prob_d(const Pattern& w, SLM::InterpolationStrategy* is) const;
-	std::pair <double,double> prob_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
-	std::pair <double,double> prob_b_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
-	std::pair <double,double> prob_a__d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
-	std::pair <double,double> prob_bcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
-	std::pair <double,double> prob_a_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
-	std::pair <double,double> prob_ab_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
-	std::pair <double,double> prob_abcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_b_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_a__d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_bcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_a_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_ab_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const;
+	std::pair <double,double> prob_abcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const;
 
 	unsigned int getCount(const Pattern& w, const Pattern& context) const;
 	std::vector<unsigned int> getCounts(const Pattern& context) const;
@@ -121,11 +122,11 @@ template<unsigned N> struct PYPLM {
 
 	double prob4(const Pattern& w, const Pattern& context) const;
 
-	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& cache, bool ignoreCache) const;
+	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache, bool ignoreCache) const;
 
-	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::map<Pattern, double>& probCache, std::map<Pattern, double>& normalisationCache);
+	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache);
 
-	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::map<Pattern, double>& probCache, std::map<Pattern, double>& normalisationCache);
+	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache);
 
 	double log_likelihood() const {
 		return backoff.log_likelihood() + tr.log_likelihood();
@@ -160,7 +161,7 @@ public:
 	Pattern toPattern(const std::string& patternString);
 	std::string toString(const Pattern& pattern);
 
-	const std::vector<Pattern>& getVocabulary() const;
+	const PatternSet<uint64_t>& getVocabulary() const;
 	bool isOOV(const Pattern& word);
 	unsigned int count(const Pattern& pattern);
 
@@ -169,8 +170,8 @@ public:
 
 	double getProb(const Pattern& focus, const Pattern& context);
 	double getProb4(const Pattern& focus, const Pattern& context);
-	double getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache, bool ignoreCache);
-	double getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::map<Pattern, double>& cache, std::map<Pattern, double>& normalisationCache);
+	double getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, bool ignoreCache);
+	double getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, std::unordered_map<Pattern, double>& normalisationCache);
 private:
 	void initialise(const ProgramOptions& programOptions);
 	void defaultPatternModelOptions();
@@ -185,7 +186,7 @@ private:
 	PatternModel<uint32_t> patternModel;
 	PatternModelOptions patternModelOptions;
 
-	std::vector<Pattern> vocabulary;
+	PatternSet<uint64_t> vocabulary;
 	::cpyp::PYPLM<4> lm;
 };
 } // namespace SLM
