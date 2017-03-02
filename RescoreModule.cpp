@@ -40,6 +40,7 @@ void RescoreModule::addLine(const std::string& originalSentenceString, int origi
 
 void RescoreModule::rescoreLine()
 {
+//	L_P << "RescoreModule: rescore ppl =" << pow(2, lprob/usedPatterns) << "\n";
 	currentLine->setRescore(pow(2, lprob/usedPatterns));
 	nbestList.add(currentLine);
 }
@@ -53,16 +54,19 @@ void RescoreModule::rescoreFile()
 void RescoreModule::evaluatePattern(const Pattern& focus, const Pattern& context, bool isOOV)
 {
 	double prob = backoffStrategy->prob(context, focus, isOOV);
-	L_P << "RescoreModule: prob =" << prob << "\n";
 
 	if(isOOV)
 	{
+		L_P << "RescoreModule: ***";
 		++oovs;
 	} else
 	{
+		L_P << "RescoreModule: ";
 		++usedPatterns;
-		lprob += prob;
+		lprob -= prob;
 	}
+
+	L_P << "prob =" << prob << "\n";
 }
 
 
