@@ -36,12 +36,13 @@ void RescoreModule::addLine(const std::string& originalSentenceString, int origi
 
 	lprob = 0.0;
 	oovs = 0;
+	usedPatternsForLine = 0;
 }
 
 void RescoreModule::rescoreLine()
 {
-	L_V << "RescoreModule: rescore ppl =" << pow(2, lprob/usedPatterns) << " P:" << lprob << " U:" << usedPatterns << "\n";
-	currentLine->setRescore(pow(2, lprob/usedPatterns));
+	L_V << "RescoreModule: rescore ppl =" << pow(2, lprob/usedPatternsForLine) << " P:" << lprob << " U:" << usedPatternsForLine << "\n";
+	currentLine->setRescore(pow(2, lprob/usedPatternsForLine));
 	nbestList.add(currentLine);
 }
 
@@ -63,6 +64,7 @@ void RescoreModule::evaluatePattern(const Pattern& focus, const Pattern& context
 	{
 		L_P << "RescoreModule: ";
 		++usedPatterns;
+		++usedPatternsForLine;
 		lprob -= prob;
 	}
 
