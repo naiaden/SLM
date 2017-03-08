@@ -121,10 +121,10 @@ void NBestList::printToFile(const std::string& originalFileName, const std::stri
 
 bool comparePtrToNode(NBestItem* a, NBestItem* b) {
 
-        double lhs = a->getAmScore() + a->getReScore();//a->getLmScore();
-        double rhs = b->getAmScore() + b->getReScore();//b->getLmScore();
+        double lhs = a->getAmScore() - a->getReScore();//a->getLmScore();
+        double rhs = b->getAmScore() - b->getReScore();//b->getLmScore();
 
-        return lhs < rhs;
+        return lhs > rhs;
 //      return (*a < *b);
 }
 

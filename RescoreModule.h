@@ -33,6 +33,7 @@ protected:
 	double lprob = 0.0;
 	int oovs = 0;
 	int usedPatterns = 0;
+	int usedPatternsForLine = 0;
 
 	std::string originalFileName;
 	std::string outputDirectory;
