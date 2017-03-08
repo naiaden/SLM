@@ -61,7 +61,7 @@ void RescoreModule::evaluatePattern(const Pattern& focus, const Pattern& context
 	} else
 	{
 		++usedPatterns;
-		lprob += prob;
+		lprob -= prob;
 	}
 }
 
