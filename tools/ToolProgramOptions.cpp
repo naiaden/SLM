@@ -19,11 +19,13 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 
 	clp.add<std::string>("inputpath", 'i', "directory with nbest lists", true);
 	clp.add<std::string>("outputpath", 'o', "directory to write results", true);
+	clp.add<std::string>("referencepath", 'r', "directory with reference files", true);
 	clp.add<std::string>("debug", '\0', "debug setting", false, "none");
 	clp.parse_check(argc, argv);
 
 	inputPath = clp.get<std::string>("inputpath");
 	outputPath = clp.get<std::string>("outputpath");
+	referencePath = clp.get<std::string>("referencepath");
 
 	SLM::Logging::getInstance().set(clp.get<std::string>("debug"));
 
@@ -37,7 +39,8 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 			<< std::setw(30) << "Running on machine: " << hostName << "\n"
 			<< "\n"
 			<< std::setw(30) << "Input path: " << inputPath << "\n"
-			<< std::setw(30) << "Output path: " << outputPath << "\n";
+			<< std::setw(30) << "Output path: " << outputPath << "\n"
+			<< std::setw(30) << "Reference path: " << referencePath << "\n";
 
 	L_A << "ProgramOptions\t- Processing program options\n";
 }
@@ -50,6 +53,11 @@ std::string ToolProgramOptions::getInputPath() const
 std::string ToolProgramOptions::getOutputPath() const
 {
 	return outputPath;
+}
+
+std::string ToolProgramOptions::getReferencePath() const
+{
+	return referencePath;
 }
 
 ToolProgramOptions::~ToolProgramOptions() {

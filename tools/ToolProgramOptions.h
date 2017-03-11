@@ -19,12 +19,13 @@ public:
 
 	std::string getInputPath() const;
 	std::string getOutputPath() const;
-
+	std::string getReferencePath() const;
 protected:
 	cmdline::parser clp;
 
 	std::string inputPath;
 	std::string outputPath;
+	std::string referencePath;
 
 	std::string hostName;
 };
