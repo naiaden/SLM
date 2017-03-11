@@ -22,6 +22,8 @@ public:
 
 	void add(SLM::NBestList* nbl);
 	std::vector<SLM::NBestList*> getNBestLists() const;
+
+	std::string getId() const;
 protected:
 	std::string id;
 	std::vector<SLM::NBestList*> nBestLists;

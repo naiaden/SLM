@@ -17,11 +17,22 @@ public:
 	FileWriter(const std::string& outputDir, const std::string& fileName);
 	virtual ~FileWriter();
 
-	void addLine(const std::string& line);
+
 protected:
 	std::string outputDir;
 	std::string fileName;
 	std::ofstream file;
+};
+
+class ReferenceFileWriter : public FileWriter
+{
+public:
+	ReferenceFileWriter(const std::string& outputDir, const std::string& fileName);
+	virtual ~ReferenceFileWriter();
+
+	void addLine(const std::string& line);
+protected:
+	bool isFirstLine = true;
 };
 
 } /* namespace SLM */

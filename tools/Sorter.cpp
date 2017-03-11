@@ -46,7 +46,7 @@ AcousticSorter::~AcousticSorter() {
 bool AcousticSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
 {
 	if(!l || !r) return false;
-    return l->getAcousticScore() < r->getAcousticScore();
+    return l->getAcousticScore() > r->getAcousticScore();
 }
 
 SLM::Hypothesis AcousticSorter::sort(const SLM::NBestList& nBestList) const
@@ -56,6 +56,11 @@ SLM::Hypothesis AcousticSorter::sort(const SLM::NBestList& nBestList) const
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());
+}
+
+std::string AcousticSorter::getName() const
+{
+	return "acoustic";
 }
 
 ////////////////////////
@@ -73,8 +78,8 @@ WeightedSorter::~WeightedSorter() {
 bool WeightedSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
 {
 	if(!l || !r) return false;
-    return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore()
-    		< acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore();
+    return acousticWeight*l->getAcousticScore() - languageModelWeight*l->getLanguageModelScore()
+    		> acousticWeight*r->getAcousticScore() - languageModelWeight*r->getLanguageModelScore();
 }
 
 SLM::Hypothesis WeightedSorter::sort(const SLM::NBestList& nBestList) const
@@ -84,6 +89,11 @@ SLM::Hypothesis WeightedSorter::sort(const SLM::NBestList& nBestList) const
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());
+}
+
+std::string WeightedSorter::getName() const
+{
+	return "weighted";
 }
 
 } /* namespace SLM */

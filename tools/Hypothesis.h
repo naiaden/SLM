@@ -21,9 +21,12 @@ public:
 	double getAcousticScore() const;
 	double getLanguageModelScore() const;
 	std::string getSentence() const;
+	std::vector<std::string> getTokens() const;
+	int getCount() const;
 protected:
 	double acousticScore;
 	double languageModelScore;
+	int count;
 	std::vector<std::string> tokens;
 	std::string sentence;
 };

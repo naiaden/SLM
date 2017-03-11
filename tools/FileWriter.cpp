@@ -19,9 +19,31 @@ FileWriter::~FileWriter() {
 	file.close();
 }
 
-void FileWriter::addLine(const std::string& line)
+
+
+
+////////////////////////
+
+ReferenceFileWriter::ReferenceFileWriter(const std::string& outputDir, const std::string& fileName)
+	: FileWriter(outputDir, fileName)
 {
-	  file << line;
+
+}
+
+ReferenceFileWriter::~ReferenceFileWriter()
+{
+}
+
+void ReferenceFileWriter::addLine(const std::string& line)
+{
+	if(!isFirstLine)
+	{
+		file << " ";
+	}
+
+	file << line;
+
+	isFirstLine = false;
 }
 
 } /* namespace SLM */

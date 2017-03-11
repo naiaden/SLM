@@ -30,4 +30,9 @@ std::vector<SLM::NBestList*> ReferenceId::getNBestLists() const
 	return nBestLists;
 }
 
+std::string ReferenceId::getId() const
+{
+	return id;
+}
+
 } /* namespace SLM */

@@ -20,6 +20,8 @@ public:
 
 	virtual SLM::Hypothesis sort(const SLM::NBestList& nBestList) const = 0;
 	virtual bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const = 0;
+
+	virtual std::string getName() const = 0;
 };
 
 class AcousticSorter : public Sorter {
@@ -29,6 +31,8 @@ public:
 
 	SLM::Hypothesis sort(const SLM::NBestList& nBestList) const;
 	bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const;
+
+	std::string getName() const;
 };
 
 class WeightedSorter : public Sorter {
@@ -38,6 +42,8 @@ public:
 
 	SLM::Hypothesis sort(const SLM::NBestList& nBestList) const;
 	bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const;
+
+	std::string getName() const;
 protected:
 	double acousticWeight;
 	double languageModelWeight;
