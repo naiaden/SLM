@@ -97,25 +97,25 @@ void NBestList::add(NBestItem* item)
 
 void NBestList::print(bool fileFormat)
 {
-        for(NBestItem* nbi : items)
-        {
-                std::cout << nbi->toString(fileFormat) << std::endl;
-        }
+	for(NBestItem* nbi : items)
+	{
+			std::cout << nbi->toString(fileFormat) << std::endl;
+	}
 }
 
 void NBestList::printToFile(const std::string& originalFileName, const std::string& directory)
 {
 	L_I << "NBestList: Processing " << originalFileName << std::endl;
-        std::string newName = fr.rename(originalFileName, directory);
-        L_I << "NBestList:  into " << newName << std::endl;
+	std::string newName = fr.rename(originalFileName, directory);
+	L_I << "NBestList:  into " << newName << std::endl;
 
-        std::ofstream myfile;
-          myfile.open (newName);
-          for(NBestItem* nbi : items)
-                {
-                  myfile << nbi->toString(true) << std::endl;
-                }
-          myfile.close();
+	std::ofstream myfile;
+	myfile.open (newName);
+	for(NBestItem* nbi : items)
+	{
+		myfile << nbi->toString(true) << std::endl;
+	}
+	myfile.close();
 }
 
 

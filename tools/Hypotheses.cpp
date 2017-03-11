@@ -5,15 +5,17 @@
  *      Author: louis
  */
 
-#include "NBestList.h"
+#include "Hypotheses.h"
 
 #include <fstream>
 #include <iostream>
 #include <string>
 
+#include "Logging.h"
+
 namespace SLM {
 
-NBestList::NBestList(const std::string& fileName, const std::string& path) : fileName(fileName), path(path) {
+Hypotheses::Hypotheses(const std::string& fileName, const std::string& path) : fileName(fileName), path(path) {
 //	std::filesystem::path my_path = ...;
 	std::ifstream stream(path.c_str(), std::ios::binary);
 
@@ -28,20 +30,20 @@ NBestList::NBestList(const std::string& fileName, const std::string& path) : fil
 	    stream.close();
 	  }
 
-	 std::cout << "Added " << hypotheses.size() << " hypotheses" << std::endl;
+	 L_V << "Hypotheses: " << hypotheses.size() << " hypotheses\n";
 
 }
 
-NBestList::~NBestList() {
+Hypotheses::~Hypotheses() {
 	// TODO Auto-generated destructor stub
 }
 
-std::vector<SLM::Hypothesis*> NBestList::getHypotheses() const
+std::vector<SLM::Hypothesis*> Hypotheses::getHypotheses() const
 {
 	return hypotheses;
 }
 
-std::string NBestList::getFileName() const
+std::string Hypotheses::getFileName() const
 {
 	return fileName;
 }

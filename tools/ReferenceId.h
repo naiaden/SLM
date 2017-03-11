@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "NBestList.h"
+#include "Hypotheses.h"
 
 namespace SLM {
 
@@ -20,13 +20,13 @@ public:
 	ReferenceId(const std::string& id);
 	virtual ~ReferenceId();
 
-	void add(SLM::NBestList* nbl);
-	std::vector<SLM::NBestList*> getNBestLists() const;
+	void add(SLM::Hypotheses* nbl);
+	std::vector<SLM::Hypotheses*> getNBestLists() const;
 
 	std::string getId() const;
 protected:
 	std::string id;
-	std::vector<SLM::NBestList*> nBestLists;
+	std::vector<SLM::Hypotheses*> nBestLists;
 };
 
 } /* namespace SLM */

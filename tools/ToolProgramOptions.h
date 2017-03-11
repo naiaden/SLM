@@ -10,7 +10,12 @@
 
 #include "cmdline.h"
 
+#include "Sorter.h"
+
 namespace SLM {
+
+enum ProgramMode { GRIDSEARCH, SELECTBEST, CEILING };
+enum WeightMode { ACOUSTIC, LANGUAGE, WEIGHTED };
 
 class ToolProgramOptions {
 public:
@@ -20,6 +25,17 @@ public:
 	std::string getInputPath() const;
 	std::string getOutputPath() const;
 	std::string getReferencePath() const;
+
+	bool isProgramMode(ProgramMode mode) const;
+	ProgramMode getProgramMode() const;
+
+	bool isWeightMode(WeightMode mode) const;
+	WeightMode getWeightMode() const;
+
+	double getAcousticWeight() const;
+	double getLanguageModelWeight() const;
+
+	SLM::Sorter* getSorter();
 protected:
 	cmdline::parser clp;
 
@@ -28,6 +44,12 @@ protected:
 	std::string referencePath;
 
 	std::string hostName;
+
+	double aW = 1.0;
+	double lW = 1.0;
+
+	ProgramMode programMode = ProgramMode::SELECTBEST;
+	WeightMode weightMode = WeightMode::WEIGHTED;
 };
 
 } /* namespace SLM */

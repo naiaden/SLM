@@ -20,12 +20,12 @@ ReferenceId::~ReferenceId() {
 //	std::cout << "ReferenceId[" << id << "] deleted" << std::endl;
 }
 
-void ReferenceId::add(SLM::NBestList* nbl)
+void ReferenceId::add(SLM::Hypotheses* nbl)
 {
 	nBestLists.push_back(nbl);
 }
 
-std::vector<SLM::NBestList*> ReferenceId::getNBestLists() const
+std::vector<SLM::Hypotheses*> ReferenceId::getNBestLists() const
 {
 	return nBestLists;
 }

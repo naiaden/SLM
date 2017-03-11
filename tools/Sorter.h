@@ -8,8 +8,8 @@
 #ifndef SORTER_H_
 #define SORTER_H_
 
+#include "Hypotheses.h"
 #include "ReferenceId.h"
-#include "NBestList.h"
 
 namespace SLM {
 
@@ -18,7 +18,7 @@ public:
 	Sorter();
 	virtual ~Sorter();
 
-	virtual SLM::Hypothesis sort(const SLM::NBestList& nBestList) const = 0;
+	virtual SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const = 0;
 	virtual bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const = 0;
 
 	virtual std::string getName() const = 0;
@@ -29,7 +29,7 @@ public:
 	AcousticSorter();
 	virtual ~AcousticSorter();
 
-	SLM::Hypothesis sort(const SLM::NBestList& nBestList) const;
+	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
 	bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const;
 
 	std::string getName() const;
@@ -40,7 +40,7 @@ public:
 	WeightedSorter(double acousticWeight, double languageModelWeight);
 	virtual ~WeightedSorter();
 
-	SLM::Hypothesis sort(const SLM::NBestList& nBestList) const;
+	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
 	bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const;
 
 	std::string getName() const;

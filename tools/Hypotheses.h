@@ -5,8 +5,8 @@
  *      Author: louis
  */
 
-#ifndef NBESTLIST_H_
-#define NBESTLIST_H_
+#ifndef HYPOTHESES_H_
+#define HYPOTHESES_H_
 
 #include <string>
 #include <vector>
@@ -15,10 +15,10 @@
 
 namespace SLM {
 
-class NBestList {
+class Hypotheses {
 public:
-	NBestList(const std::string& fileName, const std::string& path);
-	virtual ~NBestList();
+	Hypotheses(const std::string& fileName, const std::string& path);
+	virtual ~Hypotheses();
 
 	std::vector<SLM::Hypothesis*> getHypotheses() const;
 	std::string getFileName() const;
@@ -30,4 +30,4 @@ protected:
 
 } /* namespace SLM */
 
-#endif /* NBESTLIST_H_ */
+#endif /* HYPOTHESES_H_ */
