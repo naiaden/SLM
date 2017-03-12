@@ -67,7 +67,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 	clp.add<std::string>("referencepath", 'r', "directory with reference files", true);
 
 	clp.add<std::string>("mode", 'm', "program mode: ceiling, best, search", false);
-	clp.add<std::string>("weighting", 'w', "weighting mode: acoustic, lm, weights (-a -l)", false);
+	clp.add<std::string>("weighting", 'w', "weighting mode: acoustic, language, weights (-a -l)", false);
 
 	clp.add<double>("acousticweight", 'a', "acoustic model weight", false, 1.0);
 	clp.add<double>("lmweight", 'l', "language model weight", false, 1.0);
@@ -176,7 +176,7 @@ SLM::Sorter* ToolProgramOptions::getSorter()
 		case WeightMode::ACOUSTIC:
 			return new AcousticSorter();
 		case WeightMode::LANGUAGE:
-			return new AcousticSorter();
+			return new LanguageModelSorter();
 		default:
 			return new WeightedSorter(aW, lW);
 	}

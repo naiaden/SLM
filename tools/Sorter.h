@@ -35,6 +35,17 @@ public:
 	std::string getName() const;
 };
 
+class LanguageModelSorter : public Sorter {
+public:
+	LanguageModelSorter();
+	virtual ~LanguageModelSorter();
+
+	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
+	bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const;
+
+	std::string getName() const;
+};
+
 class WeightedSorter : public Sorter {
 public:
 	WeightedSorter(double acousticWeight, double languageModelWeight);

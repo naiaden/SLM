@@ -65,6 +65,37 @@ std::string AcousticSorter::getName() const
 
 ////////////////////////
 
+LanguageModelSorter::LanguageModelSorter() {
+	// TODO Auto-generated constructor stub
+
+}
+
+LanguageModelSorter::~LanguageModelSorter() {
+	// TODO Auto-generated destructor stub
+}
+
+bool LanguageModelSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
+{
+	if(!l || !r) return false;
+    return l->getLanguageModelScore() < r->getLanguageModelScore();
+}
+
+SLM::Hypothesis LanguageModelSorter::sort(const SLM::Hypotheses& nBestList) const
+{
+	std::vector<SLM::Hypothesis*> hypotheses = nBestList.getHypotheses();
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](SLM::Hypothesis * lhs, SLM::Hypothesis * rhs) {
+	        return this->compare(lhs,rhs);
+	    });
+	return *(hypotheses.front());
+}
+
+std::string LanguageModelSorter::getName() const
+{
+	return "languagemodel";
+}
+
+////////////////////////
+
 WeightedSorter::WeightedSorter(double acousticWeight, double languageModelWeight)
 	: acousticWeight(acousticWeight), languageModelWeight(languageModelWeight) {
 	// TODO Auto-generated constructor stub
