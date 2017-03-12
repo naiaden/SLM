@@ -72,7 +72,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 	clp.add<double>("acousticweight", 'a', "acoustic model weight", false, 1.0);
 	clp.add<double>("lmweight", 'l', "language model weight", false, 1.0);
 
-	clp.add<std::string>("limit-to", '\0', "limit to dash separated reference ids", false, "none");
+	clp.add<std::string>("limit-to", '\0', "limit to dash separated reference ids", false, "");
 
 	clp.add<std::string>("debug", '\0', "debug setting", false, "none");
 	clp.parse_check(argc, argv);
