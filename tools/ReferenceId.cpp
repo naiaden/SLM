@@ -18,7 +18,7 @@ ReferenceId::ReferenceId(const std::string& id) : id(id) {
 }
 
 ReferenceId::~ReferenceId() {
-//	std::cout << "ReferenceId[" << id << "] deleted" << std::endl;
+//	clear();
 }
 
 void ReferenceId::add(SLM::Hypotheses* nbl)
@@ -40,6 +40,13 @@ std::vector<SLM::Hypotheses*> ReferenceId::getTimeSortedNBestLists()
 	});
 
 	return nBestLists;
+}
+
+void ReferenceId::clear()
+{
+	for (auto i : nBestLists)
+	    delete i;
+	nBestLists.clear();
 }
 
 std::string ReferenceId::getId() const

@@ -24,6 +24,8 @@ public:
 	std::vector<SLM::Hypotheses*> getNBestLists() const;
 	std::vector<SLM::Hypotheses*> getTimeSortedNBestLists();
 
+	void clear();
+
 	std::string getId() const;
 protected:
 	std::string id;

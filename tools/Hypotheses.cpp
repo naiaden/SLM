@@ -38,7 +38,9 @@ Hypotheses::Hypotheses(const std::string& fileName, const std::string& path) : f
 }
 
 Hypotheses::~Hypotheses() {
-	// TODO Auto-generated destructor stub
+//	for (auto i : hypotheses)
+//		    delete i;
+//	hypotheses.clear();
 }
 
 std::vector<SLM::Hypothesis*> Hypotheses::getHypotheses() const

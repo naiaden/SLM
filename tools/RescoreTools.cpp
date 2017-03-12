@@ -164,9 +164,13 @@ int main(int argc, char** argv)
     		L_I << r.first << "\t" << localWER << "\n";
 
 		}
+
+    	r.second.clear();
     }
 
     std::cout << "WER: " << std::accumulate( globalWER.begin(), globalWER.end(), 0.0)/globalWER.size() << std::endl;
+
+    delete sorter;
 
 
 
