@@ -161,7 +161,7 @@ int main(int argc, char** argv)
     		}
 
     		globalWER.push_back(localWER);
-    		std::cout << r.first << "\t" << localWER << std::endl;
+    		L_I << r.first << "\t" << localWER << "\n";
 
 		}
     }
