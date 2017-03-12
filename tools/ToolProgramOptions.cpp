@@ -11,6 +11,7 @@
 #include <iomanip>
 
 #include "Logging.h"
+#include "Utils.h"
 
 namespace SLM {
 
@@ -71,6 +72,8 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 	clp.add<double>("acousticweight", 'a', "acoustic model weight", false, 1.0);
 	clp.add<double>("lmweight", 'l', "language model weight", false, 1.0);
 
+	clp.add<std::string>("limit-to", '\0', "limit to dash separated reference ids", false, "none");
+
 	clp.add<std::string>("debug", '\0', "debug setting", false, "none");
 	clp.parse_check(argc, argv);
 
@@ -83,6 +86,11 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 
 	aW = clp.get<double>("acousticweight");
 	lW = clp.get<double>("lmweight");
+
+	if(!clp.get<std::string>("limit-to").empty())
+	{
+		limitedReferenceIds = delimiterTokeniser(clp.get<std::string>("limit-to"), '-');
+	}
 
 	SLM::Logging::getInstance().set(clp.get<std::string>("debug"));
 
@@ -98,6 +106,8 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 			<< std::setw(30) << "Program mode: " << toString(programMode) << "\n"
 			<< std::setw(30) << "Weight mode: " << toString(weightMode) << "\n"
 			<< std::setw(30) << "Weights: " << "A[" << aW << "] L[" << lW << "] \n"
+			<< "\n"
+			<< std::setw(30) << "Limiting to: " << join(limitedReferenceIds, " ") << "\n"
 			<< "\n"
 			<< std::setw(30) << "Input path: " << inputPath << "\n"
 			<< std::setw(30) << "Output path: " << outputPath << "\n"
@@ -153,6 +163,11 @@ double ToolProgramOptions::getAcousticWeight() const
 double ToolProgramOptions::getLanguageModelWeight() const
 {
 	return lW;
+}
+
+std::vector<std::string> ToolProgramOptions::getLimitedReferenceIds() const
+{
+	return limitedReferenceIds;
 }
 
 SLM::Sorter* ToolProgramOptions::getSorter()

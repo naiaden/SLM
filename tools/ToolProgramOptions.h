@@ -35,6 +35,8 @@ public:
 	double getAcousticWeight() const;
 	double getLanguageModelWeight() const;
 
+	std::vector<std::string> getLimitedReferenceIds() const;
+
 	SLM::Sorter* getSorter();
 protected:
 	cmdline::parser clp;
@@ -50,6 +52,8 @@ protected:
 
 	ProgramMode programMode = ProgramMode::SELECTBEST;
 	WeightMode weightMode = WeightMode::WEIGHTED;
+
+	std::vector<std::string> limitedReferenceIds;
 };
 
 } /* namespace SLM */

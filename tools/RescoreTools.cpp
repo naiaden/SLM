@@ -111,6 +111,20 @@ int main(int argc, char** argv)
 
     std::vector<double> globalWER;
 
+    if(po.getLimitedReferenceIds().size())
+    {
+    	std::unordered_map<std::string, SLM::ReferenceId> subsetReferenceIds;
+    	for(auto & r : po.getLimitedReferenceIds())
+    	{
+    		std::unordered_map<std::string,SLM::ReferenceId>::const_iterator rIt = referenceIds.find (r);
+
+    		  if ( rIt != referenceIds.end() )
+    			  subsetReferenceIds.emplace(r, rIt->second);
+    	}
+
+    	referenceIds = subsetReferenceIds;
+    }
+
     for (auto & r : referenceIds)
     {
     	collectHypothesesForReferenceId(r.second, po.getInputPath());
