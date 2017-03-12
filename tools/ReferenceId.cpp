@@ -8,6 +8,7 @@
 #include "ReferenceId.h"
 
 #include <iostream>
+#include <algorithm>
 
 namespace SLM {
 
@@ -27,6 +28,17 @@ void ReferenceId::add(SLM::Hypotheses* nbl)
 
 std::vector<SLM::Hypotheses*> ReferenceId::getNBestLists() const
 {
+	return nBestLists;
+}
+
+std::vector<SLM::Hypotheses*> ReferenceId::getTimeSortedNBestLists()
+{
+	std::sort(nBestLists.begin(), nBestLists.end(),
+	    [](const Hypotheses* const a, const Hypotheses* const b) -> bool
+	{
+	    return a->getStartTime() < b->getStartTime();
+	});
+
 	return nBestLists;
 }
 

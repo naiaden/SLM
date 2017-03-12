@@ -22,10 +22,14 @@ public:
 
 	std::vector<SLM::Hypothesis*> getHypotheses() const;
 	std::string getFileName() const;
+
+	double getStartTime() const;
 protected:
 	std::string fileName;
 	std::string path;
 	std::vector<SLM::Hypothesis*> hypotheses;
+
+	double startTime;
 };
 
 } /* namespace SLM */

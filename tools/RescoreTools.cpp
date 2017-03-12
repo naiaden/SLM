@@ -142,8 +142,10 @@ int main(int argc, char** argv)
     		std::vector<std::string> hypothesisTokens;
 
 
-    		for(auto & nbl : r.second.getNBestLists())
+    		for(auto & nbl : r.second.getTimeSortedNBestLists())
     		{
+    			L_V << "Processing " << nbl->getStartTime() << "\n";
+
     			if(nbl->getHypotheses().size())
     			{
 					std::vector<std::string> f = sorter->sort(*nbl).getTokens();

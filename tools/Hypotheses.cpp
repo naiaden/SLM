@@ -10,8 +10,10 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <numeric>
 
 #include "Logging.h"
+#include "Utils.h"
 
 namespace SLM {
 
@@ -30,8 +32,9 @@ Hypotheses::Hypotheses(const std::string& fileName, const std::string& path) : f
 	    stream.close();
 	  }
 
-	 L_V << "Hypotheses: " << hypotheses.size() << " hypotheses\n";
+	 L_V << "Hypotheses: " << hypotheses.size() << " hypotheses for " << fileName << "\n";
 
+	 startTime = std::stod(delimiterTokeniser(fileName, ':')[1]);
 }
 
 Hypotheses::~Hypotheses() {
@@ -46,6 +49,11 @@ std::vector<SLM::Hypothesis*> Hypotheses::getHypotheses() const
 std::string Hypotheses::getFileName() const
 {
 	return fileName;
+}
+
+double Hypotheses::getStartTime() const
+{
+	return startTime;
 }
 
 } /* namespace SLM */

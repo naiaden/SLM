@@ -22,6 +22,7 @@ public:
 
 	void add(SLM::Hypotheses* nbl);
 	std::vector<SLM::Hypotheses*> getNBestLists() const;
+	std::vector<SLM::Hypotheses*> getTimeSortedNBestLists();
 
 	std::string getId() const;
 protected:
