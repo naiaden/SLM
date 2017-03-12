@@ -12,6 +12,7 @@
 #include <experimental/filesystem>
 
 #include <unordered_map>
+#include <memory>
 #include <numeric>
 
 #include "Logging.h"
@@ -55,7 +56,7 @@ SLM::ReferenceId collectHypothesesForReferenceId(SLM::ReferenceId& rId, const st
 		if(startsWith(fileName, rId.getId()))
 		{
 			L_A << "RescoreTools: \t" << fileName << "\n";
-			rId.add(new SLM::Hypotheses(fileName, p.path()));
+			rId.add(std::make_shared<SLM::Hypotheses>(fileName, p.path()));
 		}
 	}
 

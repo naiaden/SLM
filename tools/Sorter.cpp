@@ -25,8 +25,8 @@ Sorter::~Sorter() {
 
 SLM::Hypothesis Sorter::sort(const SLM::Hypotheses& nBestList) const
 {
-	std::vector<SLM::Hypothesis*> hypotheses = nBestList.getHypotheses();
-	std::sort(hypotheses.begin(), hypotheses.end(), [&](SLM::Hypothesis * lhs, SLM::Hypothesis * rhs) {
+	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());
@@ -43,7 +43,7 @@ AcousticSorter::~AcousticSorter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool AcousticSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
+bool AcousticSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const
 {
 	if(!l || !r) return false;
     return l->getAcousticScore() > r->getAcousticScore();
@@ -51,8 +51,8 @@ bool AcousticSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
 
 SLM::Hypothesis AcousticSorter::sort(const SLM::Hypotheses& nBestList) const
 {
-	std::vector<SLM::Hypothesis*> hypotheses = nBestList.getHypotheses();
-	std::sort(hypotheses.begin(), hypotheses.end(), [&](SLM::Hypothesis * lhs, SLM::Hypothesis * rhs) {
+	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());
@@ -74,7 +74,7 @@ LanguageModelSorter::~LanguageModelSorter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool LanguageModelSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
+bool LanguageModelSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const
 {
 	if(!l || !r) return false;
     return l->getLanguageModelScore() < r->getLanguageModelScore();
@@ -82,8 +82,8 @@ bool LanguageModelSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
 
 SLM::Hypothesis LanguageModelSorter::sort(const SLM::Hypotheses& nBestList) const
 {
-	std::vector<SLM::Hypothesis*> hypotheses = nBestList.getHypotheses();
-	std::sort(hypotheses.begin(), hypotheses.end(), [&](SLM::Hypothesis * lhs, SLM::Hypothesis * rhs) {
+	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());
@@ -106,7 +106,7 @@ WeightedSorter::~WeightedSorter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool WeightedSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
+bool WeightedSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const
 {
 	if(!l || !r) return false;
     return acousticWeight*l->getAcousticScore() - languageModelWeight*l->getLanguageModelScore()
@@ -115,8 +115,8 @@ bool WeightedSorter::compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const
 
 SLM::Hypothesis WeightedSorter::sort(const SLM::Hypotheses& nBestList) const
 {
-	std::vector<SLM::Hypothesis*> hypotheses = nBestList.getHypotheses();
-	std::sort(hypotheses.begin(), hypotheses.end(), [&](SLM::Hypothesis * lhs, SLM::Hypothesis * rhs) {
+	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());

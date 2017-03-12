@@ -21,20 +21,20 @@ ReferenceId::~ReferenceId() {
 //	clear();
 }
 
-void ReferenceId::add(SLM::Hypotheses* nbl)
+void ReferenceId::add(std::shared_ptr<SLM::Hypotheses> nbl)
 {
 	nBestLists.push_back(nbl);
 }
 
-std::vector<SLM::Hypotheses*> ReferenceId::getNBestLists() const
+std::vector<std::shared_ptr<SLM::Hypotheses>> ReferenceId::getNBestLists() const
 {
 	return nBestLists;
 }
 
-std::vector<SLM::Hypotheses*> ReferenceId::getTimeSortedNBestLists()
+std::vector<std::shared_ptr<SLM::Hypotheses>> ReferenceId::getTimeSortedNBestLists()
 {
 	std::sort(nBestLists.begin(), nBestLists.end(),
-	    [](const Hypotheses* const a, const Hypotheses* const b) -> bool
+	    [](std::shared_ptr<Hypotheses> a, std::shared_ptr<Hypotheses> b) -> bool
 	{
 	    return a->getStartTime() < b->getStartTime();
 	});
@@ -44,8 +44,8 @@ std::vector<SLM::Hypotheses*> ReferenceId::getTimeSortedNBestLists()
 
 void ReferenceId::clear()
 {
-	for (auto i : nBestLists)
-	    delete i;
+//	for (auto i : nBestLists)
+//	    delete i;
 	nBestLists.clear();
 }
 

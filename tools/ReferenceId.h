@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 
+#include <memory>
+
 #include "Hypotheses.h"
 
 namespace SLM {
@@ -20,16 +22,16 @@ public:
 	ReferenceId(const std::string& id);
 	virtual ~ReferenceId();
 
-	void add(SLM::Hypotheses* nbl);
-	std::vector<SLM::Hypotheses*> getNBestLists() const;
-	std::vector<SLM::Hypotheses*> getTimeSortedNBestLists();
+	void add(std::shared_ptr<SLM::Hypotheses> nbl);
+	std::vector<std::shared_ptr<SLM::Hypotheses>> getNBestLists() const;
+	std::vector<std::shared_ptr<SLM::Hypotheses>> getTimeSortedNBestLists();
 
 	void clear();
 
 	std::string getId() const;
 protected:
 	std::string id;
-	std::vector<SLM::Hypotheses*> nBestLists;
+	std::vector<std::shared_ptr<SLM::Hypotheses>> nBestLists;
 };
 
 } /* namespace SLM */

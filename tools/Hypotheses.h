@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 
+#include <memory>
+
 #include "Hypothesis.h"
 
 namespace SLM {
@@ -20,14 +22,14 @@ public:
 	Hypotheses(const std::string& fileName, const std::string& path);
 	virtual ~Hypotheses();
 
-	std::vector<SLM::Hypothesis*> getHypotheses() const;
+	std::vector<std::shared_ptr<SLM::Hypothesis>> getHypotheses() const;
 	std::string getFileName() const;
 
 	double getStartTime() const;
 protected:
 	std::string fileName;
 	std::string path;
-	std::vector<SLM::Hypothesis*> hypotheses;
+	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses;
 
 	double startTime;
 };

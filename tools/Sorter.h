@@ -9,6 +9,9 @@
 #define SORTER_H_
 
 #include "Hypotheses.h"
+
+#include <memory>
+
 #include "ReferenceId.h"
 
 namespace SLM {
@@ -19,7 +22,7 @@ public:
 	virtual ~Sorter();
 
 	virtual SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const = 0;
-	virtual bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const = 0;
+	virtual bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const = 0;
 
 	virtual std::string getName() const = 0;
 };
@@ -30,7 +33,7 @@ public:
 	virtual ~AcousticSorter();
 
 	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
-	bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const;
+	bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const;
 
 	std::string getName() const;
 };
@@ -41,7 +44,7 @@ public:
 	virtual ~LanguageModelSorter();
 
 	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
-	bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const;
+	bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const;
 
 	std::string getName() const;
 };
@@ -52,7 +55,7 @@ public:
 	virtual ~WeightedSorter();
 
 	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
-	bool compare(SLM::Hypothesis* l, SLM::Hypothesis* r) const;
+	bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const;
 
 	std::string getName() const;
 protected:

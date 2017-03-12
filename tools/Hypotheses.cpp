@@ -27,7 +27,7 @@ Hypotheses::Hypotheses(const std::string& fileName, const std::string& path) : f
 	  {
 	    while ( std::getline (stream,line) )
 	    {
-	    	hypotheses.push_back(new Hypothesis(line));
+	    	hypotheses.push_back(std::make_shared<Hypothesis>(line));
 	    }
 	    stream.close();
 	  }
@@ -43,7 +43,7 @@ Hypotheses::~Hypotheses() {
 //	hypotheses.clear();
 }
 
-std::vector<SLM::Hypothesis*> Hypotheses::getHypotheses() const
+std::vector<std::shared_ptr<SLM::Hypothesis>> Hypotheses::getHypotheses() const
 {
 	return hypotheses;
 }
