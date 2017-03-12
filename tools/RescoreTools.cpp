@@ -96,7 +96,25 @@ double WER(const std::vector<std::string> &ref, const std::vector<std::string> &
 	return 100* (result/(double) s1len);
 }
 
+std::unordered_map<std::string, SLM::ReferenceId> referenceIdsPreprocessing(std::unordered_map<std::string, SLM::ReferenceId> references, std::vector<std::string> specials)
+{
+    if(specials.size())
+    {
+    	std::unordered_map<std::string, SLM::ReferenceId> subsetReferenceIds;
+    	for(auto & r : specials)
+    	{
+    		std::unordered_map<std::string,SLM::ReferenceId>::const_iterator rIt = references.find (r);
 
+    		  if ( rIt != references.end() )
+    			  subsetReferenceIds.emplace(r, rIt->second);
+    	}
+
+    	return subsetReferenceIds;
+    } else
+    {
+    	return references;
+    }
+}
 
 
 int main(int argc, char** argv)
@@ -107,23 +125,9 @@ int main(int argc, char** argv)
 
 	SLM::CGNTextPreprocessor tpp;
 
-    std::unordered_map<std::string, SLM::ReferenceId> referenceIds = collectReferenceIds(po.getInputPath());
+    std::unordered_map<std::string, SLM::ReferenceId> referenceIds = referenceIdsPreprocessing(collectReferenceIds(po.getInputPath()), po.getLimitedReferenceIds());
 
     std::vector<double> globalWER;
-
-    if(po.getLimitedReferenceIds().size())
-    {
-    	std::unordered_map<std::string, SLM::ReferenceId> subsetReferenceIds;
-    	for(auto & r : po.getLimitedReferenceIds())
-    	{
-    		std::unordered_map<std::string,SLM::ReferenceId>::const_iterator rIt = referenceIds.find (r);
-
-    		  if ( rIt != referenceIds.end() )
-    			  subsetReferenceIds.emplace(r, rIt->second);
-    	}
-
-    	referenceIds = subsetReferenceIds;
-    }
 
     for (auto & r : referenceIds)
     {
@@ -148,13 +152,19 @@ int main(int argc, char** argv)
     		}
 
     		double localWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
+
+    		if(SLM::Logging::getInstance().doLog(SLM::LoggingLevel::ALL))
+    		{
+    			L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
+    		}
+
     		globalWER.push_back(localWER);
     		std::cout << r.first << "\t" << localWER << std::endl;
 
 		}
     }
 
-    std::cout << "WER: " << std::accumulate( globalWER.begin(), globalWER.end(), 0.0)/globalWER.size();
+    std::cout << "WER: " << std::accumulate( globalWER.begin(), globalWER.end(), 0.0)/globalWER.size() << std::endl;
 
 
 
