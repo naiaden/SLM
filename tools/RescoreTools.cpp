@@ -126,8 +126,11 @@ int main(int argc, char** argv)
 
     		for(auto & nbl : r.second.getNBestLists())
     		{
-    			std::vector<std::string> f = sorter->sort(*nbl).getTokens();
-    			hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(f), std::end(f));
+    			if(nbl->getHypotheses())
+    			{
+					std::vector<std::string> f = sorter->sort(*nbl).getTokens();
+					hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(f), std::end(f));
+    			}
     		}
 
     		double localWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
