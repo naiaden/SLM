@@ -126,7 +126,7 @@ int main(int argc, char** argv)
 
     		for(auto & nbl : r.second.getNBestLists())
     		{
-    			if(nbl->getHypotheses())
+    			if(nbl->getHypotheses().size())
     			{
 					std::vector<std::string> f = sorter->sort(*nbl).getTokens();
 					hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(f), std::end(f));
