@@ -127,4 +127,37 @@ std::string WeightedSorter::getName() const
 	return "weighted";
 }
 
+////////////////////////
+
+PowerWeightedSorter::PowerWeightedSorter(double acousticWeight, double languageModelWeight)
+	: WeightedSorter(acousticWeight, languageModelWeight) {
+	// TODO Auto-generated constructor stub
+
+}
+
+PowerWeightedSorter::~PowerWeightedSorter() {
+	// TODO Auto-generated destructor stub
+}
+
+bool PowerWeightedSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const
+{
+	if(!l || !r) return false;
+    return pow(acousticWeight,l->getAcousticScore()) - pow(languageModelWeight,l->getLanguageModelScore())
+    		> pow(acousticWeight,r->getAcousticScore()) - pow(languageModelWeight,r->getLanguageModelScore());
+}
+
+SLM::Hypothesis PowerWeightedSorter::sort(const SLM::Hypotheses& nBestList) const
+{
+	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
+	        return this->compare(lhs,rhs);
+	    });
+	return *(hypotheses.front());
+}
+
+std::string PowerWeightedSorter::getName() const
+{
+	return "powerweighted";
+}
+
 } /* namespace SLM */

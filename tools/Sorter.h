@@ -63,6 +63,17 @@ protected:
 	double languageModelWeight;
 };
 
+class PowerWeightedSorter : public WeightedSorter {
+public:
+	PowerWeightedSorter(double acousticWeight, double languageModelWeight);
+	virtual ~PowerWeightedSorter();
+
+	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
+	bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const;
+
+	std::string getName() const;
+};
+
 } /* namespace SLM */
 
 #endif /* SORTER_H_ */
