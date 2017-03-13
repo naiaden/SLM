@@ -9,9 +9,18 @@
 #define HYPOTHESIS_H_
 
 #include <string>
+#include <exception>
 #include <vector>
 
 namespace SLM {
+
+class IncompleteHypothesis: public std::exception
+{
+  virtual const char* what() const throw()
+  {
+    return "Hypothesis is not complete";
+  }
+};
 
 class Hypothesis {
 public:

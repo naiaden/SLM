@@ -22,11 +22,17 @@ Hypothesis::Hypothesis(const std::string& hypothesisEntry) {
 
 	std::vector<std::string> entries = whitespaceTokeniser(hypothesisEntry);
 
-	acousticScore = std::stod(entries[0]);
-	languageModelScore = std::stod(entries[1]);
-	count = std::stoi(entries[2]);
+	if(entries.size() > 4)
+	{
+		acousticScore = std::stod(entries[0]);
+		languageModelScore = std::stod(entries[1]);
+		count = std::stoi(entries[2]);
 
-	tokens = std::vector<std::string>(entries.begin() + 3, entries.end()) ;
+		tokens = std::vector<std::string>(entries.begin() + 3, entries.end()) ;
+	} else
+	{
+		throw SLM::IncompleteHypothesis();
+	}
 
 //	std::cout << acousticScore << " - " << languageModelScore << " - " << join(tokens, " ") << std::endl;
 }

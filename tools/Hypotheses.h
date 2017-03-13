@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <memory>
+#include <exception>
 
 #include "Hypothesis.h"
 

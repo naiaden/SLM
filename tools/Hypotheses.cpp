@@ -27,7 +27,17 @@ Hypotheses::Hypotheses(const std::string& fileName, const std::string& path) : f
 	  {
 	    while ( std::getline (stream,line) )
 	    {
-	    	hypotheses.push_back(std::make_shared<Hypothesis>(line));
+	    	try
+	    	  {
+	    		std::shared_ptr<SLM::Hypothesis> h = std::make_shared<Hypothesis>(line);
+	    		hypotheses.push_back(h);
+	    	  }
+	    	  catch (...)
+	    	  {
+	    	    L_V << "Hypotheses: In file " << fileName << "\n\tignore " << line << "\n";
+	    	  }
+
+
 	    }
 	    stream.close();
 	  }
