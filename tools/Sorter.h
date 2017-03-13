@@ -18,18 +18,20 @@ namespace SLM {
 
 class Sorter {
 public:
-	Sorter();
+	Sorter(bool reverse = false);
 	virtual ~Sorter();
 
 	virtual SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const = 0;
 	virtual bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const = 0;
 
 	virtual std::string getName() const = 0;
+protected:
+	bool reverse;
 };
 
 class AcousticSorter : public Sorter {
 public:
-	AcousticSorter();
+	AcousticSorter(bool reverse = false);
 	virtual ~AcousticSorter();
 
 	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
@@ -40,7 +42,7 @@ public:
 
 class LanguageModelSorter : public Sorter {
 public:
-	LanguageModelSorter();
+	LanguageModelSorter(bool reverse = false);
 	virtual ~LanguageModelSorter();
 
 	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
@@ -51,7 +53,7 @@ public:
 
 class WeightedSorter : public Sorter {
 public:
-	WeightedSorter(double acousticWeight, double languageModelWeight);
+	WeightedSorter(double acousticWeight, double languageModelWeight, bool reverse = false);
 	virtual ~WeightedSorter();
 
 	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
@@ -65,7 +67,7 @@ protected:
 
 class PowerWeightedSorter : public WeightedSorter {
 public:
-	PowerWeightedSorter(double acousticWeight, double languageModelWeight);
+	PowerWeightedSorter(double acousticWeight, double languageModelWeight, bool reverse = false);
 	virtual ~PowerWeightedSorter();
 
 	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;

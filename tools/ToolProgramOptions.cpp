@@ -72,6 +72,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 
 	clp.add<std::string>("mode", 'm', "program mode: ceiling, best, search", false);
 	clp.add<std::string>("weighting", 'w', "weighting mode: acoustic, language, (power,)weighted (-a -l)", false);
+	clp.add("reverse", '\0', "reverse the sort mode");
 
 	clp.add<double>("acousticweight", 'a', "acoustic model weight", false, 1.0);
 	clp.add<double>("lmweight", 'l', "language model weight", false, 1.0);
@@ -98,6 +99,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 
 	SLM::Logging::getInstance().set(clp.get<std::string>("debug"));
 
+	reverse = clp.exist("reverse");
 
 	char hostname[128];
 	gethostname(hostname, sizeof hostname);
@@ -109,6 +111,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 			<< "\n"
 			<< std::setw(30) << "Program mode: " << toString(programMode) << "\n"
 			<< std::setw(30) << "Weight mode: " << toString(weightMode) << "\n"
+			<< std::setw(30) << "Reverse sort: " << (reverse ? "yes" : "no") << "\n"
 			<< std::setw(30) << "Weights: " << "A[" << aW << "] L[" << lW << "] \n"
 			<< "\n"
 			<< std::setw(30) << "Limiting to: " << join(limitedReferenceIds, " ") << "\n"
@@ -174,17 +177,22 @@ std::vector<std::string> ToolProgramOptions::getLimitedReferenceIds() const
 	return limitedReferenceIds;
 }
 
+bool ToolProgramOptions::isReverse() const
+{
+	return reverse;
+}
+
 SLM::Sorter* ToolProgramOptions::getSorter()
 {
 	switch (weightMode) {
 		case WeightMode::ACOUSTIC:
-			return new AcousticSorter();
+			return new AcousticSorter(reverse);
 		case WeightMode::LANGUAGE:
-			return new LanguageModelSorter();
+			return new LanguageModelSorter(reverse);
 		case WeightMode::POWERWEIGHTED:
-			return new PowerWeightedSorter(aW, lW);
+			return new PowerWeightedSorter(aW, lW, reverse);
 		default:
-			return new WeightedSorter(aW, lW);
+			return new WeightedSorter(aW, lW, reverse);
 	}
 }
 
