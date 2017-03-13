@@ -151,9 +151,6 @@ int main(int argc, char** argv)
     	if(po.isProgramMode(SLM::ProgramMode::CEILING))
 //    	if(true) // select best and select fase
     	{
-    		// for each h in hypotheses
-    		// keep only best hypothesis
-
     		SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
 			std::vector<std::string> reference = fr.getTokens();
 
@@ -168,8 +165,11 @@ int main(int argc, char** argv)
     		std::vector<std::string> hypothesisTokens;
     		for(auto& hyp : hypotheses)
     		{
-    			std::vector<std::string> tokens = hyp->getBestHypothesis()->getTokens();
-				hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(tokens), std::end(tokens));
+    			if(hyp->getBestHypothesis())
+    			{
+					std::vector<std::string> tokens = hyp->getBestHypothesis()->getTokens();
+					hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(tokens), std::end(tokens));
+    			}
     		}
 
     		double localWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
