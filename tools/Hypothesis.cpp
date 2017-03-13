@@ -15,10 +15,7 @@
 
 namespace SLM {
 
-Hypothesis::Hypothesis(const std::string& hypothesisEntry) {
-	sentence = hypothesisEntry;
-
-	L_A << "Hypothesis: " << sentence << "\n";
+PartialHypothesis::PartialHypothesis(const std::string& hypothesisEntry) {
 
 	std::vector<std::string> entries = whitespaceTokeniser(hypothesisEntry);
 
@@ -27,26 +24,42 @@ Hypothesis::Hypothesis(const std::string& hypothesisEntry) {
 		acousticScore = std::stod(entries[0]);
 		languageModelScore = std::stod(entries[1]);
 		count = std::stoi(entries[2]);
+	} else
+	{
+		throw SLM::IncompleteHypothesis();
+	}
+}
 
+PartialHypothesis::~PartialHypothesis()
+{
+
+}
+
+Hypothesis::Hypothesis(const std::string& hypothesisEntry) : PartialHypothesis(hypothesisEntry) {
+	sentence = hypothesisEntry;
+
+
+	std::vector<std::string> entries = whitespaceTokeniser(hypothesisEntry);
+
+	if(entries.size() > 4)
+	{
 		tokens = std::vector<std::string>(entries.begin() + 3, entries.end()) ;
 	} else
 	{
 		throw SLM::IncompleteHypothesis();
 	}
-
-//	std::cout << acousticScore << " - " << languageModelScore << " - " << join(tokens, " ") << std::endl;
 }
 
 Hypothesis::~Hypothesis() {
 	// TODO Auto-generated destructor stub
 }
 
-double Hypothesis::getAcousticScore() const
+double PartialHypothesis::getAcousticScore() const
 {
 	return acousticScore;
 }
 
-double Hypothesis::getLanguageModelScore() const
+double PartialHypothesis::getLanguageModelScore() const
 {
 	return languageModelScore;
 }
@@ -61,7 +74,7 @@ std::vector<std::string> Hypothesis::getTokens() const
 	return tokens;
 }
 
-int Hypothesis::getCount() const
+int PartialHypothesis::getCount() const
 {
 	return count;
 }

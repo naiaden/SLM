@@ -14,13 +14,33 @@
 
 #include "Logging.h"
 #include "Utils.h"
+#include "Sorter.h"
 
 namespace SLM {
 
-Hypotheses::Hypotheses(const std::string& fileName, const std::string& path) : fileName(fileName), path(path) {
-//	std::filesystem::path my_path = ...;
-	std::ifstream stream(path.c_str(), std::ios::binary);
+Hypotheses::Hypotheses(const std::string& fileName, const std::string& path) : fileName(fileName), path(path)
+{
+	startTime = std::stod(delimiterTokeniser(fileName, ':')[1]);
+}
 
+Hypotheses::~Hypotheses()
+{
+
+}
+
+std::string Hypotheses::getFileName() const
+{
+	return fileName;
+}
+
+double Hypotheses::getStartTime() const
+{
+	return startTime;
+}
+
+AllHypotheses::AllHypotheses(const std::string& fileName, const std::string& path) : SLM::Hypotheses(fileName, path) {
+	std::string fullPath = path + "/" + fileName;
+	std::ifstream stream(fullPath.c_str(), std::ios::binary);
 
 	std::string line;
 	 if (stream.is_open())
@@ -36,36 +56,64 @@ Hypotheses::Hypotheses(const std::string& fileName, const std::string& path) : f
 	    	  {
 	    	    L_V << "Hypotheses: In file " << fileName << "\n\tignore " << line << "\n";
 	    	  }
-
-
 	    }
 	    stream.close();
 	  }
 
 	 L_V << "Hypotheses: " << hypotheses.size() << " hypotheses for " << fileName << "\n";
-
-	 startTime = std::stod(delimiterTokeniser(fileName, ':')[1]);
 }
 
-Hypotheses::~Hypotheses() {
-//	for (auto i : hypotheses)
-//		    delete i;
-//	hypotheses.clear();
+AllHypotheses::~AllHypotheses() {
 }
 
-std::vector<std::shared_ptr<SLM::Hypothesis>> Hypotheses::getHypotheses() const
+std::vector<std::shared_ptr<SLM::Hypothesis>> AllHypotheses::getHypotheses() const
 {
 	return hypotheses;
 }
 
-std::string Hypotheses::getFileName() const
+BestHypotheses::BestHypotheses(const std::string& fileName, const std::string& path, SLM::Sorter* sorter)
+	: Hypotheses(fileName, path)
 {
-	return fileName;
+	std::string fullPath = path + "/" + fileName;
+	std::ifstream stream(fullPath.c_str(), std::ios::binary);
+
+	std::cout << fileName << std::endl;
+
+	std::string line;
+	if (stream.is_open())
+	{
+		while ( std::getline (stream,line) )
+		{
+			try
+			{
+				std::shared_ptr<SLM::PartialHypothesis> h = std::make_shared<PartialHypothesis>(line);
+
+				if(!bestHypothesis) // nullptr
+				{
+					bestHypothesis = h;
+				}
+
+				if(sorter->compare(bestHypothesis, h))
+				{
+					std::cout << h->getLanguageModelScore() << " is better than " << bestHypothesis->getLanguageModelScore() << std::endl;
+					bestHypothesis = h;
+
+				}
+
+			}
+			catch (...)
+			{
+				L_V << "Hypotheses: In file " << fileName << "\n\tignore " << line << "\n";
+			}
+		}
+		stream.close();
+	}
 }
 
-double Hypotheses::getStartTime() const
+BestHypotheses::~BestHypotheses()
 {
-	return startTime;
+
 }
+
 
 } /* namespace SLM */

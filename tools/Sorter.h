@@ -8,10 +8,9 @@
 #ifndef SORTER_H_
 #define SORTER_H_
 
-#include "Hypotheses.h"
-
 #include <memory>
 
+#include "Hypotheses.h"
 #include "ReferenceId.h"
 
 namespace SLM {
@@ -21,8 +20,8 @@ public:
 	Sorter(bool reverse = false);
 	virtual ~Sorter();
 
-	virtual SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const = 0;
-	virtual bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const = 0;
+	virtual SLM::Hypothesis sort(const SLM::AllHypotheses& nBestList) const = 0;
+	virtual bool compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const = 0;
 
 	virtual std::string getName() const = 0;
 protected:
@@ -34,8 +33,8 @@ public:
 	AcousticSorter(bool reverse = false);
 	virtual ~AcousticSorter();
 
-	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
-	bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const;
+	SLM::Hypothesis sort(const SLM::AllHypotheses& nBestList) const;
+	bool compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const;
 
 	std::string getName() const;
 };
@@ -45,8 +44,8 @@ public:
 	LanguageModelSorter(bool reverse = false);
 	virtual ~LanguageModelSorter();
 
-	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
-	bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const;
+	SLM::Hypothesis sort(const SLM::AllHypotheses& nBestList) const;
+	bool compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const;
 
 	std::string getName() const;
 };
@@ -56,8 +55,8 @@ public:
 	WeightedSorter(double acousticWeight, double languageModelWeight, bool reverse = false);
 	virtual ~WeightedSorter();
 
-	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
-	bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const;
+	SLM::Hypothesis sort(const SLM::AllHypotheses& nBestList) const;
+	bool compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const;
 
 	std::string getName() const;
 protected:
@@ -70,8 +69,8 @@ public:
 	PowerWeightedSorter(double acousticWeight, double languageModelWeight, bool reverse = false);
 	virtual ~PowerWeightedSorter();
 
-	SLM::Hypothesis sort(const SLM::Hypotheses& nBestList) const;
-	bool compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const;
+	SLM::Hypothesis sort(const SLM::AllHypotheses& nBestList) const;
+	bool compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const;
 
 	std::string getName() const;
 };

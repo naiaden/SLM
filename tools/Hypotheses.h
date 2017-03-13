@@ -15,24 +15,48 @@
 #include <exception>
 
 #include "Hypothesis.h"
+//#include "Sorter.h"
+
+
 
 namespace SLM {
+
+class /*SLM::*/Sorter;
 
 class Hypotheses {
 public:
 	Hypotheses(const std::string& fileName, const std::string& path);
 	virtual ~Hypotheses();
 
-	std::vector<std::shared_ptr<SLM::Hypothesis>> getHypotheses() const;
-	std::string getFileName() const;
+	virtual std::string getFileName() const final;
 
-	double getStartTime() const;
+	virtual double getStartTime() const final;
 protected:
 	std::string fileName;
 	std::string path;
-	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses;
 
 	double startTime;
+
+};
+
+class AllHypotheses : public SLM::Hypotheses {
+public:
+	AllHypotheses(const std::string& fileName, const std::string& path);
+	virtual ~AllHypotheses();
+
+	std::vector<std::shared_ptr<SLM::Hypothesis>> getHypotheses() const;
+protected:
+	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses;
+};
+
+class BestHypotheses : public SLM::Hypotheses {
+public:
+	BestHypotheses(const std::string& fileName, const std::string& path, SLM::Sorter* sorter);
+	virtual ~BestHypotheses();
+
+protected:
+	std::shared_ptr<SLM::PartialHypothesis> bestHypothesis;
+//	std::
 };
 
 } /* namespace SLM */

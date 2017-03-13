@@ -22,20 +22,31 @@ class IncompleteHypothesis: public std::exception
   }
 };
 
-class Hypothesis {
+class PartialHypothesis {
 public:
-	Hypothesis(const std::string& hypothesisEntry);
-	virtual ~Hypothesis();
+	PartialHypothesis(const std::string& hypothesisEntry);
+	virtual ~PartialHypothesis();
 
 	double getAcousticScore() const;
 	double getLanguageModelScore() const;
-	std::string getSentence() const;
-	std::vector<std::string> getTokens() const;
 	int getCount() const;
+
 protected:
 	double acousticScore;
 	double languageModelScore;
 	int count;
+};
+
+class Hypothesis : public PartialHypothesis {
+public:
+	Hypothesis(const std::string& hypothesisEntry);
+	virtual ~Hypothesis();
+
+
+	std::string getSentence() const;
+	std::vector<std::string> getTokens() const;
+
+protected:
 	std::vector<std::string> tokens;
 	std::string sentence;
 };

@@ -46,24 +46,39 @@ std::unordered_map<std::string, SLM::ReferenceId> collectReferenceIds(const std:
 	return referenceIds;
 }
 
-SLM::ReferenceId collectHypothesesForReferenceId(SLM::ReferenceId& rId, const std::string& path)
+std::vector<std::string> getFilesForReferenceId(SLM::ReferenceId& rId, const std::string& path)
 {
-	L_V << "RescoreTools: " << rId.getId() << "\n";
+	std::vector<std::string> files;
 
 	for (auto & p : std::experimental::filesystem::directory_iterator(path))
 	{
 		std::string fileName = delimiterTokeniser(p.path(), '/').back();
 		if(startsWith(fileName, rId.getId()))
 		{
-			L_A << "RescoreTools: \t" << fileName << "\n";
-			rId.add(std::make_shared<SLM::Hypotheses>(fileName, p.path()));
+			files.push_back(fileName);
 		}
+	}
+
+	return files;
+}
+
+SLM::ReferenceId collectHypothesesForReferenceId(SLM::ReferenceId& rId, const std::string& path)
+{
+	L_V << "RescoreTools: " << rId.getId() << "\n";
+
+	std::vector<std::string> files = getFilesForReferenceId(rId, path);
+	for(auto& file : files)
+	{
+		L_A << "RescoreTools: \t" << file << " " << path << "\n";
+		rId.add(std::make_shared<SLM::AllHypotheses>(file, path));
 	}
 
 	L_V << "RescoreTools: " << rId.getNBestLists().size() << " hypotheses for " << rId.getId() << "\n" << std::endl;
 
 	return rId;
 }
+
+
 
 // https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#C.2B.2B
 double WER(const std::vector<std::string> &ref, const std::vector<std::string> &hyp)
@@ -132,10 +147,26 @@ int main(int argc, char** argv)
 
     for (auto & r : referenceIds)
     {
-    	collectHypothesesForReferenceId(r.second, po.getInputPath());
 
-    	if(po.isProgramMode(SLM::ProgramMode::SELECTBEST))
+//    	if(false)
+    	if(true) // select best and select fase
+    	{
+    		// for each h in hypotheses
+    		// keep only best hypothesis
+    		std::vector<std::shared_ptr<SLM::BestHypotheses>> hypotheses;
+    		std::vector<std::string> hypothesesFiles = getFilesForReferenceId(r.second, po.getInputPath());
+    		for(auto& hFile : hypothesesFiles)
+    		{
+    			hypotheses.push_back(std::make_shared<SLM::BestHypotheses>(hFile, po.getInputPath(), sorter));
+    		}
+    	}
+
+
+//    	if(po.isProgramMode(SLM::ProgramMode::SELECTBEST))
+    	if(false)
 		{
+    		collectHypothesesForReferenceId(r.second, po.getInputPath());
+
     		SLM::ReferenceFileWriter fw(po.getOutputPath(), r.first + "-" + sorter->getName());
     		SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
 

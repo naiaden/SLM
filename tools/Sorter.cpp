@@ -45,7 +45,7 @@ AcousticSorter::~AcousticSorter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool AcousticSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const
+bool AcousticSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const
 {
 	if(!l || !r)
 		return false;
@@ -54,10 +54,10 @@ bool AcousticSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr
     return l->getAcousticScore() > r->getAcousticScore();
 }
 
-SLM::Hypothesis AcousticSorter::sort(const SLM::Hypotheses& nBestList) const
+SLM::Hypothesis AcousticSorter::sort(const SLM::AllHypotheses& nBestList) const
 {
 	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
-	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::PartialHypothesis> lhs, std::shared_ptr<SLM::PartialHypothesis> rhs) {
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());
@@ -79,7 +79,7 @@ LanguageModelSorter::~LanguageModelSorter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool LanguageModelSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const
+bool LanguageModelSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const
 {
 	if(!l || !r)
 		return false;
@@ -88,10 +88,10 @@ bool LanguageModelSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::share
     return l->getLanguageModelScore() < r->getLanguageModelScore();
 }
 
-SLM::Hypothesis LanguageModelSorter::sort(const SLM::Hypotheses& nBestList) const
+SLM::Hypothesis LanguageModelSorter::sort(const SLM::AllHypotheses& nBestList) const
 {
 	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
-	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::PartialHypothesis> lhs, std::shared_ptr<SLM::PartialHypothesis> rhs) {
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());
@@ -114,7 +114,7 @@ WeightedSorter::~WeightedSorter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool WeightedSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const
+bool WeightedSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const
 {
 	if(!l || !r)
 	{
@@ -129,10 +129,10 @@ bool WeightedSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr
     		> acousticWeight*r->getAcousticScore() - languageModelWeight*r->getLanguageModelScore();
 }
 
-SLM::Hypothesis WeightedSorter::sort(const SLM::Hypotheses& nBestList) const
+SLM::Hypothesis WeightedSorter::sort(const SLM::AllHypotheses& nBestList) const
 {
 	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
-	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::PartialHypothesis> lhs, std::shared_ptr<SLM::PartialHypothesis> rhs) {
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());
@@ -155,7 +155,7 @@ PowerWeightedSorter::~PowerWeightedSorter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool PowerWeightedSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::shared_ptr<SLM::Hypothesis> r) const
+bool PowerWeightedSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const
 {
 	if(!l || !r)
 		return false;
@@ -166,10 +166,10 @@ bool PowerWeightedSorter::compare(std::shared_ptr<SLM::Hypothesis> l, std::share
     		> pow(acousticWeight,r->getAcousticScore()) - pow(languageModelWeight,r->getLanguageModelScore());
 }
 
-SLM::Hypothesis PowerWeightedSorter::sort(const SLM::Hypotheses& nBestList) const
+SLM::Hypothesis PowerWeightedSorter::sort(const SLM::AllHypotheses& nBestList) const
 {
 	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
-	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::Hypothesis> lhs, std::shared_ptr<SLM::Hypothesis> rhs) {
+	std::sort(hypotheses.begin(), hypotheses.end(), [&](std::shared_ptr<SLM::PartialHypothesis> lhs, std::shared_ptr<SLM::PartialHypothesis> rhs) {
 	        return this->compare(lhs,rhs);
 	    });
 	return *(hypotheses.front());

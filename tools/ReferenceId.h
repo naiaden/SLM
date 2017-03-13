@@ -22,16 +22,16 @@ public:
 	ReferenceId(const std::string& id);
 	virtual ~ReferenceId();
 
-	void add(std::shared_ptr<SLM::Hypotheses> nbl);
-	std::vector<std::shared_ptr<SLM::Hypotheses>> getNBestLists() const;
-	std::vector<std::shared_ptr<SLM::Hypotheses>> getTimeSortedNBestLists();
+	void add(std::shared_ptr<SLM::AllHypotheses> nbl);
+	std::vector<std::shared_ptr<SLM::AllHypotheses>> getNBestLists() const;
+	std::vector<std::shared_ptr<SLM::AllHypotheses>> getTimeSortedNBestLists();
 
 	void clear();
 
 	std::string getId() const;
 protected:
 	std::string id;
-	std::vector<std::shared_ptr<SLM::Hypotheses>> nBestLists;
+	std::vector<std::shared_ptr<SLM::AllHypotheses>> nBestLists;
 };
 
 } /* namespace SLM */
