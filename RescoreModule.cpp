@@ -42,7 +42,8 @@ void RescoreModule::addLine(const std::string& originalSentenceString, int origi
 void RescoreModule::rescoreLine()
 {
 	L_V << "RescoreModule: rescore ppl =" << pow(2, lprob/usedPatternsForLine) << " P:" << lprob << " U:" << usedPatternsForLine << "\n";
-	currentLine->setRescore(pow(2, lprob/usedPatternsForLine));
+//	currentLine->setRescore(pow(2, lprob/usedPatternsForLine));
+	currentLine->setRescore(lprob);
 	nbestList.add(currentLine);
 }
 

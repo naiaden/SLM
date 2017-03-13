@@ -10,12 +10,15 @@
 #include <vector>
 #include <iostream>
 
+#include "Logging.h"
 #include "Utils.h"
 
 namespace SLM {
 
 Hypothesis::Hypothesis(const std::string& hypothesisEntry) {
 	sentence = hypothesisEntry;
+
+	L_A << "Hypothesis: " << sentence << "\n";
 
 	std::vector<std::string> entries = whitespaceTokeniser(hypothesisEntry);
 
