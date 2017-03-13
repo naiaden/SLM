@@ -54,8 +54,10 @@ public:
 	BestHypotheses(const std::string& fileName, const std::string& path, SLM::Sorter* sorter);
 	virtual ~BestHypotheses();
 
+	std::shared_ptr<SLM::Hypothesis> getBestHypothesis() const;
+
 protected:
-	std::shared_ptr<SLM::PartialHypothesis> bestHypothesis;
+	std::shared_ptr<SLM::Hypothesis> bestHypothesis;
 //	std::
 };
 

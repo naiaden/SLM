@@ -148,22 +148,45 @@ int main(int argc, char** argv)
     for (auto & r : referenceIds)
     {
 
-//    	if(false)
-    	if(true) // select best and select fase
+    	if(po.isProgramMode(SLM::ProgramMode::CEILING))
+//    	if(true) // select best and select fase
     	{
     		// for each h in hypotheses
     		// keep only best hypothesis
+
+    		SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
+			std::vector<std::string> reference = fr.getTokens();
+
+
     		std::vector<std::shared_ptr<SLM::BestHypotheses>> hypotheses;
     		std::vector<std::string> hypothesesFiles = getFilesForReferenceId(r.second, po.getInputPath());
     		for(auto& hFile : hypothesesFiles)
     		{
     			hypotheses.push_back(std::make_shared<SLM::BestHypotheses>(hFile, po.getInputPath(), sorter));
     		}
+
+    		std::vector<std::string> hypothesisTokens;
+    		for(auto& hyp : hypotheses)
+    		{
+    			std::vector<std::string> tokens = hyp->getBestHypothesis()->getTokens();
+				hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(tokens), std::end(tokens));
+    		}
+
+    		double localWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
+
+    		if(SLM::Logging::getInstance().doLog(SLM::LoggingLevel::ALL))
+			{
+				L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
+			}
+
+
+    		globalWER.push_back(localWER);
+			L_I << r.first << "\t" << localWER << "\n";
     	}
 
 
-//    	if(po.isProgramMode(SLM::ProgramMode::SELECTBEST))
-    	if(false)
+    	if(po.isProgramMode(SLM::ProgramMode::SELECTBEST))
+//    	if(false)
 		{
     		collectHypothesesForReferenceId(r.second, po.getInputPath());
 

@@ -71,13 +71,18 @@ std::vector<std::shared_ptr<SLM::Hypothesis>> AllHypotheses::getHypotheses() con
 	return hypotheses;
 }
 
+std::shared_ptr<SLM::Hypothesis> BestHypotheses::getBestHypothesis() const
+{
+	return bestHypothesis;
+}
+
 BestHypotheses::BestHypotheses(const std::string& fileName, const std::string& path, SLM::Sorter* sorter)
 	: Hypotheses(fileName, path)
 {
 	std::string fullPath = path + "/" + fileName;
 	std::ifstream stream(fullPath.c_str(), std::ios::binary);
 
-	std::cout << fileName << std::endl;
+//	std::cout << fileName << std::endl;
 
 	std::string line;
 	if (stream.is_open())
@@ -86,7 +91,7 @@ BestHypotheses::BestHypotheses(const std::string& fileName, const std::string& p
 		{
 			try
 			{
-				std::shared_ptr<SLM::PartialHypothesis> h = std::make_shared<PartialHypothesis>(line);
+				std::shared_ptr<SLM::Hypothesis> h = std::make_shared<Hypothesis>(line);
 
 				if(!bestHypothesis) // nullptr
 				{
@@ -95,7 +100,7 @@ BestHypotheses::BestHypotheses(const std::string& fileName, const std::string& p
 
 				if(sorter->compare(bestHypothesis, h))
 				{
-					std::cout << h->getLanguageModelScore() << " is better than " << bestHypothesis->getLanguageModelScore() << std::endl;
+//					std::cout << h->getLanguageModelScore() << " is better than " << bestHypothesis->getLanguageModelScore() << std::endl;
 					bestHypothesis = h;
 
 				}
