@@ -64,7 +64,7 @@ void Logging::set(const std::string& level)
 	else if(level == LL_VERBOSE) loggingLevel = LoggingLevel::VERBOSE;
 	else if(level == LL_NONE) loggingLevel = LoggingLevel::NONE;
 
-	std::cout << "Debug output level is " << toString(loggingLevel) << std::endl;
+	L_V << "Debug output level is " << toString(loggingLevel) << "\n";
 }
 
 bool Logging::doLog(LoggingLevel currentLevel) const

@@ -36,12 +36,20 @@ bool CGNTextPreprocessor::isFiller(const std::string& w)
 	return it != SLM::CGNTextPreprocessor::fillers.end();
 }
 
-std::vector<std::string> CGNTextPreprocessor::removeFillers(std::vector<std::string>& words)
+std::vector<std::string> CGNTextPreprocessor::removeFillers(std::vector<std::string>& words, bool removeMarkers)
 {
 	words.erase(std::remove_if(words.begin(),
 							   words.end(),
 	                           [](const std::string& x){return SLM::CGNTextPreprocessor::isFiller(x);}),
 				words.end());
+
+	if(removeMarkers)
+	{
+		words.erase(std::remove_if(	words.begin(),
+									words.end(),
+			                        [](const std::string& x){return x == "<s>" || x == "</s>";}),
+						words.end());
+	}
 
 	return words;
 }

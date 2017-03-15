@@ -24,7 +24,7 @@ public:
 	CGNTextPreprocessor();
 	virtual ~CGNTextPreprocessor();
 
-	std::vector<std::string> removeFillers(std::vector<std::string>& words);
+	std::vector<std::string> removeFillers(std::vector<std::string>& words, bool removeMarkers = false);
 protected:
 	static bool isFiller(const std::string& word);
 
