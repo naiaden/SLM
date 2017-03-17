@@ -46,6 +46,11 @@ double WER(const std::vector<std::string> &ref, const std::vector<std::string> &
 	return 100* (result/(double) s1len);
 }
 
+double OOV(int count, int oov)
+{
+	return (count ? 100.0*oov/(double) count : 0.0);
+}
+
 std::unordered_map<std::string, SLM::ReferenceId> collectReferenceIds(const std::string& path)
 {
 	std::unordered_map<std::string, SLM::ReferenceId> referenceIds;

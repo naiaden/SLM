@@ -68,7 +68,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 
 	clp.add<std::string>("inputpath", 'i', "directory with nbest lists", true);
 	clp.add<std::string>("outputpath", 'o', "directory to write results", true);
-	clp.add<std::string>("referencepath", 'r', "directory with reference files (only for rescoring)", false);
+	clp.add<std::string>("referencepath", 'r', "directory with reference files", true);
 
 	clp.add<std::string>("vocabulary", 'v', "vocabulary file (only for oov counting)", false);
 

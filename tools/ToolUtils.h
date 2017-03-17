@@ -15,6 +15,7 @@
 #include "ReferenceId.h"
 
 double WER(const std::vector<std::string> &ref, const std::vector<std::string> &hyp);
+double OOV(int count, int oov);
 
 std::unordered_map<std::string, SLM::ReferenceId> collectReferenceIds(const std::string& path);
 std::vector<std::string> getFilesForReferenceId(SLM::ReferenceId& rId, const std::string& path);
