@@ -39,20 +39,77 @@ int main(int argc, char** argv)
 
     std::unordered_map<std::string, SLM::ReferenceId> referenceIds = referenceIdsPreprocessing(collectReferenceIds(po.getInputPath()), po.getLimitedReferenceIds());
 
-
+    int compOov = 0;
+    int compCount = 0;
     for(auto & r : referenceIds)
     {
     	SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
 
     	int oov = 0;
+
     	for(auto & t : fr.getTokens())
     	{
-    		if(wl.contains(t)) ++oov;
+    		++compCount;
+
+    		if(!wl.contains(t))
+			{
+    			++oov;
+    			++compOov;
+			}
     	}
-    	std::cout << r.first << "\t" << oov << std::endl;
+
+    	std::cout << r.first << "\t" << OOV(fr.getTokens().size(), oov) << std::endl;
     }
+    std::cout << "Component OOV: " << OOV(compCount, compOov) << std::endl;
 
 
+    for(auto & r : referenceIds)
+	{
+		std::vector<std::shared_ptr<SLM::AllHypotheses>> hypotheses;
+		std::vector<std::string> hypothesesFiles = getFilesForReferenceId(r.second, po.getInputPath());
+		for(auto& hFile : hypothesesFiles)
+		{
+			hypotheses.push_back(std::make_shared<SLM::AllHypotheses>(hFile, po.getInputPath()));
+		}
+
+		int refOov = 0;
+		int refCount = 0;
+		double hypAvgOov = 0.0;
+
+		std::vector<std::string> hypothesisTokens;
+		for(auto& hypFiles : hypotheses)
+		{
+			for(auto& hyp: hypFiles->getHypotheses())
+			{
+//				std::cout << "[" << hyp->getTokens().size() << "] " << join(hyp->getTokens(), "_") << std::endl;
+				if(hyp->getTokens().size())
+				{
+					int hypOov = 0;
+					int hypCount = 0;
+
+					for(auto & t: hyp->getTokens())
+					{
+						++hypCount;
+						if(!wl.contains(t))
+						{
+							++hypOov;
+							std::cout << hypFiles->getFileName() << "\t" << t << " is out-of-vocabulary" << std::endl;
+						}
+//						else { std::cout << t << " wel" << std::endl; }
+					}
+//					hypAvgOov = OOV(hyp->getTokens().size(), hypOov);
+
+//					std::cout << r.first << "\t hyp avg " << OOV(hypCount, hypOov) << "\t" << hypOov << std::endl;
+
+					refCount += hypCount;
+					refOov += hypOov;
+				}
+//				break;
+			}
+		}
+
+		std::cout << r.first << "\t all avg" << OOV(refCount, refOov) << "\t" << refOov << std::endl;
+	}
 //
 //
 //    for (auto & r : referenceIds)
