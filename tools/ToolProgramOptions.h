@@ -40,6 +40,8 @@ public:
 	std::vector<std::string> getLimitedReferenceIds() const;
 
 	SLM::Sorter* getSorter();
+
+	std::string getVocabFile() const;
 protected:
 	cmdline::parser clp;
 
@@ -57,6 +59,8 @@ protected:
 
 	std::vector<std::string> limitedReferenceIds;
 	bool reverse;
+
+	std::string vocabFile;
 };
 
 } /* namespace SLM */
