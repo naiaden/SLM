@@ -160,8 +160,10 @@ bool PowerWeightedSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std
 	if(!l || !r)
 		return false;
 	if(reverse)
+        {
 		pow(acousticWeight,l->getAcousticScore()) - pow(languageModelWeight,l->getLanguageModelScore())
 			< pow(acousticWeight,r->getAcousticScore()) - pow(languageModelWeight,r->getLanguageModelScore());
+        }
     return pow(acousticWeight,l->getAcousticScore()) - pow(languageModelWeight,l->getLanguageModelScore())
     		> pow(acousticWeight,r->getAcousticScore()) - pow(languageModelWeight,r->getLanguageModelScore());
 }

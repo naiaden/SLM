@@ -47,7 +47,7 @@ int main(int argc, char** argv)
     	int oov = 0;
     	for(auto & t : fr.getTokens())
     	{
-    		if(!wl.contains(t)) ++oov;
+    		if(wl.contains(t)) ++oov;
     	}
     	std::cout << r.first << "\t" << oov << std::endl;
     }
