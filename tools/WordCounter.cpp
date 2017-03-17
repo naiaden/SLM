@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
 	SLM::CGNTextPreprocessor tpp;
 
-	SLM::WordList wl(po.getInputPath(), po.getVocabFile());
+	SLM::WordList wl(po.getVocabFile());
 
     std::unordered_map<std::string, SLM::ReferenceId> referenceIds = referenceIdsPreprocessing(collectReferenceIds(po.getInputPath()), po.getLimitedReferenceIds());
 

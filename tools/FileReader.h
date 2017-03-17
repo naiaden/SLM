@@ -16,7 +16,9 @@ namespace SLM {
 
 class FileReader {
 public:
+
 	FileReader(const std::string& inputDir, const std::string& fileName);
+	FileReader(const std::string& fileName);
 	virtual ~FileReader();
 
 protected:

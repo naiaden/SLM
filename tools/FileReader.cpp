@@ -19,6 +19,11 @@ FileReader::FileReader(const std::string& inputDir, const std::string& fileName)
 
 }
 
+FileReader::FileReader(const std::string& fileName) {
+	file.open(fileName);
+
+}
+
 FileReader::~FileReader() {
 	file.close();
 }

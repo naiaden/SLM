@@ -16,7 +16,7 @@ namespace SLM {
 
 class WordList : public SLM::FileReader {
 public:
-	WordList(const std::string& inputDir, const std::string& file);
+	WordList(const std::string& file);
 	virtual ~WordList();
 
 	bool contains(const std::string& word) const;

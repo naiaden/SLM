@@ -11,7 +11,7 @@
 
 namespace SLM {
 
-WordList::WordList(const std::string& inputDir, const std::string& fileName) : FileReader(inputDir, fileName) {
+WordList::WordList(const std::string& fileName) : FileReader(fileName) {
 	std::string line;
 	if (file.is_open())
 	{
