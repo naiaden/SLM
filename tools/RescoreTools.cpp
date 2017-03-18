@@ -42,6 +42,8 @@ int main(int argc, char** argv)
 
     std::vector<double> globalWER;
 
+    SLM::GenericFileWriter fw(po.getOutputPath(), "selected_hyps");
+
     for (auto & r : referenceIds)
     {
 
@@ -75,6 +77,8 @@ int main(int argc, char** argv)
 			{
 				L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
 			}
+
+    		fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
 
 
     		globalWER.push_back(localWER);

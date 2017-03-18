@@ -19,7 +19,22 @@ FileWriter::~FileWriter() {
 	file.close();
 }
 
+////////////////////////
 
+GenericFileWriter::GenericFileWriter(const std::string& outputDir, const std::string& fileName)
+	: FileWriter(outputDir, fileName)
+{
+
+}
+
+GenericFileWriter::~GenericFileWriter()
+{
+}
+
+void GenericFileWriter::addLine(const std::string& line)
+{
+	file << line << "\n";
+}
 
 
 ////////////////////////

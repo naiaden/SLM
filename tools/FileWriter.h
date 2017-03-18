@@ -24,6 +24,16 @@ protected:
 	std::ofstream file;
 };
 
+class GenericFileWriter : public FileWriter
+{
+public:
+	GenericFileWriter(const std::string& outputDir, const std::string& fileName);
+	virtual ~GenericFileWriter();
+
+	void addLine(const std::string& line);
+protected:
+};
+
 class ReferenceFileWriter : public FileWriter
 {
 public:
