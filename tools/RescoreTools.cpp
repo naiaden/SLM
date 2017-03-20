@@ -78,8 +78,6 @@ int main(int argc, char** argv)
 				L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
 			}
 
-    		fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
-
 
     		globalWER.push_back(localWER);
 			L_I << r.first << "\t" << localWER << "\n";
@@ -115,6 +113,8 @@ int main(int argc, char** argv)
     		{
     			L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
     		}
+
+    		fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
 
     		globalWER.push_back(localWER);
     		L_I << r.first << "\t" << localWER << "\n";
