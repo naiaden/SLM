@@ -64,7 +64,7 @@ std::string toString(WeightMode mode)
 }
 
 ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
-	L_A << "ProgramOptions\t+ Processing program options\n";
+	L_A << "ToolProgramOptions\t+ Processing program options\n";
 
 	clp.add<std::string>("inputpath", 'i', "directory with nbest lists", true);
 	clp.add<std::string>("outputpath", 'o', "directory to write results", true);
