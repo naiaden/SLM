@@ -116,6 +116,9 @@ template<unsigned N> struct PYPLM {
                 ar & p;
 	}
 
+	double prob(const Pattern& w, const Pattern& context) const;
+	double prob(const Pattern& w, const Pattern& context, double boProb) const;
+
 	PYPLM<N - 1> backoff;
 	tied_parameter_resampler<crp<Pattern>> tr;
 	std::unordered_map<Pattern, crp<Pattern>> p;  // .first = context .second = CRP
@@ -138,9 +141,17 @@ public:
 	bool isOOV(const Pattern& word);
 
 	PatternContainer* getNextPattern();
+
+	void increment(const Pattern& w, const Pattern& context);
+	void decrement(const Pattern& w, const Pattern& context);
+
+	void resample_hyperparameters();
+	double log_likelihood() const;
 private:
 	void initialise(TrainProgramOptions& trainProgramOptions);
 	PatternModelOptions fromTrainProgramOptions(const TrainProgramOptions& trainProgramOptions);
+
+	cpyp::MT19937 _eng;
 protected:
 	PatternModelOptions patternModelOptions;
 

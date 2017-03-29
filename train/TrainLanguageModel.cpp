@@ -9,6 +9,29 @@
 
 #include "Logging.h"
 
+namespace cpyp
+{
+// full backoff
+	template<unsigned N>
+	double cpyp::PYPLM<N>::prob(const Pattern& w, const Pattern& context) const
+	{
+		const double bo = backoff.prob(w, context);
+		return prob(w, context, bo);
+	}
+
+	template<unsigned N>
+	double cpyp::PYPLM<N>::prob(const Pattern& w, const Pattern& context, double boProb) const
+	{
+		Pattern lookup = (N==1) ? Pattern() : Pattern(context.reverse(), 0, N-1);
+
+		auto it = p.find(lookup);
+		if (it == p.end()) { // if the pattern is not in the train data
+			return boProb;
+		}
+		return it->second.prob(w, boProb);
+	}
+}
+
 namespace SLM {
 
 TrainLanguageModel::TrainLanguageModel(SLM::TrainProgramOptions& trainProgramOptions) {
@@ -230,6 +253,25 @@ PatternContainer* TrainLanguageModel::getNextPattern()
 //	L_V << "TrainLanguageModel: next pattern (6)\n";
 
 	return patternContainer;
+}
+
+void TrainLanguageModel::increment(const Pattern& w, const Pattern& context)
+{
+	lm.increment(w, context, _eng);
+}
+void TrainLanguageModel::decrement(const Pattern& w, const Pattern& context)
+{
+	lm.decrement(w, context, _eng);
+}
+
+void TrainLanguageModel::resample_hyperparameters()
+{
+	lm.resample_hyperparameters(_eng);
+}
+
+double TrainLanguageModel::log_likelihood() const
+{
+	return lm.log_likelihood();
 }
 
 //void TrainLanguageModel::loadLanguageModel(const std::string& inputFile)

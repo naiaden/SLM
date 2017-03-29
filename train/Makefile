@@ -4,4 +4,4 @@ COCO_LIB=/home/louis/local/lib
 all: asd
 
 train: TrainModel.cpp
-	$(CXX) -std=c++17 -g -O3 -I.. -o $@ $< TrainLanguageModel.cpp TrainProgramOptions.cpp ../Utils.cpp ../TextPreprocessor.cpp ../Logging.cpp ../ProgramOptions.cpp -lcolibricore -lbz2 -lboost_serialization -lstdc++fs -I$(COCO_INCLUDE) -L$(COCO_LIB)
+	$(CXX) -std=c++17 -g -O0 -I.. -o $@ $< TrainProgressPrinter.cpp TrainLanguageModel.cpp TrainProgramOptions.cpp ../Utils.cpp ../TextPreprocessor.cpp ../Logging.cpp ../ProgramOptions.cpp -lcolibricore -lbz2 -lboost_serialization -lstdc++fs -I$(COCO_INCLUDE) -L$(COCO_LIB)
