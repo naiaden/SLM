@@ -13,6 +13,8 @@
 #include <classdecoder.h>
 #include <patternmodel.h>
 
+#include <unordered_set>
+
 #include "cpyp/m.h"
 #include "cpyp/random.h"
 #include "cpyp/crp.h"
@@ -25,6 +27,26 @@
 namespace SLM
 {
 	class TrainLanguageModel;
+
+	class PatternContainer
+	{
+	public:
+		PatternContainer()
+		{
+
+		}
+
+		PatternContainer(Pattern focus, Pattern context, int sentenceNumber, int patternNumber)
+			: focus(focus), context(context), sentenceNumber(sentenceNumber), patternNumber(patternNumber)
+		{
+
+		}
+
+		int sentenceNumber;
+		int patternNumber;
+		Pattern focus;
+		Pattern context;
+	};
 } /* namespace SLM */
 
 // A not very memory-efficient implementation of an N-gram LM based on PYPs
@@ -114,6 +136,8 @@ public:
 
 	const PatternSet<uint64_t>& getVocabulary() const;
 	bool isOOV(const Pattern& word);
+
+	PatternContainer* getNextPattern();
 private:
 	void initialise(TrainProgramOptions& trainProgramOptions);
 	PatternModelOptions fromTrainProgramOptions(const TrainProgramOptions& trainProgramOptions);
@@ -126,6 +150,13 @@ protected:
 	PatternModel<uint32_t> patternModel;
 	PatternSet<uint64_t> vocabulary;
 	::cpyp::PYPLM<4> lm;
+
+	PatternContainer* patternContainer = new PatternContainer();
+	IndexedCorpus::iterator indexedCorpusIter;
+	std::unordered_set<PatternPointer>::iterator patternPointerIter;
+	std::unordered_set<PatternPointer> reverseIndex;
+	uint64_t patternNumber = 0;
+	uint64_t sentenceNumber = 0;
 };
 
 } /* namespace SLM */
