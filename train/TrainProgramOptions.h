@@ -27,7 +27,7 @@ public:
 	std::string getOutputPath() const;
 
 	bool doSkipgrams() const;
-	bool doExtend() const;
+	std::string getExtendModel() const;
 
 	int getUnigramThreshold() const;
 	int getNgramThreshold() const;
@@ -60,7 +60,7 @@ protected:
 	std::string outputPath;
 
 	bool useSkipgrams = false;
-	bool extendModel = false;
+	std::string extendModel;
 
 	int unigramThreshold = 1;
 	int ngramThreshold = 1;

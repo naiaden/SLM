@@ -45,7 +45,7 @@ TrainProgramOptions::TrainProgramOptions(int argc, char** argv) {
 	clp.add<int>("unigramthreshold", 'W', "unigram threshold", false, 1);
 	clp.add<int>("prunedonsubsumed", 'p', "prune all n-grams that are not subsumed by higher order n-grams", false, 0);
 
-//	clp.add<std::string>("extendmodel", 'E', "extend current model (with larger n or skips)", false, "");
+	clp.add<std::string>("extendmodel", 'E', "extend current model (with larger n or skips)", false, "");
 	clp.parse_check(argc, argv);
 
 
@@ -56,6 +56,8 @@ TrainProgramOptions::TrainProgramOptions(int argc, char** argv) {
 	trainPatternModelFile = clp.get<std::string>("loadtrainpatternmodel");
 	trainVocabularyFile = clp.get<std::string>("loadtrainvocabulary");
 	trainSerialisedFile = clp.get<std::string>("loadtrainserialisedmodel");
+
+	extendModel = clp.get<std::string>("extendmodel");
 
 	samples = clp.get<int>("samples");
 	burnin = clp.get<int>("burnin");
@@ -84,7 +86,7 @@ TrainProgramOptions::TrainProgramOptions(int argc, char** argv) {
 			<< "\n"
 			<< std::setw(30) << "Writing model to: " << outputPath << "\n"
 			<< std::setw(30) << "With model name: " << modelName << "\n"
-			<< std::setw(30) << "Extending the model: " << (extendModel ? "yes" : "no") << "\n"
+			<< std::setw(30) << "Extending the model: " << (extendModel.empty() ? "no" : extendModel) << "\n"
 			<< "\n"
 			<< std::setw(30) << "Corpus file: " << trainCorpusFile << "\n"
 			<< std::setw(30) << "Pattern model file: " << trainPatternModelFile << "\n"
@@ -167,7 +169,7 @@ bool TrainProgramOptions::doSkipgrams() const
 {
 	return useSkipgrams;
 }
-bool TrainProgramOptions::doExtend() const
+std::string TrainProgramOptions::getExtendModel() const
 {
 	return extendModel;
 }

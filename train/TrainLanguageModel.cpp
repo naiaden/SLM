@@ -118,22 +118,7 @@ void TrainLanguageModel::initialise(TrainProgramOptions& trainProgramOptions)
 		patternModel = PatternModel<uint32_t>(indexedCorpus);
 	}
 
-	if(trainProgramOptions.doExtend())
-	{
-		if(trainProgramOptions.getPatternModelFile().empty())
-		{
-//            std::cout << "CCI: Load existing model to extend from " << _tpo.extendModel << std::endl;
-//            trainPatternModel.load(_tpo.extendModel, _pmo);
-//            std::cout << "CCI: Train the extended model from " << _tpo.clo.loadTrainCorpus << std::endl;
-//            trainPatternModel.train(_tpo.clo.loadTrainCorpus, _pmo, nullptr, nullptr, true, 1, true);
-//            std::cout << "CCI: Write extended pattern model to " << _tpo.generalBasePatternModelFileName << std::endl;
-//            trainPatternModel.write(_tpo.generalBasePatternModelFileName);
-		} else
-		{
-			L_V << "TrainLanguageModel: Load pattern modelfrom " << trainProgramOptions.getTrainCorpusFile() << "\n";
-			patternModel.train(trainProgramOptions.getPatternModelFile(), patternModelOptions);
-		}
-	} else
+	if(trainProgramOptions.getExtendModel().empty())
 	{
 		if(trainProgramOptions.getPatternModelFile().empty())
 		{
@@ -144,20 +129,29 @@ void TrainLanguageModel::initialise(TrainProgramOptions& trainProgramOptions)
 			patternModel.write(patternModelOutputFile);
 		} else
 		{
-			L_V << "TrainLanguageModel: Load pattern model from " << trainProgramOptions.getTrainCorpusFile() << "\n";
+			L_V << "TrainLanguageModel: Load pattern model from " << trainProgramOptions.getPatternModelFile() << "\n";
+			patternModel.train(trainProgramOptions.getPatternModelFile(), patternModelOptions);
+		}
+	} else
+	{
+		if(trainProgramOptions.getPatternModelFile().empty())
+		{
+			L_V << "CCI: Load existing model to extend from " << trainProgramOptions.getExtendModel() << "\n";
+			std::string extendModel = trainProgramOptions.getExtendModel();
+			patternModel.load(extendModel, patternModelOptions);
+            L_V << "CCI: Train the extended model from " << trainProgramOptions.getTrainCorpusFile() << std::endl;
+            patternModel.train(trainProgramOptions.getTrainCorpusFile(), patternModelOptions, nullptr, nullptr, true, 1, true);
+            L_V << "CCI: Write extended pattern model to " << trainProgramOptions.getPatternModelFile() << std::endl;
+            patternModel.write(trainProgramOptions.getPatternModelFile());
+		} else
+		{
+			L_V << "TrainLanguageModel: Load pattern modelfrom " << trainProgramOptions.getTrainCorpusFile() << "\n";
 			patternModel.train(trainProgramOptions.getPatternModelFile(), patternModelOptions);
 		}
 	}
-//
-//	L_V << "LanguageModel: Extending the class encoder\n";
-//	extendClassEncoder(programOptions.getTestInputFiles(), programOptions.getTestCorpus());
-//
-//	L_V << "LanguageModel: Loading language model\n";
-//	loadLanguageModel(programOptions.getTrainLanguageModel());
-//
+
 	L_V << "TrainLanguageModel: Initialise vocabulary\n";
 	vocabulary = patternModel.extractset(1,1);
-////	vocabulary = std::unordered_set<Pattern>(vocabularySet.begin(), vocabularySet.end());
 	L_V << "TrainLanguageModel: Vocabulary contains " << vocabulary.size() << " items\n";
 }
 
