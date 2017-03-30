@@ -51,16 +51,19 @@ int BackoffStrategy::nextFile()
 	totalCount += fileCount;
 	totalOovs += fileOovs;
 	totalLLH += fileLLH;
+	totalSentences += sentences;
 
 	if(files)
 	{
 //		done();
 
 		double filePerplexity = pow(2, fileLLH/(fileCount/*-totalOovs*/));
-		L_I << "BackoffStrategy: " << name() << "\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
+		L_I << "BackoffStrategy: FILE (" << name() << ")\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
+		outputFile << "BackoffStrategy: FILE (" << name() << ")\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
+
 
 		double totalPerplexity = pow(2, totalLLH/(totalCount/*-totalOovs*/));
-		L_I << "BackoffStrategy: " << name() << "\tS" << sentences << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
+		L_I << "BackoffStrategy: TOTAL (" << name() << ")\tS" << sentences << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
 
 	}
 
@@ -88,7 +91,7 @@ int BackoffStrategy::nextLine()
 	if(sentences)
 	{
 		double sentPerplexity = pow(2, sentLLH/(1.0*sentCount/*-sentOovs*/));
-		L_V << "BackoffStrategy: (" << name() << ") sentence:" << sentences << "\tppl:" << sentPerplexity << "\tcount:" << (sentCount/*-sentOovs*/) << "\toovs:" << sentOovs << "\tllh:" << sentLLH << std::endl;
+		L_V << "BackoffStrategy: SENT (" << name() << ") sentence:" << sentences << "\tppl:" << sentPerplexity << "\tcount:" << (sentCount/*-sentOovs*/) << "\toovs:" << sentOovs << "\tllh:" << sentLLH << std::endl;
 		sentsProbFile << sentences << "\t" << sentPerplexity << "\t" << (sentCount/*-sentOovs*/) << "\t" << sentOovs << "\t" << sentLLH << std::endl;
 	}
 
@@ -107,25 +110,30 @@ int BackoffStrategy::nextLine()
 
 void BackoffStrategy::done()
 {
-	double filePerplexity = pow(2, fileLLH/(fileCount/*-totalOovs*/));
-	L_I << "BackoffStrategy: " << name() << "\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
+	nextLine();
 
+//	double filePerplexity = pow(2, fileLLH/(fileCount/*-totalOovs*/));
+//	L_I << "BackoffStrategy: " << name() << "\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
+	--sentences;
 
 	//	L_V << "BackoffStrategy: done\n";
-	nextLine();
+
 	nextFile();
 
-	if(files)
-	{
-		L_I << "BackoffStrategy: " << name() << " #C" << fileCount << "/O" << fileOovs << "[S" << sentences << "]:L" << fileLLH << "\n";
-	}
+	double totalPerplexity = pow(2, totalLLH/(totalCount/*-totalOovs*/));
+	outputFile << "BackoffStrategy: TOTAL (" << name() << ")\tS" << totalSentences << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
+
+//	if(files)
+//	{
+//		L_I << "BackoffStrategy: " << name() << " #C" << fileCount << "/O" << fileOovs << "[S" << sentences << "]:L" << fileLLH << "\n";
+//	}
 
 //	totalCount += fileCount;
 //	totalOovs += fileOovs;
 //	totalLLH += fileLLH;
 
-	double totalPerplexity = pow(2, totalLLH/(totalCount/*-totalOovs*/));
-	L_I << "BackoffStrategy: " << name() << "\tS" << sentences << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
+//	double totalPerplexity = pow(2, totalLLH/(totalCount/*-totalOovs*/));
+//	L_I << "BackoffStrategy: " << name() << "\tS" << sentences << "\tP" << totalPerplexity << "\tC" << (totalCount/*-totalOovs*/) << "\tO" << totalOovs << "\tL" << totalLLH << std::endl;
 }
 
 void BackoffStrategy::writeProbToFile(const Pattern& focus, const Pattern& context, double logProb, bool isOOV)

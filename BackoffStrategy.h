@@ -52,7 +52,6 @@ protected:
 	double fileLLH = 0.0;
 	unsigned long long fileCount = 0;
 	unsigned long long fileOovs = 0;
-	unsigned long fileSentences = 0;
 
 	unsigned long sentences = 0;
 	double sentLLH = 0.0;

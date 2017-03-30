@@ -484,9 +484,6 @@ namespace cpyp
 		L_S << "LanguageModel: getNormalisationFactor: context length: "  << " " << context.size() << "\n";
 		int contextSize = context.size();
 
-		// if(count(uw) > 0) return (1-ps)/(vs-i)
-		// else return
-
 		auto iter = normalisationCache.find(context);
 		if(iter == normalisationCache.end())
 		{
@@ -520,15 +517,15 @@ namespace cpyp
 				{
 					if(context.isgap(1))
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 4: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 4: \n";
 						ps += prob_a_cd(dish->first, context, is, probCache).second;
 					} else if(context.isgap(2))
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 5: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 5: \n";
 						ps += prob_ab_d(dish->first, context, is, probCache).second;
 					} else if(context.isgap(1) && context.isgap(2))
 					{
-						L_S << "LanguageModel: getNormalisationFactor: 6: \n";
+//						L_S << "LanguageModel: getNormalisationFactor: 6: \n";
 						ps += prob_a__d(dish->first, context, is, probCache).second;
 					} else
 					{
@@ -548,13 +545,14 @@ namespace cpyp
 				L_S << "LanguageModel: getNormalisationFactor: [" << context.size() << "]!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
 
 
-
-//			int numberOfWordsAfterContext;
-
+			double rv = 0;
 			if(ps > 0.0)
-				return (1.0 - ps)/(vocabSize - i);
-			else
-				return 0;
+				rv = (1.0 - ps)/(vocabSize - i);
+
+			normalisationCache.emplace(context, rv);
+
+			return rv;
+
 
 		} else
 		{

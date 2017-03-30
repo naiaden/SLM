@@ -65,6 +65,7 @@ int main(int argc, char** argv) {
 		}
 
 	}
+	std::cout << "DONE" << std::endl;
 	bo.done();
 
 	return EXIT_SUCCESS;
