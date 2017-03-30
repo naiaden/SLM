@@ -158,19 +158,17 @@ void TrainLanguageModel::initialise(TrainProgramOptions& trainProgramOptions)
 	indexedCorpusIter = indexedCorpus->begin();
 	reverseIndex = patternModel.getreverseindex(indexedCorpusIter.index(), 0, 0, 4);
 	patternPointerIter = reverseIndex.begin();
-
-	std::cout << "Size of revidx: " << reverseIndex.size() << std::endl;
 }
 
 PatternContainer* TrainLanguageModel::getNextPattern()
 {
-	L_V << "TrainLanguageModel: next pattern\n";
+	L_P << "TrainLanguageModel: next pattern\n";
 
 	if(patternPointerIter == reverseIndex.end())
 	{
 		do
 		{
-			L_V << "TrainLanguageModel: End of patternPointerIter\n";
+			L_P << "TrainLanguageModel: End of patternPointerIter\n";
 			++indexedCorpusIter;
 			++sentenceNumber;
 
@@ -184,18 +182,12 @@ PatternContainer* TrainLanguageModel::getNextPattern()
 			}
 
 		} while (patternPointerIter == reverseIndex.end());
-
-
 	}
-
-//	L_V << "TrainLanguageModel: next pattern (1)\n";
 
 	if(indexedCorpusIter == indexedCorpus->end())
 	{
-		L_V << "TrainLanguageModel: End of indexedCorpusIter\n";
+		L_P << "TrainLanguageModel: End of indexedCorpusIter\n";
 
-//		focus = nullptr;
-//		context = nullptr;
 		sentenceNumber = 0;
 		patternNumber = 0;
 
@@ -206,28 +198,16 @@ PatternContainer* TrainLanguageModel::getNextPattern()
 		return nullptr;
 	}
 
-//	L_V << "TrainLanguageModel: next pattern (2)\n";
-
-//	if(!(*patternPointerIter)) std::cout << "HELP" << std::endl;
 	PatternPointer pp = *patternPointerIter;
-
-//	L_V << "TrainLanguageModel: next pattern (3)\n";
-
 	Pattern pattern(pp);
-
-//	L_V << "TrainLanguageModel: next pattern (4)\n";
 
 	patternContainer->context = Pattern(pattern, 0, 4 - 1);
 	patternContainer->focus = Pattern(pattern, 4-1, 1);
-
-//	L_V << "TrainLanguageModel: next pattern (5)\n";
 
 	patternContainer->patternNumber = ++patternNumber;
 	patternContainer->sentenceNumber = sentenceNumber;
 
 	++patternPointerIter;
-
-//	L_V << "TrainLanguageModel: next pattern (6)\n";
 
 	return patternContainer;
 }
