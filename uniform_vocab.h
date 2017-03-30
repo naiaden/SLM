@@ -23,7 +23,7 @@ struct UniformVocabulary {
   double glm_prob(const Pattern& , const Pattern&, const ClassDecoder *const) const { return p0; }
   template<typename Engine>
   void resample_hyperparameters(Engine&) {}
-  double log_likelihood() const { /*std::cerr << "(draws:" << draws << ",log(p0):" << log(p0) << ")";*/ return draws * log(p0); }
+  double log_likelihood() const { std::cout << "(draws:" << draws << ",log(p0):" << log(p0) << ")\n"; return draws * log(p0); }
   template<class Archive> void serialize(Archive& ar, const unsigned int) {
     ar & p0;
     ar & draws;

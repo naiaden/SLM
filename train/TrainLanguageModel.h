@@ -24,6 +24,8 @@
 
 #include "TrainProgramOptions.h"
 
+#include "Logging.h"
+
 namespace SLM
 {
 	class TrainLanguageModel;
@@ -101,6 +103,7 @@ template<unsigned N> struct PYPLM {
 	}
 
 	double log_likelihood() const {
+		std::cout << backoff.log_likelihood() << " + " << tr.log_likelihood() << std::endl;
 		return backoff.log_likelihood() + tr.log_likelihood();
 	}
 
@@ -115,6 +118,9 @@ template<unsigned N> struct PYPLM {
 		//ar & tr;
                 ar & p;
 	}
+
+	double prob(const Pattern& w, const Pattern& context) const;
+	double prob(const Pattern& w, const Pattern& context, double boProb) const;
 
 	PYPLM<N - 1> backoff;
 	tied_parameter_resampler<crp<Pattern>> tr;
@@ -138,9 +144,19 @@ public:
 	bool isOOV(const Pattern& word);
 
 	PatternContainer* getNextPattern();
+
+	void increment(const Pattern& w, const Pattern& context);
+	void decrement(const Pattern& w, const Pattern& context);
+
+	void resample_hyperparameters();
+	double log_likelihood() const;
+
+	void serialise(const std::string& fileName);
 private:
 	void initialise(TrainProgramOptions& trainProgramOptions);
 	PatternModelOptions fromTrainProgramOptions(const TrainProgramOptions& trainProgramOptions);
+
+	cpyp::MT19937 _eng;
 protected:
 	PatternModelOptions patternModelOptions;
 

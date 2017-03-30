@@ -9,11 +9,40 @@
 
 #include "Logging.h"
 
+#include "cpyp/boost_serializers.h"
+#include <boost/serialization/vector.hpp>
+//#include <boost/serialization/unordered_map.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+
+namespace cpyp
+{
+// full backoff
+	template<unsigned N>
+	double cpyp::PYPLM<N>::prob(const Pattern& w, const Pattern& context) const
+	{
+		const double bo = backoff.prob(w, context);
+		return prob(w, context, bo);
+	}
+
+	template<unsigned N>
+	double cpyp::PYPLM<N>::prob(const Pattern& w, const Pattern& context, double boProb) const
+	{
+		Pattern lookup = (N==1) ? Pattern() : Pattern(context.reverse(), 0, N-1);
+
+		auto it = p.find(lookup);
+		if (it == p.end()) { // if the pattern is not in the train data
+			return boProb;
+		}
+		return it->second.prob(w, boProb);
+	}
+}
+
 namespace SLM {
 
 TrainLanguageModel::TrainLanguageModel(SLM::TrainProgramOptions& trainProgramOptions) {
 	initialise(trainProgramOptions);
-
+	lm = ::cpyp::PYPLM<4>(vocabulary.size(), 1, 1, 1, 1); // initialise return vocab size?
 }
 
 TrainLanguageModel::~TrainLanguageModel() {
@@ -154,6 +183,7 @@ void TrainLanguageModel::initialise(TrainProgramOptions& trainProgramOptions)
 	vocabulary = patternModel.extractset(1,1);
 	L_V << "TrainLanguageModel: Vocabulary contains " << vocabulary.size() << " items\n";
 
+//	lm = ::cpyp::PYPLM<4>(vocabulary.size(), 1, 1, 1, 1);
 
 	indexedCorpusIter = indexedCorpus->begin();
 	reverseIndex = patternModel.getreverseindex(indexedCorpusIter.index(), 0, 0, 4);
@@ -210,6 +240,37 @@ PatternContainer* TrainLanguageModel::getNextPattern()
 	++patternPointerIter;
 
 	return patternContainer;
+}
+
+void TrainLanguageModel::increment(const Pattern& w, const Pattern& context)
+{
+	lm.increment(w, context, _eng);
+}
+void TrainLanguageModel::decrement(const Pattern& w, const Pattern& context)
+{
+	lm.decrement(w, context, _eng);
+}
+
+void TrainLanguageModel::resample_hyperparameters()
+{
+	lm.resample_hyperparameters(_eng);
+}
+
+double TrainLanguageModel::log_likelihood() const
+{
+	return lm.log_likelihood();
+}
+
+void TrainLanguageModel::serialise(const std::string& fileName)
+{
+	std::ofstream ofile(fileName, std::ios::binary);
+	if(!ofile.good())
+	{
+		std::cerr << "Failed to open " << fileName << " for writing" << std::endl;
+	}
+
+	boost::archive::binary_oarchive oa(ofile);
+	oa << lm;
 }
 
 //void TrainLanguageModel::loadLanguageModel(const std::string& inputFile)

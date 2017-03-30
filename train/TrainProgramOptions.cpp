@@ -160,6 +160,19 @@ void TrainProgramOptions::setPatternModelFile(const std::string& fileName)
 	trainPatternModelFile = fileName;
 }
 
+std::string TrainProgramOptions::getSerialisedFile() const
+{
+	return trainSerialisedFile;
+}
+std::string TrainProgramOptions::constructSerialisedFile() const
+{
+	return outputPath + "/" + modelName + "." + languagemodelExtension;
+}
+void TrainProgramOptions::setSerialisedFile(const std::string& fileName)
+{
+	trainSerialisedFile = fileName;
+}
+
 std::string TrainProgramOptions::getOutputPath() const
 {
 	return outputPath;
