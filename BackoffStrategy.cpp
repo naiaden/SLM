@@ -85,12 +85,10 @@ int BackoffStrategy::nextFile()
 
 int BackoffStrategy::nextLine()
 {
-	L_P << "BackoffStrategy: (" << name() << ") next sentence\n";
-
 	if(sentences)
 	{
 		double sentPerplexity = pow(2, sentLLH/(1.0*sentCount/*-sentOovs*/));
-		L_V << "BackoffStrategy: Sentence:" << sentences << "\tppl:" << sentPerplexity << "\tcount:" << (sentCount/*-sentOovs*/) << "\toovs:" << sentOovs << "\tllh" << sentLLH << std::endl;
+		L_V << "BackoffStrategy: (" << name() << ") sentence:" << sentences << "\tppl:" << sentPerplexity << "\tcount:" << (sentCount/*-sentOovs*/) << "\toovs:" << sentOovs << "\tllh:" << sentLLH << std::endl;
 		sentsProbFile << sentences << "\t" << sentPerplexity << "\t" << (sentCount/*-sentOovs*/) << "\t" << sentOovs << "\t" << sentLLH << std::endl;
 	}
 

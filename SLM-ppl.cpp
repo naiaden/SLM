@@ -32,15 +32,15 @@ int main(int argc, char** argv) {
 		L_V << "SLM: Reading " << inputFile << "\n";
 		std::ifstream file(inputFile);
 		bo.nextFile();
-		pt.nextFile();
+//		pt.nextFile();
 
 		std::string retrievedString;
 		while(std::getline(file, retrievedString))
 		{
 			// hack
-			retrievedString = "<s> <s> <s> " + retrievedString;
+//			retrievedString = "<s> <s> <s> " + retrievedString;
 			bo.nextLine();
-			pt.nextLine();
+//			pt.nextLine();
 
 			std::vector<std::string> words = whitespaceTokeniser(retrievedString);
 			for(int i = (4-1); i < words.size(); ++i)
@@ -57,10 +57,10 @@ int main(int argc, char** argv) {
 				Pattern focus = lm.toPattern(words[i]);
 
 				L_P << "SLM: [" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
-				bo.prob(context, focus);
-				pt.nextPattern();
+				bo.prob(context, focus, lm.isOOV(focus));
+//				pt.nextPattern();
 
-				pt.toString();
+//				pt.toString();
 			}
 		}
 
