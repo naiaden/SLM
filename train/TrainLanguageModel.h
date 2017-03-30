@@ -103,7 +103,6 @@ template<unsigned N> struct PYPLM {
 	}
 
 	double log_likelihood() const {
-		std::cout << backoff.log_likelihood() << " + " << tr.log_likelihood() << std::endl;
 		return backoff.log_likelihood() + tr.log_likelihood();
 	}
 
@@ -118,6 +117,8 @@ template<unsigned N> struct PYPLM {
 		//ar & tr;
                 ar & p;
 	}
+
+	void setVocabSize(unsigned vs) { backoff.setVocabSize(vs); }
 
 	double prob(const Pattern& w, const Pattern& context) const;
 	double prob(const Pattern& w, const Pattern& context, double boProb) const;

@@ -42,8 +42,10 @@ namespace SLM {
 
 TrainLanguageModel::TrainLanguageModel(SLM::TrainProgramOptions& trainProgramOptions) {
 	initialise(trainProgramOptions);
-	lm = ::cpyp::PYPLM<4>(vocabulary.size(), 1, 1, 1, 1); // initialise return vocab size?
+	lm.setVocabSize(vocabulary.size());
 }
+
+
 
 TrainLanguageModel::~TrainLanguageModel() {
 	// TODO Auto-generated destructor stub
@@ -183,7 +185,10 @@ void TrainLanguageModel::initialise(TrainProgramOptions& trainProgramOptions)
 	vocabulary = patternModel.extractset(1,1);
 	L_V << "TrainLanguageModel: Vocabulary contains " << vocabulary.size() << " items\n";
 
-//	lm = ::cpyp::PYPLM<4>(vocabulary.size(), 1, 1, 1, 1);
+	if(!indexedCorpus)
+	{
+		std::cerr << "WHAT" << std::endl;
+	}
 
 	indexedCorpusIter = indexedCorpus->begin();
 	reverseIndex = patternModel.getreverseindex(indexedCorpusIter.index(), 0, 0, 4);
