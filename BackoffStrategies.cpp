@@ -167,7 +167,15 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 
 		if(startsWith(token, "lim"))
 		{
-			InterpolationStrategy* is = new UniformInterpolationStrategy();
+			InterpolationStrategy* is;
+
+			if(endsWith(token, "random"))
+			{
+				is = new RandomInterpolationStrategy();
+			} else
+			{
+				is = new UniformInterpolationStrategy();
+			}
 
 			BackoffStrategy* bos = createLimitedBackoffStrategy(programOptions, lm, is);
 			if(bos) backoffStrategies.push_back(bos);

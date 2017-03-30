@@ -124,9 +124,9 @@ template<unsigned N> struct PYPLM {
 
 	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache, bool ignoreCache) const;
 
-	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache);
+	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize);
 
-	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache);
+	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize);
 
 	double log_likelihood() const {
 		return backoff.log_likelihood() + tr.log_likelihood();
@@ -162,6 +162,7 @@ public:
 	std::string toString(const Pattern& pattern);
 
 	const PatternSet<uint64_t>& getVocabulary() const;
+	unsigned getVocabularySize();
 	bool isOOV(const Pattern& word);
 	unsigned int count(const Pattern& pattern);
 
@@ -187,6 +188,7 @@ private:
 	PatternModelOptions patternModelOptions;
 
 	PatternSet<uint64_t> vocabulary;
+	unsigned vocabularySize = 0;
 	::cpyp::PYPLM<4> lm;
 };
 } // namespace SLM
