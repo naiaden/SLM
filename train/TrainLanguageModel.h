@@ -24,6 +24,8 @@
 
 #include "TrainProgramOptions.h"
 
+#include "Logging.h"
+
 namespace SLM
 {
 	class TrainLanguageModel;
@@ -101,6 +103,7 @@ template<unsigned N> struct PYPLM {
 	}
 
 	double log_likelihood() const {
+		std::cout << backoff.log_likelihood() << " + " << tr.log_likelihood() << std::endl;
 		return backoff.log_likelihood() + tr.log_likelihood();
 	}
 
@@ -147,6 +150,8 @@ public:
 
 	void resample_hyperparameters();
 	double log_likelihood() const;
+
+	void serialise(const std::string& fileName);
 private:
 	void initialise(TrainProgramOptions& trainProgramOptions);
 	PatternModelOptions fromTrainProgramOptions(const TrainProgramOptions& trainProgramOptions);

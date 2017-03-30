@@ -49,6 +49,10 @@ public:
 	std::string constructPatternModelFile() const;
 	void setPatternModelFile(const std::string& fileName);
 
+	std::string getSerialisedFile() const;
+	std::string constructSerialisedFile() const;
+	void setSerialisedFile(const std::string& fileName);
+
 protected:
 	cmdline::parser clp;
 

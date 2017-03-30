@@ -20,13 +20,12 @@ int main(int argc, char** argv)
 	SLM::TrainProgressPrinter tpp;
 	tpp.start();
 
-	for(int sample = 0; sample < 1/*tpo.getSamples()*/; ++sample)
+	for(int sample = 0; sample < tpo.getSamples(); ++sample)
 	{
 		SLM::PatternContainer* pc = tlm.getNextPattern();
 		while(pc)
 		{
-//			std::cout << "[" << pc->sentenceNumber << "/" << pc->patternNumber << "] " << tlm.toString(pc->context) << " " << tlm.toString(pc->focus) << std::endl;
-			pc = tlm.getNextPattern();
+			L_P << "[" << pc->sentenceNumber << "/" << pc->patternNumber << "] " << tlm.toString(pc->context) << " " << tlm.toString(pc->focus) << "\n";
 
 			if(sample > 0)
 			{
@@ -34,6 +33,7 @@ int main(int argc, char** argv)
 			}
 			tlm.increment(pc->focus, pc->context);
 
+			pc = tlm.getNextPattern();
 			tpp.next();
 		}
 
@@ -42,7 +42,8 @@ int main(int argc, char** argv)
 			L_I << "\n[LLH=" << tlm.log_likelihood() << "]\n";
 			tlm.resample_hyperparameters();
 		}
-
-		std::cout << "DONE" << std::endl;
+		tpp.nextSample();
 	}
+
+	tlm.serialise(tpo.constructSerialisedFile());
 }
