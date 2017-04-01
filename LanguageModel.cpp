@@ -515,11 +515,11 @@ namespace cpyp
 
 				if(contextSize == 3 )
 				{
-					if(context.isgap(1))
+					if(context.isgap(1) && !context.isgap(2))
 					{
 //						L_S << "LanguageModel: getNormalisationFactor: 4: \n";
 						ps += prob_a_cd(dish->first, context, is, probCache).second;
-					} else if(context.isgap(2))
+					} else if(!context.isgap(1) && context.isgap(2))
 					{
 //						L_S << "LanguageModel: getNormalisationFactor: 5: \n";
 						ps += prob_ab_d(dish->first, context, is, probCache).second;
