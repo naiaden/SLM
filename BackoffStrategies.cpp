@@ -17,13 +17,14 @@
 #include "CountInterpolationStrategy.h"
 #include "RandomInterpolationStrategy.h"
 #include "NprefInterpolationStrategy.h"
+#include "PerplexityInterpolationStrategy.h"
 
 
 
 namespace SLM {
 
 enum BackoffLevel { NGRAM, LIMITED, FULL };
-enum InterpolationFactor { UNIFORM, MLE, ENTROPY, COUNT, RANDOM, NPREF };
+enum InterpolationFactor { UNIFORM, MLE, ENTROPY, COUNT, RANDOM, NPREF, PERPLEXITY };
 
 
 
@@ -90,6 +91,8 @@ std::string toString(InterpolationFactor is)
 			return "random";
 		case SLM::InterpolationFactor::NPREF:
 			return "npref";
+		case SLM::InterpolationFactor::PERPLEXITY:
+			return "ppl";
 	}
 }
 
@@ -113,6 +116,7 @@ InterpolationFactor stringToInterpolationStrategy(const std::string& is)
 	if(is == "count")	return SLM::InterpolationFactor::COUNT;
 	if(is == "random")	return SLM::InterpolationFactor::RANDOM;
 	if(is == "npref")	return SLM::InterpolationFactor::NPREF;
+	if(is == "ppl")		return SLM::InterpolationFactor::PERPLEXITY;
 
 	return SLM::InterpolationFactor::UNIFORM;
 }
@@ -156,6 +160,9 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			} else if(endsWith(token, "npref"))
 			{
 				is = new NprefInterpolationStrategy();
+			} else if(endsWith(token, "ppl"))
+			{
+				is = new PerplexityInterpolationStrategy(lm);
 			} else
 			{
 				is = new UniformInterpolationStrategy();
@@ -168,10 +175,24 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 		if(startsWith(token, "lim"))
 		{
 			InterpolationStrategy* is;
-
-			if(endsWith(token, "random"))
+			if(endsWith(token, "mle"))
+			{
+				is = new MLEInterpolationStrategy(lm);
+			} else if(endsWith(token, "ent"))
+			{
+				is = new EntropyInterpolationStrategy(lm);
+			} else if(endsWith(token, "count"))
+			{
+				is = new CountInterpolationStrategy(lm);
+			} else if(endsWith(token, "random"))
 			{
 				is = new RandomInterpolationStrategy();
+			} else if(endsWith(token, "npref"))
+			{
+				is = new NprefInterpolationStrategy();
+			} else if(endsWith(token, "ppl"))
+			{
+				is = new PerplexityInterpolationStrategy(lm);
 			} else
 			{
 				is = new UniformInterpolationStrategy();
