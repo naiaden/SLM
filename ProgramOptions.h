@@ -46,6 +46,8 @@ public:
 	std::string getHostName() const;
 
 	std::string getBackoffOptions() const;
+
+	double getNpref() const;
 private:
 	cmdline::parser clp;
 
@@ -77,6 +79,8 @@ private:
 	// backoff
 
 	std::string hostName;
+
+	double npref;
 };
 
 } /* namespace SLM */
