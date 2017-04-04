@@ -159,7 +159,7 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 				is = new RandomInterpolationStrategy();
 			} else if(endsWith(token, "npref"))
 			{
-				is = new NprefInterpolationStrategy();
+				is = new NprefInterpolationStrategy(programOptions.getNpref());
 			} else if(endsWith(token, "ppl"))
 			{
 				is = new PerplexityInterpolationStrategy(lm);
@@ -189,7 +189,7 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 				is = new RandomInterpolationStrategy();
 			} else if(endsWith(token, "npref"))
 			{
-				is = new NprefInterpolationStrategy();
+				is = new NprefInterpolationStrategy(programOptions.getNpref());
 			} else if(endsWith(token, "ppl"))
 			{
 				is = new PerplexityInterpolationStrategy(lm);
