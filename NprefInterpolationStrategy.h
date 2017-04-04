@@ -14,11 +14,13 @@ namespace SLM {
 
 class NprefInterpolationStrategy: public InterpolationStrategy {
 public:
-	NprefInterpolationStrategy();
+	NprefInterpolationStrategy(double npref = 2.0);
 	virtual ~NprefInterpolationStrategy();
 
 	double get(const Pattern& context);
 	std::string name() const;
+protected:
+	double npref = 2.0;
 };
 
 } /* namespace SLM */

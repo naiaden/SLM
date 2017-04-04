@@ -45,6 +45,8 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	clp.add<std::string>("testinputfiles", '\0', "file with filename per line", false);
 	clp.add<std::string>("testoutputdirectory", 'O', "test output directory", true);
 
+	clp.add<int>("npref", '\0', "npref value", false, 2);
+
 	clp.add<std::string>("backoff", 'B', "backoff method", false);
 	clp.add<bool>("ignorecache", '\0', "ignore cache", false);
 	clp.add<std::string>("debug", '\0', "debug setting", false, "none");
@@ -70,6 +72,8 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	testVocabulary = testModelName + "." + vocabularyExtension;
 
 	backoffOptions = clp.get<std::string>("backoff");
+
+	npref = clp.get<double>("npref");
 
 	char hostname[128];
 	gethostname(hostname, sizeof hostname);
@@ -117,7 +121,8 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 			<< "\n"
 			<< std::setw(30) << "Number of test input files: " << testInputFiles.size() << "\n"
 			<< "\n"
-			<< std::setw(30) << "Backoff strategies: " << backoffOptions << "\n";
+			<< std::setw(30) << "Backoff strategies: " << backoffOptions << "\n"
+			<< std::setw(30) << "Npref ratio: " << npref << "\n";
 
 	//
 
@@ -204,6 +209,11 @@ std::string ProgramOptions::getHostName() const
 std::string ProgramOptions::getBackoffOptions() const
 {
 	return backoffOptions;
+}
+
+double ProgramOptions::getNpref() const
+{
+	return npref;
 }
 
 } /* namespace SLM */

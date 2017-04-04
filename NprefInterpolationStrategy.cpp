@@ -9,7 +9,7 @@
 
 namespace SLM {
 
-NprefInterpolationStrategy::NprefInterpolationStrategy() {
+NprefInterpolationStrategy::NprefInterpolationStrategy(double npref) : npref(npref) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -22,12 +22,12 @@ double NprefInterpolationStrategy::get(const Pattern& context)
 {
 	if(context.isskipgram())
 		return 1.0;
-	return 2.0;
+	return npref;
 }
 
 std::string NprefInterpolationStrategy::name() const
 {
-	return "npref";
+	return "npref" + std::to_string(npref);
 }
 
 } /* namespace SLM */
