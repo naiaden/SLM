@@ -45,7 +45,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	clp.add<std::string>("testinputfiles", '\0', "file with filename per line", false);
 	clp.add<std::string>("testoutputdirectory", 'O', "test output directory", true);
 
-	clp.add<int>("npref", '\0', "npref value", false, 2);
+	clp.add<double>("npref", '\0', "npref value", false, 2.0);
 
 	clp.add<std::string>("backoff", 'B', "backoff method", false);
 	clp.add<bool>("ignorecache", '\0', "ignore cache", false);
