@@ -39,22 +39,19 @@ double PerplexityInterpolationStrategy::get(const Pattern& context)
 
 		std::vector<unsigned int> occurrenceCounts = lm->getCounts(context);
 		unsigned int sum = std::accumulate ( occurrenceCounts.begin( ) , occurrenceCounts.end( ) , 0 ) ;
-		for (auto count: occurrenceCounts)
+		if(sum > 0)
 		{
-			if(count > 0)
+			for (auto count: occurrenceCounts)
 			{
-				double mle = (1.0*count)/(1.0*sum);
-				if(!std::isnormal(mle))
+				if(count > 0)
 				{
-					mle = 0.0000001;
+					double mle = (1.0*count)/(1.0*sum);
+					entropySum += mle * log2(mle);
 				}
-				mle = std::max(0.0000001, mle);
-
-				entropySum += mle * log(mle);
 			}
 		}
 
-		double perplexity = 1.0 / ( std::exp2(entropySum));
+		double perplexity = 1.0 / ( std::exp2(-entropySum));
 
 		L_S << "Perplexity: get(" << contextSize << ") sum:" << sum << " entropysum:" << entropySum << " perplexity:" << perplexity << "\n";
 
