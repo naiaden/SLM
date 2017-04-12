@@ -124,7 +124,7 @@ template<unsigned N> struct PYPLM {
 
 	double probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache, bool ignoreCache) const;
 
-	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize);
+	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize, bool ignoreCache);
 
 	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize);
 
@@ -172,7 +172,7 @@ public:
 	double getProb(const Pattern& focus, const Pattern& context);
 	double getProb4(const Pattern& focus, const Pattern& context);
 	double getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, bool ignoreCache);
-	double getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, std::unordered_map<Pattern, double>& normalisationCache);
+	double getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, std::unordered_map<Pattern, double>& normalisationCache, bool ignoreCache = false);
 private:
 	void initialise(const ProgramOptions& programOptions);
 	void defaultPatternModelOptions();

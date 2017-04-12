@@ -57,7 +57,7 @@ void FullBackoffStrategy::writeCache()
 
 double FullBackoffStrategy::prob(const Pattern& context, const Pattern& focus, bool isOOV)
 {
-	L_S << "FullBackoffStrategy: Estimating prob for " << languageModel.toString(context)
+	L_S << "FullBackoffStrategy(" << interpolationStrategy->name() << "): Estimating prob for " << languageModel.toString(context)
 			<< " " << languageModel.toString(focus) << "\n";
 
 	double logProb = 0.0;
@@ -66,6 +66,7 @@ double FullBackoffStrategy::prob(const Pattern& context, const Pattern& focus, b
 	{
 		// implement skipgrams from layer 3 on
 		double prob = languageModel.getProbS4(focus, context, interpolationStrategy, cache, ignoreCache);
+//		double prob = languageModel.getProb4(focus, context);
 
 		logProb = log2(prob);
 
@@ -76,7 +77,7 @@ double FullBackoffStrategy::prob(const Pattern& context, const Pattern& focus, b
 		++sentOovs;
 	}
 
-	L_S << "FullBackoffStrategy: \t\t" << logProb << "\n";
+	L_S << "FullBackoffStrategy(" << interpolationStrategy->name() << "): \t\t" << logProb << "\n";
 
 	writeProbToFile(focus, context, logProb, isOOV);
 

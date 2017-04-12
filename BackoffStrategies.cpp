@@ -18,13 +18,14 @@
 #include "RandomInterpolationStrategy.h"
 #include "NprefInterpolationStrategy.h"
 #include "PerplexityInterpolationStrategy.h"
+#include "FakeNgramInterpolationStrategy.h"
 
 
 
 namespace SLM {
 
 enum BackoffLevel { NGRAM, LIMITED, FULL };
-enum InterpolationFactor { UNIFORM, MLE, ENTROPY, COUNT, RANDOM, NPREF, PERPLEXITY };
+enum InterpolationFactor { UNIFORM, MLE, ENTROPY, COUNT, RANDOM, NPREF, PERPLEXITY, FAKENGRAM };
 
 
 
@@ -93,6 +94,8 @@ std::string toString(InterpolationFactor is)
 			return "npref";
 		case SLM::InterpolationFactor::PERPLEXITY:
 			return "ppl";
+		case SLM::InterpolationFactor::FAKENGRAM:
+			return "fakengram";
 	}
 }
 
@@ -117,6 +120,7 @@ InterpolationFactor stringToInterpolationStrategy(const std::string& is)
 	if(is == "random")	return SLM::InterpolationFactor::RANDOM;
 	if(is == "npref")	return SLM::InterpolationFactor::NPREF;
 	if(is == "ppl")		return SLM::InterpolationFactor::PERPLEXITY;
+	if(is == "fakengram") return SLM::InterpolationFactor::FAKENGRAM;
 
 	return SLM::InterpolationFactor::UNIFORM;
 }
@@ -163,6 +167,9 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			} else if(endsWith(token, "ppl"))
 			{
 				is = new PerplexityInterpolationStrategy(lm);
+			} else if(endsWith(token, "fakengram"))
+			{
+				is = new FakeNgramInterpolationStrategy();
 			} else
 			{
 				is = new UniformInterpolationStrategy();
@@ -218,8 +225,8 @@ BackoffStrategy* BackoffStrategiesFactory::createNgramBackoffStrategy(const SLM:
 BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
 {
 	// limited cache option in program options?
-	LimitedBackoffStrategy* lbs = new LimitedBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy);
-	lbs->setIgnoreCache(programOptions.isIgnoreCache());
+	LimitedBackoffStrategy* lbs = new LimitedBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy, programOptions.isIgnoreCache());
+//	lbs->setIgnoreCache(programOptions.isIgnoreCache());
 	lbs->init(lm, programOptions.getTestModelName());
 	return lbs;
 }

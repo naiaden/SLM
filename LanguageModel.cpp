@@ -95,6 +95,7 @@ namespace cpyp
 		double p__ = backoff.backoff.backoff.backoff.p0; // -
 //		L_S << "HPYPLM: probS4: fresh      " << p__ << "\n";
 
+		L_A << "    : " << p__ << "\n";
 		return std::pair <double,double> (1.0, p__);
 	}
 
@@ -105,6 +106,7 @@ namespace cpyp
 //		L_S << "HPYPLM: probS4: fresh    d " << p_d << "\n";
 
 		double w_d = is->get(Pattern());
+		L_A << "   D: " << p_d << "\n";
 		return std::pair <double,double> (w_d, p_d);
 	}
 
@@ -136,6 +138,7 @@ namespace cpyp
 		}
 
 		double w_cd = is->get(lookup);
+		L_A << "  CD: " << p_cd << "\n";
 		return std::pair <double,double> (w_cd, p_cd);
 	}
 
@@ -153,17 +156,21 @@ namespace cpyp
 			if (it == backoff.p.end())
 			{
 				p_b_d = prob_d(w, is).second;
+//				L_A << " B D:           1\n";
 			} else
 			{
 				p_b_d = it->second.prob(w, prob_d(w, is).second);
+//				L_A << " B D:           2B\n";
 			}
 			cache[lookup] = p_b_d;
 		} else
 		{
 			p_b_d = i_b_d->second;
+//			L_A << " B D:           3\n";
 		}
 
 		double w_b_d = is->get(lookup);
+		L_A << " B D: " << p_b_d << "\n";
 		return std::pair <double,double> (w_b_d, p_b_d);
 	}
 
@@ -192,6 +199,7 @@ namespace cpyp
 		}
 
 		double w_a__d = is->get(lookup);
+		L_A << "A  D: " << p_a__d << "\n";
 		return std::pair <double,double> (w_a__d, p_a__d);
 	}
 
@@ -224,6 +232,7 @@ namespace cpyp
 		}
 
 		double w_bcd = is->get(lookup);
+		L_A << " BCD: " << p_bcd << "\n";
 		return std::pair <double,double> (w_bcd, p_bcd);
 	}
 
@@ -256,6 +265,7 @@ namespace cpyp
 		}
 
 		double w_a_cd = is->get(lookup);
+		L_A << "A CD: " << p_a_cd << "\n";
 		return std::pair <double,double> (w_a_cd, p_a_cd);
 	}
 
@@ -288,6 +298,7 @@ namespace cpyp
 		}
 
 		double w_ab_d = is->get(lookup);
+		L_A << "AB D: " << p_ab_d << "\n";
 		return std::pair <double,double> (w_ab_d, p_ab_d);
 	}
 
@@ -325,6 +336,8 @@ namespace cpyp
 		{
 			p_abcd = i_abcd->second;
 		}
+
+		L_A << "ABCD: " << p_abcd << "\n";
 
 		return std::pair <double,double> (1.0, p_abcd);
 	}
@@ -496,7 +509,7 @@ namespace cpyp
 				++i;
 				if(contextSize == 1 )
 				{
-//					L_S << "LanguageModel: getNormalisationFactor: 1: \n";
+					L_V << "LanguageModel: getNormalisationFactor: 1: \n";
 					ps += prob_cd(dish->first, context, is, probCache).second;
 				}
 
@@ -504,11 +517,11 @@ namespace cpyp
 				{
 					if(context.isgap(1))
 					{
-//						L_S << "LanguageModel: getNormalisationFactor: 2: \n";
+						L_V << "LanguageModel: getNormalisationFactor: 2: \n";
 						ps += prob_b_d(dish->first, context, is, probCache).second;
 					} else
 					{
-//						L_S << "LanguageModel: getNormalisationFactor: 3: \n";
+						L_V << "LanguageModel: getNormalisationFactor: 3: \n";
 						ps += prob_bcd(dish->first, context, is, probCache).second;
 					}
 				}
@@ -517,20 +530,20 @@ namespace cpyp
 				{
 					if(context.isgap(1) && !context.isgap(2))
 					{
-//						L_S << "LanguageModel: getNormalisationFactor: 4: \n";
+						L_V << "LanguageModel: getNormalisationFactor: 4: \n";
 						ps += prob_a_cd(dish->first, context, is, probCache).second;
 					} else if(!context.isgap(1) && context.isgap(2))
 					{
-//						L_S << "LanguageModel: getNormalisationFactor: 5: \n";
+						L_V << "LanguageModel: getNormalisationFactor: 5: \n";
 						ps += prob_ab_d(dish->first, context, is, probCache).second;
 					} else if(context.isgap(1) && context.isgap(2))
 					{
-//						L_S << "LanguageModel: getNormalisationFactor: 6: \n";
+						L_V << "LanguageModel: getNormalisationFactor: 6: \n";
 						ps += prob_a__d(dish->first, context, is, probCache).second;
 					} else
 					{
 						double k = prob_abcd(dish->first, context, is, probCache).second;
-//						L_S << "LanguageModel: getNormalisationFactor: 71: " << k << "\n";
+						L_V << "LanguageModel: getNormalisationFactor: 7: " << k << "\n";
 						ps += k;
 					}
 				}
@@ -561,16 +574,17 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize)
+	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize, bool ignoreCache)
 	{
 
 		double p__ = backoff.backoff.backoff.backoff.p0; // -
 		L_S << "HPYPLM: probLS4: fresh      " << p__ << "\n";
 
 		double p_d = backoff.backoff.backoff.prob(w, p__); // d   ---  p__ = 1.0?
-		L_S << "HPYPLM: probLS4: fresh    d " << p_d << "\n";
-
-		bool ignoreCache = false;
+		if(getCount(w, Pattern()))
+			L_V << "HPYPLM: probLS4: fresh     " << p_d << "\n";
+		else
+			L_V << "HPYPLM: probLS4: fresh    d " << p_d << "\n";
 
 		double w_cd;
 		double p_cd;
@@ -598,7 +612,8 @@ namespace cpyp
 						p_cd = it->second.prob(w, p_d);
 					}
 				}
-				probCache.emplace(lookup+w, p_cd);
+
+				if(!ignoreCache) probCache.emplace(lookup+w, p_cd);
 			} else
 			{
 				p_cd = i_cd->second;
@@ -633,7 +648,7 @@ namespace cpyp
 						p_b_d = it->second.prob(w, p_d);
 					}
 				}
-				probCache[lookup] = p_b_d;
+				if(!ignoreCache) probCache[lookup] = p_b_d;
 			} else
 			{
 				p_b_d = i_b_d->second;
@@ -668,7 +683,7 @@ namespace cpyp
 						p_a__d = it->second.prob(w, p_d);
 					}
 				}
-				probCache[lookup] = p_a__d;
+				if(!ignoreCache) probCache[lookup] = p_a__d;
 			} else
 			{
 				p_a__d = i_a__d->second;
@@ -707,7 +722,7 @@ namespace cpyp
 						p_bcd = it->second.prob(w, backoffProb);
 					}
 				}
-				probCache[lookup] = p_bcd;
+				if(!ignoreCache) probCache[lookup] = p_bcd;
 			} else
 			{
 				p_bcd = i_bcd->second;
@@ -744,7 +759,7 @@ namespace cpyp
 						p_a_cd = it->second.prob(w, backoffProb);
 					}
 				}
-				probCache[lookup] = p_a_cd;
+				if(!ignoreCache) probCache[lookup] = p_a_cd;
 			} else
 			{
 				p_a_cd = i_a_cd->second;
@@ -781,7 +796,7 @@ namespace cpyp
 						p_ab_d = it->second.prob(w, backoffProb);
 					}
 				}
-				probCache[lookup] = p_ab_d;
+				if(!ignoreCache) probCache[lookup] = p_ab_d;
 			} else
 			{
 				p_ab_d = i_ab_d->second;
@@ -816,7 +831,7 @@ namespace cpyp
 					p_abcd = it->second.prob(w, backoffProb);
 				}
 			}
-			probCache[context] = p_abcd;
+			if(!ignoreCache) probCache[context] = p_abcd;
 		} else
 		{
 			p_abcd = i_abcd->second;
@@ -943,9 +958,9 @@ double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SL
 	return lm.probS4(focus, context, interpolationStrategy, cache, ignoreCache);
 }
 
-double LanguageModel::getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, std::unordered_map<Pattern, double>& normalisationCache)
+double LanguageModel::getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, std::unordered_map<Pattern, double>& normalisationCache, bool ignoreCache)
 {
-	return lm.probLS4(focus, context, interpolationStrategy, cache, normalisationCache, getVocabularySize());
+	return lm.probLS4(focus, context, interpolationStrategy, cache, normalisationCache, getVocabularySize(), ignoreCache);
 }
 
 unsigned LanguageModel::getVocabularySize()

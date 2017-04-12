@@ -17,7 +17,7 @@ class InterpolationStrategy;
 class LimitedBackoffStrategy: public FullBackoffStrategy
 {
 public:
-	LimitedBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy);
+	LimitedBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy, bool ignoreCache = false);
 	virtual ~LimitedBackoffStrategy();
 
 	virtual void init(SLM::LanguageModel& languageModel, const std::string& baseFileName);
@@ -28,6 +28,7 @@ public:
 	double getNormalisationFactor(const Pattern& context);
 private:
 	std::unordered_map<Pattern, double> normalisationCache;
+	bool ignoreCache;
 };
 
 } /* namespace SLM */

@@ -48,7 +48,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	clp.add<double>("npref", '\0', "npref value", false, 2.0);
 
 	clp.add<std::string>("backoff", 'B', "backoff method", false);
-	clp.add<bool>("ignorecache", '\0', "ignore cache", false);
+	clp.add("ignorecache", '\0', "ignore cache");
 	clp.add<std::string>("debug", '\0', "debug setting", false, "none");
 	clp.parse_check(argc, argv);
 
@@ -74,6 +74,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	backoffOptions = clp.get<std::string>("backoff");
 
 	npref = clp.get<double>("npref");
+	ignoreCache = clp.exist("ignorecache");
 
 	char hostname[128];
 	gethostname(hostname, sizeof hostname);
@@ -122,6 +123,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 			<< std::setw(30) << "Number of test input files: " << testInputFiles.size() << "\n"
 			<< "\n"
 			<< std::setw(30) << "Backoff strategies: " << backoffOptions << "\n"
+			<< std::setw(30) << "Ignore cache: " << (ignoreCache ? "Yes" : "No") << "\n"
 			<< std::setw(30) << "Npref ratio: " << npref << "\n";
 
 	//

@@ -12,8 +12,8 @@
 
 namespace SLM {
 
-LimitedBackoffStrategy::LimitedBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy)
- : FullBackoffStrategy(languageModel, baseFileName, interpolationStrategy)
+LimitedBackoffStrategy::LimitedBackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName, SLM::InterpolationStrategy* interpolationStrategy, bool ignoreCache)
+ : FullBackoffStrategy(languageModel, baseFileName, interpolationStrategy), ignoreCache(ignoreCache)
 {
 
 }
@@ -47,7 +47,7 @@ double LimitedBackoffStrategy::prob(const Pattern& context, const Pattern& focus
 	if(!isOOV)
 	{
 		// implement skipgrams from layer 3 on
-		double prob = languageModel.getProbLS4(focus, context, interpolationStrategy, cache, normalisationCache);
+		double prob = languageModel.getProbLS4(focus, context, interpolationStrategy, cache, normalisationCache, ignoreCache);
 
 		logProb = log2(prob);
 
