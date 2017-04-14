@@ -18,7 +18,6 @@
 #include "RandomInterpolationStrategy.h"
 #include "NprefInterpolationStrategy.h"
 #include "PerplexityInterpolationStrategy.h"
-#include "FakeNgramInterpolationStrategy.h"
 
 
 
@@ -167,9 +166,6 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			} else if(endsWith(token, "ppl"))
 			{
 				is = new PerplexityInterpolationStrategy(lm);
-			} else if(endsWith(token, "fakengram"))
-			{
-				is = new FakeNgramInterpolationStrategy();
 			} else
 			{
 				is = new UniformInterpolationStrategy();

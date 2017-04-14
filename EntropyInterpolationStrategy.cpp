@@ -46,12 +46,12 @@ double EntropyInterpolationStrategy::get(const Pattern& context)
 				if(count > 0)
 				{
 					double mle = (1.0*count)/(1.0*sum);
-					entropySum += mle * log2(mle);
+					entropySum -= mle * log2(mle);
 				}
 			}
 		}
 
-		double entropy = 1.0 / (1.0 - entropySum);
+		double entropy = 1.0 / (1.0 + entropySum);
 
 		L_S << "Entropyi: get(" << contextSize << ") sum:" << sum << " entropysum:" << entropySum << " entropy:" << entropy << "\n";
 

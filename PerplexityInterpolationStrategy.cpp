@@ -46,12 +46,12 @@ double PerplexityInterpolationStrategy::get(const Pattern& context)
 				if(count > 0)
 				{
 					double mle = (1.0*count)/(1.0*sum);
-					entropySum += mle * log2(mle);
+					entropySum -= mle * log2(mle);
 				}
 			}
 		}
 
-		double perplexity = 1.0 / ( std::exp2(-entropySum));
+		double perplexity = 1.0 / ( std::exp2(entropySum));
 
 		L_S << "Perplexity: get(" << contextSize << ") sum:" << sum << " entropysum:" << entropySum << " perplexity:" << perplexity << "\n";
 

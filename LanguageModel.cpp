@@ -492,7 +492,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize)
+	double cpyp::PYPLM<N>::getNormalisationFactor(const Pattern& context, const Pattern& originalContext, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize)
 	{
 		L_S << "LanguageModel: getNormalisationFactor: context length: "  << " " << context.size() << "\n";
 		int contextSize = context.size();
@@ -510,7 +510,7 @@ namespace cpyp
 				if(contextSize == 1 )
 				{
 					L_V << "LanguageModel: getNormalisationFactor: 1: \n";
-					ps += prob_cd(dish->first, context, is, probCache).second;
+					ps += prob_cd(dish->first, originalContext, is, probCache).second;
 				}
 
 				if(contextSize == 2 )
@@ -518,11 +518,11 @@ namespace cpyp
 					if(context.isgap(1))
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 2: \n";
-						ps += prob_b_d(dish->first, context, is, probCache).second;
+						ps += prob_b_d(dish->first, originalContext, is, probCache).second;
 					} else
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 3: \n";
-						ps += prob_bcd(dish->first, context, is, probCache).second;
+						ps += prob_bcd(dish->first, originalContext, is, probCache).second;
 					}
 				}
 
@@ -531,18 +531,18 @@ namespace cpyp
 					if(context.isgap(1) && !context.isgap(2))
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 4: \n";
-						ps += prob_a_cd(dish->first, context, is, probCache).second;
+						ps += prob_a_cd(dish->first, originalContext, is, probCache).second;
 					} else if(!context.isgap(1) && context.isgap(2))
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 5: \n";
-						ps += prob_ab_d(dish->first, context, is, probCache).second;
+						ps += prob_ab_d(dish->first, originalContext, is, probCache).second;
 					} else if(context.isgap(1) && context.isgap(2))
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 6: \n";
-						ps += prob_a__d(dish->first, context, is, probCache).second;
+						ps += prob_a__d(dish->first, originalContext, is, probCache).second;
 					} else
 					{
-						double k = prob_abcd(dish->first, context, is, probCache).second;
+						double k = prob_abcd(dish->first, originalContext, is, probCache).second;
 						L_V << "LanguageModel: getNormalisationFactor: 7: " << k << "\n";
 						ps += k;
 					}
@@ -581,7 +581,7 @@ namespace cpyp
 		L_S << "HPYPLM: probLS4: fresh      " << p__ << "\n";
 
 		double p_d = backoff.backoff.backoff.prob(w, p__); // d   ---  p__ = 1.0?
-		if(getCount(w, Pattern()))
+		if(!getCount(w, Pattern()))
 			L_V << "HPYPLM: probLS4: fresh     " << p_d << "\n";
 		else
 			L_V << "HPYPLM: probLS4: fresh    d " << p_d << "\n";
@@ -604,7 +604,7 @@ namespace cpyp
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
 						L_S << "LanguageModel: probLS4: cd in model --> no backoff \n";
-						p_cd = it->second.prob(w, getNormalisationFactor(lookup, it->second, is, probCache, normalisationCache, vocabSize));
+						p_cd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -613,7 +613,7 @@ namespace cpyp
 					}
 				}
 
-				if(!ignoreCache) probCache.emplace(lookup+w, p_cd);
+		//		if(!ignoreCache) probCache.emplace(lookup+w, p_cd);
 			} else
 			{
 				p_cd = i_cd->second;
@@ -630,8 +630,8 @@ namespace cpyp
 			auto i_b_d = probCache.find(lookup);
 			if(i_b_d == probCache.end())
 			{
-				auto it = backoff.backoff.p.find(lookup.reverse());
-				if (it == backoff.backoff.p.end())
+				auto it = backoff.p.find(lookup.reverse());
+				if (it == backoff.p.end())
 				{
 					L_S << "LanguageModel: probLS4: b_ NOT in model --> backoff \n";
 					p_b_d = p_d;
@@ -640,7 +640,7 @@ namespace cpyp
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
 						L_S << "LanguageModel: probLS4: b_d in model --> no backoff \n";
-						p_b_d = it->second.prob(w, getNormalisationFactor(lookup, it->second, is, probCache, normalisationCache, vocabSize));
+						p_b_d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -648,7 +648,7 @@ namespace cpyp
 						p_b_d = it->second.prob(w, p_d);
 					}
 				}
-				if(!ignoreCache) probCache[lookup] = p_b_d;
+		//		if(!ignoreCache) probCache[lookup] = p_b_d;
 			} else
 			{
 				p_b_d = i_b_d->second;
@@ -665,8 +665,8 @@ namespace cpyp
 			auto i_a__d = probCache.find(lookup);
 			if(i_a__d == probCache.end())
 			{
-				auto it = backoff.backoff.p.find(lookup.reverse());
-				if (it == backoff.backoff.p.end())
+				auto it = p.find(lookup.reverse());
+				if (it == p.end())
 				{
 					L_S << "LanguageModel: probLS4: a__ NOT in model --> backoff \n";
 					p_a__d = p_d;
@@ -675,7 +675,7 @@ namespace cpyp
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
 						L_S << "LanguageModel: probLS4: a__d in model --> no backoff \n";
-						p_a__d = it->second.prob(w, getNormalisationFactor(lookup, it->second, is, probCache, normalisationCache, vocabSize));
+						p_a__d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -683,7 +683,7 @@ namespace cpyp
 						p_a__d = it->second.prob(w, p_d);
 					}
 				}
-				if(!ignoreCache) probCache[lookup] = p_a__d;
+		//		if(!ignoreCache) probCache[lookup] = p_a__d;
 			} else
 			{
 				p_a__d = i_a__d->second;
@@ -714,7 +714,7 @@ namespace cpyp
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
 						L_S << "LanguageModel: probLS4: bcd in model --> no backoff \n";
-						p_bcd = it->second.prob(w, getNormalisationFactor(lookup, it->second, is, probCache, normalisationCache, vocabSize));
+						p_bcd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -722,7 +722,7 @@ namespace cpyp
 						p_bcd = it->second.prob(w, backoffProb);
 					}
 				}
-				if(!ignoreCache) probCache[lookup] = p_bcd;
+		//		if(!ignoreCache) probCache[lookup] = p_bcd;
 			} else
 			{
 				p_bcd = i_bcd->second;
@@ -741,8 +741,8 @@ namespace cpyp
 			{
 				double backoffProb = (w_cd*p_cd + w_a__d*p_a__d)/(w_cd + w_a__d);
 
-				auto it = backoff.p.find(lookup.reverse());
-				if (it == backoff.p.end())
+				auto it = p.find(lookup.reverse());
+				if (it == p.end())
 				{
 					L_S << "LanguageModel: probLS4: a_c NOT in model --> backoff \n";
 					p_a_cd = backoffProb;
@@ -751,7 +751,7 @@ namespace cpyp
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
 						L_S << "LanguageModel: probLS4: a_cd in model --> no backoff \n";
-						p_a_cd = it->second.prob(w, getNormalisationFactor(lookup, it->second, is, probCache, normalisationCache, vocabSize));
+						p_a_cd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -759,7 +759,7 @@ namespace cpyp
 						p_a_cd = it->second.prob(w, backoffProb);
 					}
 				}
-				if(!ignoreCache) probCache[lookup] = p_a_cd;
+		//		if(!ignoreCache) probCache[lookup] = p_a_cd;
 			} else
 			{
 				p_a_cd = i_a_cd->second;
@@ -778,8 +778,8 @@ namespace cpyp
 			{
 				double backoffProb = (w_b_d*p_b_d + w_a__d*p_a__d)/(w_b_d + w_a__d);
 
-				auto it = backoff.p.find(lookup.reverse());
-				if (it == backoff.p.end())
+				auto it = p.find(lookup.reverse());
+				if (it == p.end())
 				{
 					L_S << "LanguageModel: probLS4: ab_ NOT in model --> backoff \n";
 					p_ab_d = backoffProb;
@@ -788,7 +788,7 @@ namespace cpyp
 					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 					{
 						L_S << "LanguageModel: probLS4: ab_d in model --> no backoff \n";
-						p_ab_d = it->second.prob(w, getNormalisationFactor(lookup, it->second, is, probCache, normalisationCache, vocabSize));
+						p_ab_d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
 					}
 					else // we have not seen uw, but seen u -> backoff
 					{
@@ -796,7 +796,7 @@ namespace cpyp
 						p_ab_d = it->second.prob(w, backoffProb);
 					}
 				}
-				if(!ignoreCache) probCache[lookup] = p_ab_d;
+		//		if(!ignoreCache) probCache[lookup] = p_ab_d;
 			} else
 			{
 				p_ab_d = i_ab_d->second;
@@ -823,7 +823,7 @@ namespace cpyp
 				if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
 				{
 					L_S << "LanguageModel: probLS4: abcd in model --> no backoff \n";
-					p_abcd = it->second.prob(w, getNormalisationFactor(context, it->second, is, probCache, normalisationCache, vocabSize));
+					p_abcd = it->second.prob(w, getNormalisationFactor(context, context, it->second, is, probCache, normalisationCache, vocabSize));
 				}
 				else // we have not seen uw, but seen u -> backoff
 				{
@@ -831,7 +831,7 @@ namespace cpyp
 					p_abcd = it->second.prob(w, backoffProb);
 				}
 			}
-			if(!ignoreCache) probCache[context] = p_abcd;
+		//	if(!ignoreCache) probCache[context] = p_abcd;
 		} else
 		{
 			p_abcd = i_abcd->second;

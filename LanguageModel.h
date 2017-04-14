@@ -126,7 +126,7 @@ template<unsigned N> struct PYPLM {
 
 	double probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize, bool ignoreCache);
 
-	double getNormalisationFactor(const Pattern& context, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize);
+	double getNormalisationFactor(const Pattern& context, const Pattern& originalContext, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize);
 
 	double log_likelihood() const {
 		return backoff.log_likelihood() + tr.log_likelihood();
