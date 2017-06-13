@@ -39,11 +39,14 @@ public:
 	void nextPattern();
 	void nextLine();
 	void nextFile();
+
+        void disablePrinting();
 private:
 	unsigned long long patterns = 0;
 	unsigned long long lines = 0;
 	unsigned int files = 0;
 
+        bool doPrint = true;
 };
 
 } /* namespace SLM */

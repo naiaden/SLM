@@ -34,6 +34,10 @@ int main(int argc, char** argv) {
 	SLM::RescoreModule rm(bo, po.getTestOutputDirectory());
 
 	SLM::ProgressTimer pt;
+        if(po.isDisableProgress())
+        {
+            pt.disablePrinting();
+        }
 
 	SLM::CGNTextPreprocessor cgnTP;
 
@@ -86,7 +90,7 @@ int main(int argc, char** argv) {
 //			rm.addLine(sentenceString, ++currentRank, acousticModelScore, languageModelScore, numberOfWords);
 
 			// hack
-			sentenceString = "<s> <s> " + sentenceString;
+//			sentenceString = "<s> <s> " + sentenceString;
 
 			std::vector<std::string> tokens = whitespaceTokeniser(sentenceString);
 			std::vector<std::string> words = cgnTP.removeFillers(tokens);

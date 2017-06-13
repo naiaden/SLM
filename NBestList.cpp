@@ -118,13 +118,13 @@ void NBestList::printToFile(const std::string& originalFileName, const std::stri
 	myfile.close();
 }
 
-
+// returns true if the first argument is less than (i.e. is ordered before) the second. 
 bool comparePtrToNode(NBestItem* a, NBestItem* b) {
 
         double lhs = a->getAmScore() - a->getReScore();//a->getLmScore();
         double rhs = b->getAmScore() - b->getReScore();//b->getLmScore();
 
-        return lhs > rhs;
+        return lhs < rhs;
 //      return (*a < *b);
 }
 

@@ -53,6 +53,12 @@ ProgressTimer::~ProgressTimer()
 
 }
 
+void ProgressTimer::disablePrinting()
+{
+    doPrint = false;
+}
+
+
 std::string ProgressTimer::toString()
 {
 //	 *mout << std::fixed << "\r"
@@ -61,18 +67,19 @@ std::string ProgressTimer::toString()
 //	              << std::setw(8) << ((int) avgPerSecond) << "P/s"
 //	              << " took " << elapsedSeconds.count() << " seconds";
 //	        *mout << std::endl;
-
-	if(patterns < 10000 || patterns % 20000 == 0)
-	{
-		std::cout << "Pattern: " << std::setw(10) << patterns
-				  << "\tF" << files << ":S" << lines
-				  << "\tAvg: " << (patterns*1.0)/getSplit().count()
-				  << "P/s\tTook: " << getSplit().count()
-				  << " seconds"
-//				  << std::flush;
-				  << std::endl;
-	}
-
+        if(doPrint)
+        {
+            if(patterns < 10000 || patterns % 20000 == 0)
+            {
+                    std::cout << "Pattern: " << std::setw(10) << patterns
+                                      << "\tF" << files << ":S" << lines
+                                      << "\tAvg: " << (patterns*1.0)/getSplit().count()
+                                      << "P/s\tTook: " << getSplit().count()
+                                      << " seconds"
+    //				  << std::flush;
+                                      << std::endl;
+            }
+        }
 	return "hoi";
 }
 

@@ -48,6 +48,7 @@ public:
 	std::string getBackoffOptions() const;
 
 	double getNpref() const;
+        bool isDisableProgress() const;
 private:
 	cmdline::parser clp;
 
@@ -81,6 +82,7 @@ private:
 	std::string hostName;
 
 	double npref;
+        bool disableProgress;
 };
 
 } /* namespace SLM */
