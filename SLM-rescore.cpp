@@ -79,6 +79,7 @@ int main(int argc, char** argv) {
 				std::getline(linestream, numberOfWordsString, ' ');
 				numberOfWords = std::stoi(numberOfWordsString);
 				std::getline(linestream, sentenceString);
+                                sentenceString = trim(sentenceString);
 			} catch (const std::invalid_argument& ia)
 			{
 				std::cerr << "Invalid argument: " << ia.what() << '\n';
@@ -88,6 +89,11 @@ int main(int argc, char** argv) {
 			}
 
 //			rm.addLine(sentenceString, ++currentRank, acousticModelScore, languageModelScore, numberOfWords);
+                        if(!endsWith(sentenceString, "</s>"))
+                        {
+                            std::cerr << "Invalid line (no </s>): " << sentenceString << "(" << inputFile << ":" << lineNumber << ")\n";
+                            continue;
+                        }
 
 			// hack
 //			sentenceString = "<s> <s> " + sentenceString;

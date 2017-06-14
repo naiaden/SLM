@@ -20,6 +20,8 @@ std::vector<std::string> delimiterTokeniser(const std::string& input, char delim
 bool startsWith(const std::string& s1, const std::string& s2);
 bool endsWith(std::string const & value, std::string const & ending);
 
+std::string trim(const std::string &s);
+
 template <typename T>
 std::string join(const T& v, const std::string& delim) {
 	std::ostringstream s;
