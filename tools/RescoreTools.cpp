@@ -47,6 +47,8 @@ int main(int argc, char** argv)
     for (auto & r : referenceIds)
     {
 
+        L_A << "\n\n--------------------\n\n";
+
     	if(po.isProgramMode(SLM::ProgramMode::CEILING))
 //    	if(true) // select best and select fase
     	{
@@ -86,10 +88,16 @@ int main(int argc, char** argv)
     	if(po.isProgramMode(SLM::ProgramMode::SELECTBEST))
 //    	if(false)
 		{
-    		collectHypothesesForReferenceId(r.second, po.getInputPath());
+                L_P << "SelectBest Mode is used\n";
+
+    		collectHypothesesForReferenceId(r.second, po.getInputPath(), po.addPadding());
+
+                L_P << "Hypotheses collected\n";
 
     		SLM::ReferenceFileWriter fw(po.getOutputPath(), r.first + "-" + sorter->getName());
     		SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
+
+                L_P << "Files initialised\n";
 
     		std::vector<std::string> reference = fr.getTokens();
     		std::vector<std::string> hypothesisTokens;

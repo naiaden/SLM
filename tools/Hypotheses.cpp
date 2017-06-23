@@ -38,7 +38,7 @@ double Hypotheses::getStartTime() const
 	return startTime;
 }
 
-AllHypotheses::AllHypotheses(const std::string& fileName, const std::string& path) : SLM::Hypotheses(fileName, path) {
+AllHypotheses::AllHypotheses(const std::string& fileName, const std::string& path, bool addPadding) : SLM::Hypotheses(fileName, path) {
 	std::string fullPath = path + "/" + fileName;
 	std::ifstream stream(fullPath.c_str(), std::ios::binary);
 
@@ -49,7 +49,7 @@ AllHypotheses::AllHypotheses(const std::string& fileName, const std::string& pat
 	    {
 	    	try
 	    	  {
-	    		std::shared_ptr<SLM::Hypothesis> h = std::make_shared<Hypothesis>(line);
+	    		std::shared_ptr<SLM::Hypothesis> h = std::make_shared<Hypothesis>(line, addPadding);
 	    		hypotheses.push_back(h);
 	    	  }
 	    	  catch (...)

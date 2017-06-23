@@ -35,8 +35,14 @@ PartialHypothesis::~PartialHypothesis()
 
 }
 
-Hypothesis::Hypothesis(const std::string& hypothesisEntry) : PartialHypothesis(hypothesisEntry) {
-	sentence = hypothesisEntry;
+Hypothesis::Hypothesis(const std::string& hypothesisEntry, bool addPadding) : PartialHypothesis(hypothesisEntry) {
+	if(addPadding)
+        {
+                sentence = "<s> <s> " + hypothesisEntry;
+        } else
+        {
+                sentence = hypothesisEntry;
+        }
 
 
 	std::vector<std::string> entries = whitespaceTokeniser(hypothesisEntry);

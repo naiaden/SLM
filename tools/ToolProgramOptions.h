@@ -36,6 +36,7 @@ public:
 	double getLanguageModelWeight() const;
 
 	bool isReverse() const;
+        bool addPadding() const;
 
 	std::vector<std::string> getLimitedReferenceIds() const;
 
@@ -59,6 +60,7 @@ protected:
 
 	std::vector<std::string> limitedReferenceIds;
 	bool reverse;
+        bool padding;
 
 	std::string vocabFile;
 };

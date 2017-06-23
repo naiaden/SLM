@@ -41,7 +41,7 @@ protected:
 
 class AllHypotheses : public SLM::Hypotheses {
 public:
-	AllHypotheses(const std::string& fileName, const std::string& path);
+	AllHypotheses(const std::string& fileName, const std::string& path, bool addPadding = false);
 	virtual ~AllHypotheses();
 
 	std::vector<std::shared_ptr<SLM::Hypothesis>> getHypotheses() const;

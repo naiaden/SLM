@@ -19,7 +19,7 @@ double OOV(int count, int oov);
 
 std::unordered_map<std::string, SLM::ReferenceId> collectReferenceIds(const std::string& path);
 std::vector<std::string> getFilesForReferenceId(SLM::ReferenceId& rId, const std::string& path);
-SLM::ReferenceId collectHypothesesForReferenceId(SLM::ReferenceId& rId, const std::string& path);
+SLM::ReferenceId collectHypothesesForReferenceId(SLM::ReferenceId& rId, const std::string& path, bool addPadding = false);
 std::unordered_map<std::string, SLM::ReferenceId> referenceIdsPreprocessing(std::unordered_map<std::string, SLM::ReferenceId> references, std::vector<std::string> specials);
 
 #endif /* TOOLS_TOOLUTILS_H_ */

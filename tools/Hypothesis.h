@@ -39,7 +39,7 @@ protected:
 
 class Hypothesis : public PartialHypothesis {
 public:
-	Hypothesis(const std::string& hypothesisEntry);
+	Hypothesis(const std::string& hypothesisEntry, bool addPadding = false);
 	virtual ~Hypothesis();
 
 

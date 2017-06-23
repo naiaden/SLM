@@ -84,7 +84,7 @@ std::vector<std::string> getFilesForReferenceId(SLM::ReferenceId& rId, const std
 	return files;
 }
 
-SLM::ReferenceId collectHypothesesForReferenceId(SLM::ReferenceId& rId, const std::string& path)
+SLM::ReferenceId collectHypothesesForReferenceId(SLM::ReferenceId& rId, const std::string& path, bool addPadding)
 {
 	L_V << "RescoreTools: " << rId.getId() << "\n";
 
@@ -92,7 +92,7 @@ SLM::ReferenceId collectHypothesesForReferenceId(SLM::ReferenceId& rId, const st
 	for(auto& file : files)
 	{
 		L_A << "RescoreTools: \t" << file << " " << path << "\n";
-		rId.add(std::make_shared<SLM::AllHypotheses>(file, path));
+		rId.add(std::make_shared<SLM::AllHypotheses>(file, path, addPadding));
 	}
 
 	L_V << "RescoreTools: " << rId.getNBestLists().size() << " hypotheses for " << rId.getId() << "\n" << std::endl;
