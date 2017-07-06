@@ -104,8 +104,8 @@ std::string LanguageModelSorter::getName() const
 
 ////////////////////////
 
-WeightedSorter::WeightedSorter(double acousticWeight, double languageModelWeight, bool reverse)
-	: Sorter(reverse), acousticWeight(acousticWeight), languageModelWeight(languageModelWeight) {
+WeightedSorter::WeightedSorter(double acousticWeight, double languageModelWeight, double offset, bool reverse)
+	: Sorter(reverse), acousticWeight(acousticWeight), languageModelWeight(languageModelWeight), offset(offset) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -122,11 +122,11 @@ bool WeightedSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std::sha
 	}
 
 	if(reverse)
-		return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore()
-			> acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore();
+		return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore() + offset
+			> acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore() + offset;
 
-    return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore()
-    		< acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore();
+    return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore() + offset
+    		< acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore() + offset;
 }
 
 SLM::Hypothesis WeightedSorter::sort(const SLM::AllHypotheses& nBestList) const
@@ -145,8 +145,8 @@ std::string WeightedSorter::getName() const
 
 ////////////////////////
 
-PowerWeightedSorter::PowerWeightedSorter(double acousticWeight, double languageModelWeight, bool reverse)
-	: WeightedSorter(acousticWeight, languageModelWeight, reverse) {
+PowerWeightedSorter::PowerWeightedSorter(double acousticWeight, double languageModelWeight, double offset, bool reverse)
+	: WeightedSorter(acousticWeight, languageModelWeight, offset, reverse) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -161,11 +161,11 @@ bool PowerWeightedSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std
 		return false;
 	if(reverse)
 	{
-		pow(acousticWeight,l->getAcousticScore()) - pow(languageModelWeight,l->getLanguageModelScore())
-			< pow(acousticWeight,r->getAcousticScore()) - pow(languageModelWeight,r->getLanguageModelScore());
+		pow(acousticWeight,l->getAcousticScore()) - pow(languageModelWeight,l->getLanguageModelScore()) + offset
+			< pow(acousticWeight,r->getAcousticScore()) - pow(languageModelWeight,r->getLanguageModelScore()) + offset;
 	}
-    return pow(acousticWeight,l->getAcousticScore()) - pow(languageModelWeight,l->getLanguageModelScore())
-    		> pow(acousticWeight,r->getAcousticScore()) - pow(languageModelWeight,r->getLanguageModelScore());
+    return pow(acousticWeight,l->getAcousticScore()) - pow(languageModelWeight,l->getLanguageModelScore()) + offset
+    		> pow(acousticWeight,r->getAcousticScore()) - pow(languageModelWeight,r->getLanguageModelScore()) + offset;
 }
 
 SLM::Hypothesis PowerWeightedSorter::sort(const SLM::AllHypotheses& nBestList) const

@@ -34,6 +34,7 @@ public:
 
 	double getAcousticWeight() const;
 	double getLanguageModelWeight() const;
+        double getOffset() const;
 
 	bool isReverse() const;
         bool addPadding() const;
@@ -54,6 +55,7 @@ protected:
 
 	double aW = 1.0;
 	double lW = 1.0;
+        double offset = 0.0;
 
 	ProgramMode programMode = ProgramMode::SELECTBEST;
 	WeightMode weightMode = WeightMode::WEIGHTED;

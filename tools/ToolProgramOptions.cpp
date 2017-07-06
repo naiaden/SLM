@@ -79,6 +79,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 
 	clp.add<double>("acousticweight", 'a', "acoustic model weight", false, 1.0);
 	clp.add<double>("lmweight", 'l', "language model weight", false, 1.0);
+	clp.add<double>("offset", 'O', "offset for the weights", false, 0.0);
 
 	clp.add<std::string>("limit-to", '\0', "limit to dash separated reference ids", false, "");
 
@@ -96,6 +97,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 
 	aW = clp.get<double>("acousticweight");
 	lW = clp.get<double>("lmweight");
+        offset = clp.get<double>("offset");
 
 	if(!clp.get<std::string>("limit-to").empty())
 	{
@@ -119,7 +121,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 			<< std::setw(30) << "Weight mode: " << toString(weightMode) << "\n"
 			<< std::setw(30) << "Reverse sort: " << (reverse ? "yes" : "no") << "\n"
 			<< std::setw(30) << "Add padding: " << (padding ? "yes" : "no") << "\n"
-			<< std::setw(30) << "Weights: " << "A[" << aW << "] L[" << lW << "] \n"
+			<< std::setw(30) << "Weights: " << "A[" << aW << "] L[" << lW << "] offset[" << offset << "]\n"
 			<< "\n"
 			<< std::setw(30) << "Limiting to: " << join(limitedReferenceIds, " ") << "\n"
 			<< "\n"
@@ -178,6 +180,11 @@ double ToolProgramOptions::getAcousticWeight() const
 double ToolProgramOptions::getLanguageModelWeight() const
 {
 	return lW;
+}
+
+double ToolProgramOptions::getOffset() const
+{
+        return offset;
 }
 
 std::vector<std::string> ToolProgramOptions::getLimitedReferenceIds() const

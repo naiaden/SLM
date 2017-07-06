@@ -52,7 +52,7 @@ public:
 
 class WeightedSorter : public Sorter {
 public:
-	WeightedSorter(double acousticWeight, double languageModelWeight, bool reverse = false);
+	WeightedSorter(double acousticWeight, double languageModelWeight, double offset, bool reverse = false);
 	virtual ~WeightedSorter();
 
 	SLM::Hypothesis sort(const SLM::AllHypotheses& nBestList) const;
@@ -62,11 +62,12 @@ public:
 protected:
 	double acousticWeight;
 	double languageModelWeight;
+        double offset;
 };
 
 class PowerWeightedSorter : public WeightedSorter {
 public:
-	PowerWeightedSorter(double acousticWeight, double languageModelWeight, bool reverse = false);
+	PowerWeightedSorter(double acousticWeight, double languageModelWeight, double offset, bool reverse = false);
 	virtual ~PowerWeightedSorter();
 
 	SLM::Hypothesis sort(const SLM::AllHypotheses& nBestList) const;
