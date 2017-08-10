@@ -210,9 +210,9 @@ SLM::Sorter* ToolProgramOptions::getSorter()
 		case WeightMode::LANGUAGE:
 			return new LanguageModelSorter(reverse);
 		case WeightMode::POWERWEIGHTED:
-			return new PowerWeightedSorter(aW, lW, reverse);
+			return new PowerWeightedSorter(aW, lW, offset, reverse);
 		default:
-			return new WeightedSorter(aW, lW, reverse);
+			return new WeightedSorter(aW, lW, offset, reverse);
 	}
 }
 

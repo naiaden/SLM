@@ -32,11 +32,9 @@
 
 int main(int argc, char** argv)
 {
-	SLM::ToolProgramOptions po(argc, argv);
-
-	SLM::Sorter* sorter = po.getSorter();
-
-	SLM::CGNTextPreprocessor tpp;
+    SLM::ToolProgramOptions po(argc, argv);
+    SLM::Sorter* sorter = po.getSorter();
+    SLM::CGNTextPreprocessor tpp;
 
     std::unordered_map<std::string, SLM::ReferenceId> referenceIds = referenceIdsPreprocessing(collectReferenceIds(po.getInputPath()), po.getLimitedReferenceIds());
 
@@ -46,95 +44,135 @@ int main(int argc, char** argv)
 
     for (auto & r : referenceIds)
     {
-
         L_A << "\n\n--------------------\n\n";
 
     	if(po.isProgramMode(SLM::ProgramMode::CEILING))
-//    	if(true) // select best and select fase
     	{
-    		SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
-			std::vector<std::string> reference = fr.getTokens();
+            std::cout << "READING reference file " << r.first << "\n";
+            SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
+            std::vector<std::string> reference = fr.getTokens();
+
+            collectHypothesesForReferenceId(r.second, po.getInputPath(), po.addPadding());
+
+            double currentWER = 10000.0;
+            double bestWER = 10000.0;
 
 
-    		std::vector<std::shared_ptr<SLM::BestHypotheses>> hypotheses;
-    		std::vector<std::string> hypothesesFiles = getFilesForReferenceId(r.second, po.getInputPath());
-    		for(auto& hFile : hypothesesFiles)
-    		{
-    			hypotheses.push_back(std::make_shared<SLM::BestHypotheses>(hFile, po.getInputPath(), sorter));
-    		}
+            std::vector<std::vector<std::string>> potentialHypotheses;
+            std::vector<std::string> hypothesisTokens;
+            std::vector<std::vector<std::string>> bestHypotheses;
 
-    		std::vector<std::string> hypothesisTokens;
-    		for(auto& hyp : hypotheses)
-    		{
-    			if(hyp->getBestHypothesis())
-    			{
-					std::vector<std::string> tokens = hyp->getBestHypothesis()->getTokens();
-					hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(tokens), std::end(tokens));
-    			}
-    		}
+            for(auto & nbl : r.second.getTimeSortedNBestLists())
+            {
+                L_V << "I Processing " << nbl->getStartTime() << "\n";
+                L_V << "I Contains " << nbl->getHypotheses().size() << " hypotheses\n";
+                potentialHypotheses.push_back(nbl->getHypotheses().front()->getTokens());
+                bestHypotheses.push_back(nbl->getHypotheses().front()->getTokens());
+            }
 
-    		double localWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
+            {
+                hypothesisTokens.clear();
+                for(int i = 0; i < potentialHypotheses.size(); ++i)
+                {
+                    hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(potentialHypotheses.at(i)), std::end(potentialHypotheses.at(i)));
+                }
 
-    		if(SLM::Logging::getInstance().doLog(SLM::LoggingLevel::ALL))
-			{
-				L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
-			}
+                L_V << "I HYP " << join(hypothesisTokens, " ") << std::endl;
 
-    		globalWER.push_back(localWER);
-			L_I << r.first << "\t" << localWER << "\n";
-    	}
+                currentWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
+                L_P << "cWER: " << currentWER << std::endl;
+            }
+
+            int nCtr = 0;
+            for(auto & nbl : r.second.getTimeSortedNBestLists())
+            {
+                L_V << "II Processing " << nbl->getStartTime() << "\n";
+                L_V << "II Contains " << nbl->getHypotheses().size() << " hypotheses\n";
+                for(auto hyp : nbl->getHypotheses())
+                {
+                    if(nCtr > 0)
+                    {
+                        potentialHypotheses.at(nCtr-1) = bestHypotheses.at(nCtr-1);
+                    }
+
+                    potentialHypotheses[nCtr] = hyp->getTokens();
+                
+                    // construct hypothesis
+                    hypothesisTokens.clear();
+                    for(int i = 0; i < potentialHypotheses.size(); ++i)
+                    {
+                        hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(potentialHypotheses.at(i)), std::end(potentialHypotheses.at(i)));
+                    }
+                    currentWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
+
+                    if(currentWER < bestWER)
+                    {
+                        L_I << "!" << nCtr << "," << currentWER << "! " << join(potentialHypotheses.at(nCtr), " ") << std::endl;
+                        bestHypotheses.at(nCtr) = potentialHypotheses.at(nCtr);
+                        bestWER = currentWER;
+                    }
+                }
+
+
+                ++nCtr;
+            }
+            std::cout << r.first << "\t" << bestWER << std::endl;
+            globalWER.push_back(bestWER);
+        }
 
 
     	if(po.isProgramMode(SLM::ProgramMode::SELECTBEST))
-//    	if(false)
-		{
-                L_P << "SelectBest Mode is used\n";
+        {
+            L_P << "SelectBest Mode is used\n";
 
-    		collectHypothesesForReferenceId(r.second, po.getInputPath(), po.addPadding());
+            collectHypothesesForReferenceId(r.second, po.getInputPath(), po.addPadding());
 
-                L_P << "Hypotheses collected\n";
+            L_P << "Hypotheses collected\n";
 
-    		SLM::ReferenceFileWriter fw(po.getOutputPath(), r.first + "-" + sorter->getName());
-    		SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
+            SLM::ReferenceFileWriter fw(po.getOutputPath(), r.first + "-" + sorter->getName());
+            SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
 
-                L_P << "Files initialised\n";
+            L_P << "Files initialised\n";
 
-    		std::vector<std::string> reference = fr.getTokens();
-    		std::vector<std::string> hypothesisTokens;
+            std::vector<std::string> reference = fr.getTokens();
+            std::vector<std::string> hypothesisTokens;
 
 
-    		for(auto & nbl : r.second.getTimeSortedNBestLists())
-    		{
-    			L_V << "Processing " << nbl->getStartTime() << "\n";
+            for(auto & nbl : r.second.getTimeSortedNBestLists())
+            {
+                L_V << "Processing " << nbl->getStartTime() << "\n";
 
-    			if(nbl->getHypotheses().size())
-    			{
-					std::vector<std::string> f = sorter->sort(*nbl).getTokens();
-					hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(f), std::end(f));
-    			}
-    		}
+                if(nbl->getHypotheses().size())
+                {
+                    std::vector<std::string> f = sorter->sort(*nbl).getTokens();
+                    hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(f), std::end(f));
+                }
+            }
 
-    		double localWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
+            double localWER = WER(reference, tpp.removeFillers(hypothesisTokens, true));
 
-    		if(SLM::Logging::getInstance().doLog(SLM::LoggingLevel::ALL))
-    		{
-    			L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
-    		}
+            if(SLM::Logging::getInstance().doLog(SLM::LoggingLevel::ALL))
+            {
+                L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
+            }
     		
-                fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
-                std::cout << r.first << "\t" << localWER << "\t" << join(tpp.removeFillers(hypothesisTokens, true), " ") << std::endl;
+            fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
+            std::cout << r.first << "\t" << localWER << std::endl;//"\t" << join(tpp.removeFillers(hypothesisTokens, true), " ") << std::endl;
 
-    		fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
+            fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
 
-    		globalWER.push_back(localWER);
-    		L_I << r.first << "\t" << localWER << "\n";
+            globalWER.push_back(localWER);
+            //L_I << r.first << "\t" << localWER << "\n";
 
-		}
+            //std::cout << " WER: " << localWER << std::endl;
+        }
 
     	r.second.clear();
+
+
     }
 
-    std::cout << "WER: " << std::accumulate( globalWER.begin(), globalWER.end(), 0.0)/globalWER.size() << std::endl;
+    std::cout << "GWER: " << std::accumulate( globalWER.begin(), globalWER.end(), 0.0)/globalWER.size() << std::endl;
 
     delete sorter;
 
