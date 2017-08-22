@@ -14,7 +14,7 @@
 
 namespace SLM {
 
-enum ProgramMode { GRIDSEARCH, SELECTBEST, CEILING };
+enum ProgramMode { GRIDSEARCH, SELECTBEST, SELECTBESTWINFO, CEILING };
 enum WeightMode { ACOUSTIC, LANGUAGE, WEIGHTED, POWERWEIGHTED };
 
 class ToolProgramOptions {

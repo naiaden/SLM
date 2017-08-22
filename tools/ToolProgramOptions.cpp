@@ -21,6 +21,8 @@ ProgramMode programFromString(const std::string& s)
 		return ProgramMode::CEILING;
 	if(s == "search")
 		return ProgramMode::GRIDSEARCH;
+        if(s == "bestinfo")
+                return ProgramMode::SELECTBESTWINFO;
 
 	return ProgramMode::SELECTBEST;
 }
@@ -32,6 +34,8 @@ std::string toString(ProgramMode mode)
 			return "ceiling";
 		case ProgramMode::GRIDSEARCH:
 			return "search";
+                case ProgramMode::SELECTBESTWINFO:
+                        return "bestinfo";
 		default:
 			return "best";
 	}
@@ -72,7 +76,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 
 	clp.add<std::string>("vocabulary", 'v', "vocabulary file (only for oov counting)", false);
 
-	clp.add<std::string>("mode", 'm', "program mode: ceiling, best, search", false);
+	clp.add<std::string>("mode", 'm', "program mode: ceiling, best, bestinfo, search", false);
 	clp.add<std::string>("weighting", 'w', "weighting mode: acoustic, language, (power,)weighted (-a -l)", false);
 	clp.add("reverse", '\0', "reverse the sort mode");
 	clp.add("padding", '\0', "adds 2 bos markers ('<s>') to the start of the hypothesis");

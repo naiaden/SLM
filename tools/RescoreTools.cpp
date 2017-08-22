@@ -120,6 +120,51 @@ int main(int argc, char** argv)
             globalWER.push_back(bestWER);
         }
 
+    	if(po.isProgramMode(SLM::ProgramMode::SELECTBESTWINFO))
+        {
+            L_P << "SelectBestWithInfo Mode is used\n";
+
+            collectHypothesesForReferenceId(r.second, po.getInputPath(), po.addPadding());
+
+            L_P << "Hypotheses collected\n";
+
+            SLM::ReferenceFileWriter fw(po.getOutputPath(), r.first + "-" + sorter->getName());
+            SLM::ReferenceFileReader fr(po.getReferencePath(), r.first + ".stm");
+
+            L_P << "Files initialised\n";
+
+            std::vector<std::string> reference = fr.getTokens();
+            std::vector<std::string> hypothesisTokens;
+
+
+            for(auto & nbl : r.second.getTimeSortedNBestLists())
+            {
+                L_V << "Processing " << nbl->getStartTime() << "\n";
+
+                if(nbl->getHypotheses().size())
+                {
+                    std::vector<std::string> f = sorter->sort(*nbl).getTokens();
+                    hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(f), std::end(f));
+                }
+            }
+
+            LevenshteinInfo li = levenshtein(reference, tpp.removeFillers(hypothesisTokens, true));
+            double localWER = li.wer; //WER(reference, tpp.removeFillers(hypothesisTokens, true));
+
+            if(SLM::Logging::getInstance().doLog(SLM::LoggingLevel::ALL))
+            {
+                L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
+            }
+    		
+            std::cout << r.first << "\t" << localWER << "\t" << li.ins << "\t" << li.del << "\t" << li.sub << std::endl;//"\t" << join(tpp.removeFillers(hypothesisTokens, true), " ") << std::endl;
+
+            fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
+
+            globalWER.push_back(localWER);
+            //L_I << r.first << "\t" << localWER << "\n";
+
+            //std::cout << " WER: " << localWER << std::endl;
+        }
 
     	if(po.isProgramMode(SLM::ProgramMode::SELECTBEST))
         {
@@ -156,7 +201,6 @@ int main(int argc, char** argv)
                 L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
             }
     		
-            fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
             std::cout << r.first << "\t" << localWER << std::endl;//"\t" << join(tpp.removeFillers(hypothesisTokens, true), " ") << std::endl;
 
             fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));

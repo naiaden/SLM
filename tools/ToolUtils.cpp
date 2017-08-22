@@ -14,6 +14,48 @@
 #include "Utils.h"
 #include "Logging.h"
 
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+
+#include "Utils.h"
+
+std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    while (!feof(pipe.get())) {
+        if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+            result += buffer.data();
+    }
+    return result;
+}
+
+LevenshteinInfo levenshtein(const std::vector<std::string> &ref, const std::vector<std::string> &hyp)
+{
+    LevenshteinInfo li;
+
+    std::string sRef = "\"" + join(ref, " ") + "\"";
+    std::string sHyp = "\"" + join(hyp, " ") + "\"";
+
+    std::string externalEditops = "PYTHONPATH=/home/lonrust/local/lib/python2.7/site-packages python ~/Software/python-Levenshtein/editops.py";
+    std::string space = " ";
+
+    std::string functionCall = externalEditops + space + sRef + space + sHyp;
+    std::string result = exec(functionCall.c_str());
+
+    auto tokens = delimiterTokeniser(result, '\'');
+    li.sub = std::count_if(tokens.begin(), tokens.end(), [](auto s){return s == "replace";});
+    li.ins = std::count_if(tokens.begin(), tokens.end(), [](auto s){return s == "insert";});
+    li.del = std::count_if(tokens.begin(), tokens.end(), [](auto s){return s == "delete";});
+
+    li.wer = 100*( (li.sub+li.ins+li.del) / (double) ref.size());
+
+    return li;
+}
+
 // https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#C.2B.2B
 double WER(const std::vector<std::string> &ref, const std::vector<std::string> &hyp)
 {

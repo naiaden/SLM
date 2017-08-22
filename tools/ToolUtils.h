@@ -14,7 +14,16 @@
 
 #include "ReferenceId.h"
 
+struct LevenshteinInfo
+{
+    unsigned long sub;
+    unsigned long ins;
+    unsigned long del;
+    double wer;
+};
+
 double WER(const std::vector<std::string> &ref, const std::vector<std::string> &hyp);
+LevenshteinInfo levenshtein(const std::vector<std::string> &ref, const std::vector<std::string> &hyp);
 double OOV(int count, int oov);
 
 std::unordered_map<std::string, SLM::ReferenceId> collectReferenceIds(const std::string& path);
