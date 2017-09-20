@@ -121,6 +121,13 @@ bool WeightedSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std::sha
 		return false;
 	}
 
+       /* std::cout << "A: " << acousticWeight*l->getAcousticScore() << "/"
+                           << acousticWeight*r->getAcousticScore()
+                  << "\tB: " << languageModelWeight*l->getLanguageModelScore() << "/"
+                             << languageModelWeight*r->getLanguageModelScore()
+                  << std::endl;
+*/
+
 	if(reverse)
 		return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore() + offset
 			> acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore() + offset;

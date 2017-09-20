@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <experimental/filesystem>
+#include <stdlib.h>
 
 #include <unordered_map>
 #include <memory>
@@ -156,7 +157,12 @@ int main(int argc, char** argv)
                 L_A << "[REFERENCE] " << join(reference, " ") << "\n[HYPOTHESIS] " << join(tpp.removeFillers(hypothesisTokens, true), " ") << "\n";
             }
     		
-            std::cout << r.first << "\t" << localWER << "\t" << li.ins << "\t" << li.del << "\t" << li.sub << std::endl;//"\t" << join(tpp.removeFillers(hypothesisTokens, true), " ") << std::endl;
+            std::cout << r.first 
+                << "\t" << 0.01*reference.size()*localWER << "\t" << localWER 
+                << "\t" << li.ins << "\t" << 1.0*li.ins/reference.size() 
+                << "\t" << li.del << "\t" << 1.0*li.del/reference.size() 
+                << "\t" << li.sub << "\t" << 1.0*li.sub/reference.size() 
+                << std::endl;
 
             fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
 
