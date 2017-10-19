@@ -10,6 +10,8 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
+#include <iomanip>
 
 #include "Logging.h"
 #include "Hypothesis.h"
@@ -121,19 +123,27 @@ bool WeightedSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std::sha
 		return false;
 	}
 
-       /* std::cout << "A: " << acousticWeight*l->getAcousticScore() << "/"
-                           << acousticWeight*r->getAcousticScore()
-                  << "\tB: " << languageModelWeight*l->getLanguageModelScore() << "/"
-                             << languageModelWeight*r->getLanguageModelScore()
-                  << std::endl;
-*/
+        double lval = acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore() + offset*l->getCount();
+        double rval = acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore() + offset;
+
+        //std::cout << "L(A/B/C): " << std::setprecision(5) << acousticWeight*l->getAcousticScore()
+        //          << "\t" << std::setprecision(5) << languageModelWeight*l->getLanguageModelScore()
+        //          << "\t" << std::setprecision(5) << l->getCount()
+        //          << "\t" << std::setprecision(5) << lval
+        //          << "\tR(A/B/C): " << std::setprecision(5) << acousticWeight*r->getAcousticScore()
+        //          << "\t" << std::setprecision(5) << languageModelWeight*r->getLanguageModelScore()
+        //          << "\t" << std::setprecision(5) << r->getCount()
+        //          << "\t" << std::setprecision(5) << rval
+        //          << "\t" << std::string((lval > rval) ? "L" : "R")
+        //          << std::endl;
+
 
 	if(reverse)
-		return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore() + offset
-			> acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore() + offset;
+		return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore() + offset*l->getCount()
+			> acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore() + offset*r->getCount();
 
-    return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore() + offset
-    		< acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore() + offset;
+    return acousticWeight*l->getAcousticScore() + languageModelWeight*l->getLanguageModelScore() + offset*l->getCount()
+    		< acousticWeight*r->getAcousticScore() + languageModelWeight*r->getLanguageModelScore() + offset*r->getCount();
 }
 
 SLM::Hypothesis WeightedSorter::sort(const SLM::AllHypotheses& nBestList) const

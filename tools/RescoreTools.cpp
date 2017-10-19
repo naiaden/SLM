@@ -137,14 +137,17 @@ int main(int argc, char** argv)
             std::vector<std::string> reference = fr.getTokens();
             std::vector<std::string> hypothesisTokens;
 
-
+            
+            double localPPL = 0;
             for(auto & nbl : r.second.getTimeSortedNBestLists())
             {
                 L_V << "Processing " << nbl->getStartTime() << "\n";
 
                 if(nbl->getHypotheses().size())
                 {
-                    std::vector<std::string> f = sorter->sort(*nbl).getTokens();
+                    auto sorted = sorter->sort(*nbl);
+                    std::vector<std::string> f = sorted.getTokens();
+                    localPPL += sorted.getLanguageModelScore();
                     hypothesisTokens.insert(std::end(hypothesisTokens), std::begin(f), std::end(f));
                 }
             }
@@ -162,6 +165,7 @@ int main(int argc, char** argv)
                 << "\t" << li.ins << "\t" << 1.0*li.ins/reference.size() 
                 << "\t" << li.del << "\t" << 1.0*li.del/reference.size() 
                 << "\t" << li.sub << "\t" << 1.0*li.sub/reference.size() 
+                << "\t" << 0.01*reference.size()*localPPL << "\t" << localPPL
                 << std::endl;
 
             fw.addLine(join(tpp.removeFillers(hypothesisTokens, true), " "));
