@@ -10,10 +10,22 @@
 #include <iostream>
 #include <string>
 
+#include <signal.h>
+
+void sigintHandler(int sigNum)
+{
+    signal(SIGINT, sigintHandler);
+    std::cerr << "(Use exit to terminate the program)" << std::endl;
+}
+
 int main(int argc, char** argv) 
 {
+    signal(SIGINT, sigintHandler);
+
     SLM::ProgramOptions po(argc, argv);
     SLM::LanguageModel lm(po);
+
+    std::cout << "W=" << lm.getVocabularySize() << std::endl;
 
     std::cout << "Format: backoffstrategy history1 history2 history3 focus" << std::endl;
 
@@ -26,6 +38,7 @@ int main(int argc, char** argv)
 
         SLM::BackoffStrategy* bos = nullptr;
 
+        if(words[0] == "exit") exit(0);
         auto it = backoffStrategyCache.find(words[0]);
         if (it != backoffStrategyCache.end())
         {
