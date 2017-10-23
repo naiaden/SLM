@@ -158,7 +158,7 @@ public:
 	LanguageModel(const SLM::ProgramOptions& programOptions);
 	virtual ~LanguageModel();
 
-	Pattern toPattern(const std::string& patternString);
+	Pattern toPattern(const std::string& patternString, bool allowUnknown = false);
 	std::string toString(const Pattern& pattern);
 
 	const PatternSet<uint64_t>& getVocabulary() const;

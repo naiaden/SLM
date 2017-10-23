@@ -49,6 +49,8 @@ public:
 
 	double getNpref() const;
         bool isDisableProgress() const;
+
+        bool isServerMode() const;
 private:
 	cmdline::parser clp;
 
@@ -83,6 +85,8 @@ private:
 
 	double npref;
         bool disableProgress;
+
+        bool serverMode = false;
 };
 
 } /* namespace SLM */

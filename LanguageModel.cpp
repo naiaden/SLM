@@ -859,9 +859,9 @@ const PatternSet<uint64_t>& LanguageModel::getVocabulary() const
 	return vocabulary;
 }
 
-Pattern LanguageModel::toPattern(const std::string& patternString)
+Pattern LanguageModel::toPattern(const std::string& patternString, bool allowUnknown)
 {
-	return classEncoder.buildpattern(patternString);
+	return classEncoder.buildpattern(patternString, allowUnknown);
 }
 
 std::string LanguageModel::toString(const Pattern& pattern)
