@@ -67,7 +67,7 @@ int main(int argc, char** argv)
             Pattern focus = lm.toPattern(words[4], true);
 
             std::cout << (lm.isOOV(focus) ? "!" : "") << "[" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
-            std::cout << bos->prob(context, focus, lm.isOOV(focus)) << std::endl;
+            std::cout << bos->prob(context, focus, false) << std::endl;
         } else
         {
             std::cerr << "Invalid backoff strategy (for now,... only ngram and fulluni)\n";
