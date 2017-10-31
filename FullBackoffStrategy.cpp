@@ -50,6 +50,17 @@ bool FullBackoffStrategy::setIgnoreCache(bool setting)
 	return ignoreCache;
 }
 
+bool FullBackoffStrategy::addToCache(const Pattern& pattern, double val)
+{
+    if(!ignoreCache)
+    {
+        cache[pattern] = val;
+        return true;
+    }
+
+    return false;
+}
+
 void FullBackoffStrategy::writeCache()
 {
 

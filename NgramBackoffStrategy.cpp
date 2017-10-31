@@ -31,6 +31,11 @@ std::string NgramBackoffStrategy::name() const
 	return "ngram";
 }
 
+bool NgramBackoffStrategy::addToCache(const Pattern& pattern, double val)
+{
+    return false;
+}
+
 double NgramBackoffStrategy::prob(const Pattern& context, const Pattern& focus, bool isOOV)
 {
 	L_S << "NgramBackoffStrategy: Estimating prob for " << languageModel.toString(context)

@@ -21,6 +21,7 @@ public:
 
 	std::string name() const;
 	double prob(const Pattern& context, const Pattern& focus, bool isOOV);
+        bool addToCache(const Pattern& pattern, double val);
 };
 
 } /* namespace SLM */

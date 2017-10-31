@@ -36,6 +36,8 @@ public:
 
 	unsigned long long getTotalCount() const;
 	unsigned long long getTotalOovs() const;
+
+        virtual bool addToCache(const Pattern& pattern, double val) = 0;
 protected:
 	BackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 
