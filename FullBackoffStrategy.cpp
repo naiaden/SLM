@@ -61,6 +61,18 @@ bool FullBackoffStrategy::addToCache(const Pattern& pattern, double val)
     return false;
 }
 
+std::experimental::optional<double> FullBackoffStrategy::getFromCache(const Pattern& pattern)
+{
+    auto i = cache.find(pattern);
+    if(i == cache.end())
+    {
+        return std::experimental::nullopt;
+    } else
+    {
+        return i->second;
+    }
+}
+
 void FullBackoffStrategy::writeCache()
 {
 
@@ -76,7 +88,7 @@ double FullBackoffStrategy::prob(const Pattern& context, const Pattern& focus, b
 	if(!isOOV)
 	{
 		// implement skipgrams from layer 3 on
-		double prob = languageModel.getProbS4(focus, context, interpolationStrategy, cache, ignoreCache);
+		double prob = languageModel.getProbS4(focus, context, this, interpolationStrategy);
 //		double prob = languageModel.getProb4(focus, context);
 
 		logProb = log2(prob);

@@ -47,7 +47,7 @@ double LimitedBackoffStrategy::prob(const Pattern& context, const Pattern& focus
 	if(!isOOV)
 	{
 		// implement skipgrams from layer 3 on
-		double prob = languageModel.getProbLS4(focus, context, interpolationStrategy, cache, normalisationCache, ignoreCache);
+		double prob = languageModel.getProbLS4(focus, context, this, interpolationStrategy, normalisationCache);
 
 		logProb = log2(prob);
 

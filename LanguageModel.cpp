@@ -16,6 +16,8 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 #include "Logging.h"
+#include <experimental/optional>
+#include "BackoffStrategy.h"
 
 
 namespace cpyp
@@ -111,30 +113,27 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_cd(const Pattern& w, const Pattern& originalContext, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) const
 	{
 		Pattern lookup = Pattern(originalContext, 2, 1);
 
 		double p_cd = 0.0;
-
-		//std::map<Pattern,double>::const_iterator i_cd = cache.find(lookup+w);
-		auto i_cd = cache.find(lookup+w);
-		if(i_cd == cache.end())
+                
+                std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+		if(!optionalValue)
 		{
-			auto it = backoff.backoff.p.find(lookup.reverse());
-			if (it == backoff.backoff.p.end())
-			{
-				p_cd = prob_d(w, is).second;
-			} else
-			{
-				p_cd = it->second.prob(w, prob_d(w, is).second);
-			}
-//			L_S << "HPYPLM: probS4: fresh   cd " << p_cd << "\n";
-			cache[lookup+w] = p_cd;
+                    auto it = backoff.backoff.p.find(lookup.reverse());
+                    if (it == backoff.backoff.p.end())
+                    {
+                            p_cd = prob_d(w, is).second;
+                    } else
+                    {
+                            p_cd = it->second.prob(w, prob_d(w, is).second);
+                    }
+                    bs->addToCache(lookup+w, p_cd);
 		} else
 		{
-			p_cd = i_cd->second;
-//			L_S << "HPYPLM: probS4: cache   cd " << p_cd << "\n";
+                    p_cd = optionalValue.value();
 		}
 
 		double w_cd = is->get(lookup);
@@ -143,30 +142,27 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_b_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_b_d(const Pattern& w, const Pattern& originalContext, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) const
 	{
 		Pattern lookup = Pattern(originalContext, 1, 2).addskip(std::pair<int, int>(1,1));
 
 		double p_b_d = 0.0;
 
-		auto i_b_d =  cache.find(lookup+w);
-		if(i_b_d == cache.end())
+                std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                if(!optionalValue)
 		{
-			auto it = backoff.p.find(lookup.reverse());
-			if (it == backoff.p.end())
-			{
-				p_b_d = prob_d(w, is).second;
-//				L_A << " B D:           1\n";
-			} else
-			{
-				p_b_d = it->second.prob(w, prob_d(w, is).second);
-//				L_A << " B D:           2B\n";
-			}
-			cache[lookup] = p_b_d;
+                    auto it = backoff.p.find(lookup.reverse());
+                    if (it == backoff.p.end())
+                    {
+                        p_b_d = prob_d(w, is).second;
+                    } else
+                    {
+                        p_b_d = it->second.prob(w, prob_d(w, is).second);
+                    }
+                    bs->addToCache(lookup+w, p_b_d);
 		} else
 		{
-			p_b_d = i_b_d->second;
-//			L_A << " B D:           3\n";
+                    p_b_d = optionalValue.value();
 		}
 
 		double w_b_d = is->get(lookup);
@@ -175,27 +171,27 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_a__d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_a__d(const Pattern& w, const Pattern& originalContext, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) const
 	{
 		Pattern lookup = originalContext.addskip(std::pair<int, int>(1,2));
 
 		double p_a__d = 0.0;
 
-		auto i_a__d = cache.find(lookup+w);
-		if(i_a__d == cache.end())
+		std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                if(!optionalValue)
 		{
-			auto it = p.find(lookup.reverse());
-			if (it == p.end())
-			{
-				p_a__d = prob_d(w, is).second;
-			} else
-			{
-				p_a__d = it->second.prob(w, prob_d(w, is).second);
-			}
-			cache[lookup] = p_a__d;
+                    auto it = p.find(lookup.reverse());
+                    if (it == p.end())
+                    {
+                        p_a__d = prob_d(w, is).second;
+                    } else
+                    {
+                        p_a__d = it->second.prob(w, prob_d(w, is).second);
+                    }
+                    bs->addToCache(lookup+w, p_a__d);
 		} else
 		{
-			p_a__d = i_a__d->second;
+                    p_a__d = optionalValue.value();
 		}
 
 		double w_a__d = is->get(lookup);
@@ -204,31 +200,31 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_bcd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_bcd(const Pattern& w, const Pattern& originalContext, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) const
 	{
 		Pattern lookup = Pattern(originalContext, 1, 2);
 
 		double p_bcd = 0.0;
 
-		auto i_bcd = cache.find(lookup+w);
-		if(i_bcd == cache.end())
+		std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                if(!optionalValue)
 		{
-			std::pair <double,double> x_cd = prob_cd(w, originalContext, is, cache);
-			std::pair <double,double> x_b_d = prob_b_d(w, originalContext, is, cache);
-			double backoffProb = (x_cd.first*x_cd.second + x_b_d.first*x_b_d.second)/(x_cd.first + x_b_d.first);
+                    std::pair <double,double> x_cd = prob_cd(w, originalContext, bs, is);
+                    std::pair <double,double> x_b_d = prob_b_d(w, originalContext, bs, is);
+                    double backoffProb = (x_cd.first*x_cd.second + x_b_d.first*x_b_d.second)/(x_cd.first + x_b_d.first);
 
-			auto it = backoff.p.find(lookup.reverse());
-			if (it == backoff.p.end())
-			{
-				p_bcd = backoffProb;
-			} else
-			{
-				p_bcd = it->second.prob(w, backoffProb);
-			}
-			cache[lookup] = p_bcd;
+                    auto it = backoff.p.find(lookup.reverse());
+                    if (it == backoff.p.end())
+                    {
+                        p_bcd = backoffProb;
+                    } else
+                    {
+                        p_bcd = it->second.prob(w, backoffProb);
+                    }
+                    bs->addToCache(lookup+w, p_bcd);
 		} else
 		{
-			p_bcd = i_bcd->second;
+                    p_bcd = optionalValue.value();
 		}
 
 		double w_bcd = is->get(lookup);
@@ -237,31 +233,31 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_a_cd(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_a_cd(const Pattern& w, const Pattern& originalContext, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) const
 	{
 		Pattern lookup = originalContext.addskip(std::pair<int, int>(1,1));
 
 		double p_a_cd = 0.0;
 
-		auto i_a_cd = cache.find(lookup+w);
-		if(i_a_cd == cache.end())
+		std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                if(!optionalValue)
 		{
-			std::pair <double,double> x_cd = prob_cd(w, originalContext, is, cache);
-			std::pair <double,double> x_a__d = prob_a__d(w, originalContext, is, cache);
-			double backoffProb = (x_cd.first*x_cd.second + x_a__d.first*x_a__d.second)/(x_cd.first + x_a__d.first);
+                    std::pair <double,double> x_cd = prob_cd(w, originalContext, bs, is);
+                    std::pair <double,double> x_a__d = prob_a__d(w, originalContext, bs, is);
+                    double backoffProb = (x_cd.first*x_cd.second + x_a__d.first*x_a__d.second)/(x_cd.first + x_a__d.first);
 
-			auto it = p.find(lookup.reverse());
-			if (it == p.end())
-			{
-				p_a_cd = backoffProb;
-			} else
-			{
-				p_a_cd = it->second.prob(w, backoffProb);
-			}
-			cache[lookup] = p_a_cd;
+                    auto it = p.find(lookup.reverse());
+                    if (it == p.end())
+                    {
+                        p_a_cd = backoffProb;
+                    } else
+                    {
+                        p_a_cd = it->second.prob(w, backoffProb);
+                    }
+                    bs->addToCache(lookup+w, p_a_cd);
 		} else
 		{
-			p_a_cd = i_a_cd->second;
+                    p_a_cd = optionalValue.value();
 		}
 
 		double w_a_cd = is->get(lookup);
@@ -270,31 +266,31 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_ab_d(const Pattern& w, const Pattern& originalContext, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_ab_d(const Pattern& w, const Pattern& originalContext, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) const
 	{
 		Pattern lookup = originalContext.addskip(std::pair<int, int>(2,1));
 
 		double p_ab_d = 0.0;
 
-		auto i_ab_d = cache.find(lookup +w);
-		if(i_ab_d == cache.end())
+		std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                if(!optionalValue)
 		{
-			std::pair <double,double> x_b_d = prob_b_d(w, originalContext, is, cache);
-			std::pair <double,double> x_a__d = prob_a__d(w, originalContext, is, cache);
-			double backoffProb = (x_b_d.first*x_b_d.second + x_a__d.first*x_a__d.second)/(x_b_d.first + x_a__d.first);
+                    std::pair <double,double> x_b_d = prob_b_d(w, originalContext, bs, is);
+                    std::pair <double,double> x_a__d = prob_a__d(w, originalContext, bs, is);
+                    double backoffProb = (x_b_d.first*x_b_d.second + x_a__d.first*x_a__d.second)/(x_b_d.first + x_a__d.first);
 
-			auto it = p.find(lookup.reverse());
-			if (it == p.end())
-			{
-				p_ab_d = backoffProb;
-			} else
-			{
-				p_ab_d = it->second.prob(w, backoffProb);
-			}
-			cache[lookup] = p_ab_d;
+                    auto it = p.find(lookup.reverse());
+                    if (it == p.end())
+                    {
+                        p_ab_d = backoffProb;
+                    } else
+                    {
+                        p_ab_d = it->second.prob(w, backoffProb);
+                    }
+                    bs->addToCache(lookup+w, p_ab_d);
 		} else
 		{
-			p_ab_d = i_ab_d->second;
+                    p_ab_d = optionalValue.value();
 		}
 
 		double w_ab_d = is->get(lookup);
@@ -303,38 +299,32 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	std::pair <double,double>  cpyp::PYPLM<N>::prob_abcd(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache) const
+	std::pair <double,double>  cpyp::PYPLM<N>::prob_abcd(const Pattern& w, const Pattern& context, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) const
 	{
 		double p_abcd;
 
-		auto i_abcd = cache.find(context+w);
-		if(i_abcd == cache.end())
+                std::experimental::optional<double> optionalValue = bs->getFromCache(context+w);
+                if(!optionalValue)
 		{
-			double backoffProb = 0.0;
+                    double backoffProb = 0.0;
 
-			auto it = p.find(context.reverse());
-			//if(it == p.end() || it->second.num_customers(w) == 0)
-			//{
-				std::pair <double,double> x_ab_d = prob_ab_d(w, context, is, cache);
-				std::pair <double,double> x_a_cd = prob_a_cd(w, context, is, cache);
-				std::pair <double,double> x_bcd = prob_bcd(w, context, is, cache);
-				backoffProb = (x_ab_d.first*x_ab_d.second + x_a_cd.first*x_a_cd.second + x_bcd.first*x_bcd.second)/(x_ab_d.first + x_a_cd.first + x_bcd.first);
-			//} else
-			//{
-			//	backoffProb = 0.5;//1.0;        // misschien zit hier iets niet goed
-			//}
+                    auto it = p.find(context.reverse());
+                    std::pair <double,double> x_ab_d = prob_ab_d(w, context, bs, is);
+                    std::pair <double,double> x_a_cd = prob_a_cd(w, context, bs, is);
+                    std::pair <double,double> x_bcd = prob_bcd(w, context, bs, is);
+                    backoffProb = (x_ab_d.first*x_ab_d.second + x_a_cd.first*x_a_cd.second + x_bcd.first*x_bcd.second)/(x_ab_d.first + x_a_cd.first + x_bcd.first);
 
-			if (it == p.end())
-			{
-				p_abcd = backoffProb;
-			} else
-			{
-				p_abcd = it->second.prob(w, backoffProb);
-			}
-			cache[context] = p_abcd;
+                    if (it == p.end())
+                    {
+                        p_abcd = backoffProb;
+                    } else
+                    {
+                        p_abcd = it->second.prob(w, backoffProb);
+                    }
+                    bs->addToCache(context+w, p_abcd);
 		} else
 		{
-			p_abcd = i_abcd->second;
+                    p_abcd = optionalValue.value();
 		}
 
 		L_A << "ABCD: " << p_abcd << "\n";
@@ -343,10 +333,10 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::probS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& cache, bool ignoreCache) const
+	double cpyp::PYPLM<N>::probS4(const Pattern& w, const Pattern& context, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) 
 	{
 
-		double p_abcd = prob_abcd(w, context, is, cache).second;
+		double p_abcd = prob_abcd(w, context, bs, is).second;
 		return p_abcd;
 	}
 
@@ -492,7 +482,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::getNormalisationFactor(const Pattern& context, const Pattern& originalContext, crp<Pattern> restaurant, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize)
+	double cpyp::PYPLM<N>::getNormalisationFactor(const Pattern& context, const Pattern& originalContext, crp<Pattern> restaurant, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize)
 	{
 		L_S << "LanguageModel: getNormalisationFactor: context length: "  << " " << context.size() << "\n";
 		int contextSize = context.size();
@@ -510,7 +500,7 @@ namespace cpyp
 				if(contextSize == 1 )
 				{
 					L_V << "LanguageModel: getNormalisationFactor: 1: \n";
-					ps += prob_cd(dish->first, originalContext, is, probCache).second;
+					ps += prob_cd(dish->first, originalContext, bs, is).second;
 				}
 
 				if(contextSize == 2 )
@@ -518,11 +508,11 @@ namespace cpyp
 					if(context.isgap(1))
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 2: \n";
-						ps += prob_b_d(dish->first, originalContext, is, probCache).second;
+						ps += prob_b_d(dish->first, originalContext, bs, is).second;
 					} else
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 3: \n";
-						ps += prob_bcd(dish->first, originalContext, is, probCache).second;
+						ps += prob_bcd(dish->first, originalContext, bs, is).second;
 					}
 				}
 
@@ -531,18 +521,18 @@ namespace cpyp
 					if(context.isgap(1) && !context.isgap(2))
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 4: \n";
-						ps += prob_a_cd(dish->first, originalContext, is, probCache).second;
+						ps += prob_a_cd(dish->first, originalContext, bs, is).second;
 					} else if(!context.isgap(1) && context.isgap(2))
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 5: \n";
-						ps += prob_ab_d(dish->first, originalContext, is, probCache).second;
+						ps += prob_ab_d(dish->first, originalContext, bs, is).second;
 					} else if(context.isgap(1) && context.isgap(2))
 					{
 						L_V << "LanguageModel: getNormalisationFactor: 6: \n";
-						ps += prob_a__d(dish->first, originalContext, is, probCache).second;
+						ps += prob_a__d(dish->first, originalContext, bs, is).second;
 					} else
 					{
-						double k = prob_abcd(dish->first, originalContext, is, probCache).second;
+						double k = prob_abcd(dish->first, originalContext, bs, is).second;
 						L_V << "LanguageModel: getNormalisationFactor: 7: " << k << "\n";
 						ps += k;
 					}
@@ -574,7 +564,7 @@ namespace cpyp
 	}
 
 	template<unsigned N>
-	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& probCache, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize, bool ignoreCache)
+	double cpyp::PYPLM<N>::probLS4(const Pattern& w, const Pattern& context, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is, std::unordered_map<Pattern, double>& normalisationCache, unsigned vocabSize)
 	{
 
 		double p__ = backoff.backoff.backoff.backoff.p0; // -
@@ -589,107 +579,106 @@ namespace cpyp
 		double w_cd;
 		double p_cd;
 		{
-			Pattern lookup = Pattern(context, 2, 1);
+                    Pattern lookup = Pattern(context, 2, 1);
+                    
+                    std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                    if(!optionalValue)
+                    {
+                        auto it = backoff.backoff.p.find(lookup.reverse());
+                        if (it == backoff.backoff.p.end())
+                        {
+                            L_S << "LanguageModel: probLS4: c NOT in model --> backoff \n";
+                            p_cd = p_d;
+                        } else
+                        {
+                            if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
+                            {
+                                L_S << "LanguageModel: probLS4: cd in model --> no backoff \n";
+                                p_cd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, bs, is, normalisationCache, vocabSize));
+                            }
+                            else // we have not seen uw, but seen u -> backoff
+                            {
+                                L_S << "LanguageModel: probLS4: c* in model --> backoff \n";
+                                p_cd = it->second.prob(w, p_d);
+                            }
+                        }
+                        bs->addToCache(lookup+w, p_cd);
+                    } else
+                    {
+                        p_cd = optionalValue.value();
+                    }
 
-			auto i_cd = probCache.find(lookup+w);
-			if(i_cd == probCache.end())
-			{
-				auto it = backoff.backoff.p.find(lookup.reverse());
-				if (it == backoff.backoff.p.end())
-				{
-					L_S << "LanguageModel: probLS4: c NOT in model --> backoff \n";
-					p_cd = p_d;
-				} else
-				{
-					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
-					{
-						L_S << "LanguageModel: probLS4: cd in model --> no backoff \n";
-						p_cd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
-					}
-					else // we have not seen uw, but seen u -> backoff
-					{
-						L_S << "LanguageModel: probLS4: c* in model --> backoff \n";
-						p_cd = it->second.prob(w, p_d);
-					}
-				}
-
-		//		if(!ignoreCache) probCache.emplace(lookup+w, p_cd);
-			} else
-			{
-				p_cd = i_cd->second;
-			}
-
-			w_cd = is->get(lookup);
+                    w_cd = is->get(lookup);
 		}
 
 		double w_b_d;
 		double p_b_d;
 		{
-			Pattern lookup = Pattern(context, 1, 2).addskip(std::pair<int, int>(1,1));
+                    Pattern lookup = Pattern(context, 1, 2).addskip(std::pair<int, int>(1,1));
 
-			auto i_b_d = probCache.find(lookup);
-			if(i_b_d == probCache.end())
-			{
-				auto it = backoff.p.find(lookup.reverse());
-				if (it == backoff.p.end())
-				{
-					L_S << "LanguageModel: probLS4: b_ NOT in model --> backoff \n";
-					p_b_d = p_d;
-				} else
-				{
-					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
-					{
-						L_S << "LanguageModel: probLS4: b_d in model --> no backoff \n";
-						p_b_d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
-					}
-					else // we have not seen uw, but seen u -> backoff
-					{
-						L_S << "LanguageModel: probLS4: b_* in model --> backoff \n";
-						p_b_d = it->second.prob(w, p_d);
-					}
-				}
-		//		if(!ignoreCache) probCache[lookup] = p_b_d;
-			} else
-			{
-				p_b_d = i_b_d->second;
-			}
+                    std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                    if(!optionalValue)
+                    {
+                        auto it = backoff.p.find(lookup.reverse());
+                        if (it == backoff.p.end())
+                        {
+                            L_S << "LanguageModel: probLS4: b_ NOT in model --> backoff \n";
+                            p_b_d = p_d;
+                        } else
+                        {
+                            if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
+                            {
+                                L_S << "LanguageModel: probLS4: b_d in model --> no backoff \n";
+                                p_b_d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, bs, is, normalisationCache, vocabSize));
+                            }
+                            else // we have not seen uw, but seen u -> backoff
+                            {
+                                L_S << "LanguageModel: probLS4: b_* in model --> backoff \n";
+                                p_b_d = it->second.prob(w, p_d);
+                            }
+                        }
+                        bs->addToCache(lookup+w, p_b_d);
+                    } else
+                    {
+                        p_b_d = optionalValue.value();
+                    }
 
-			w_b_d = is->get(lookup);
+                    w_b_d = is->get(lookup);
 		}
 
 		double w_a__d;
 		double p_a__d;
 		{
-			Pattern lookup = context.addskip(std::pair<int, int>(1,2));
+                    Pattern lookup = context.addskip(std::pair<int, int>(1,2));
 
-			auto i_a__d = probCache.find(lookup);
-			if(i_a__d == probCache.end())
-			{
-				auto it = p.find(lookup.reverse());
-				if (it == p.end())
-				{
-					L_S << "LanguageModel: probLS4: a__ NOT in model --> backoff \n";
-					p_a__d = p_d;
-				} else
-				{
-					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
-					{
-						L_S << "LanguageModel: probLS4: a__d in model --> no backoff \n";
-						p_a__d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
-					}
-					else // we have not seen uw, but seen u -> backoff
-					{
-						L_S << "LanguageModel: probLS4: a__* in model --> backoff \n";
-						p_a__d = it->second.prob(w, p_d);
-					}
-				}
-		//		if(!ignoreCache) probCache[lookup] = p_a__d;
-			} else
-			{
-				p_a__d = i_a__d->second;
-			}
+                    std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                    if(!optionalValue)
+                    {
+                        auto it = p.find(lookup.reverse());
+                        if (it == p.end())
+                        {
+                            L_S << "LanguageModel: probLS4: a__ NOT in model --> backoff \n";
+                            p_a__d = p_d;
+                        } else
+                        {
+                            if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
+                            {
+                                L_S << "LanguageModel: probLS4: a__d in model --> no backoff \n";
+                                p_a__d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, bs, is, normalisationCache, vocabSize));
+                            }
+                            else // we have not seen uw, but seen u -> backoff
+                            {
+                                L_S << "LanguageModel: probLS4: a__* in model --> backoff \n";
+                                p_a__d = it->second.prob(w, p_d);
+                            }
+                        }
+                        bs->addToCache(lookup+w, p_a__d);
+                    } else
+                    {
+                        p_a__d = optionalValue.value();
+                    }
 
-			w_a__d = is->get(lookup);
+                    w_a__d = is->get(lookup);
 		}
 //
 //		//////
@@ -697,144 +686,144 @@ namespace cpyp
 		double w_bcd;
 		double p_bcd;
 		{
-			Pattern lookup = Pattern(context, 1, 2);
+                    Pattern lookup = Pattern(context, 1, 2);
 
-			auto i_bcd = probCache.find(lookup);
-			if(i_bcd == probCache.end())
-			{
-				double backoffProb = (w_cd*p_cd + w_b_d*p_b_d)/(w_cd + w_b_d);
+                    std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                    if(!optionalValue)
+                    {
+                        double backoffProb = (w_cd*p_cd + w_b_d*p_b_d)/(w_cd + w_b_d);
 
-				auto it = backoff.p.find(lookup.reverse());
-				if (it == backoff.p.end())
-				{
-					L_S << "LanguageModel: probLS4: bc NOT in model --> backoff \n";
-					p_bcd = backoffProb;
-				} else
-				{
-					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
-					{
-						L_S << "LanguageModel: probLS4: bcd in model --> no backoff \n";
-						p_bcd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
-					}
-					else // we have not seen uw, but seen u -> backoff
-					{
-						L_S << "LanguageModel: probLS4: bc* in model --> backoff \n";
-						p_bcd = it->second.prob(w, backoffProb);
-					}
-				}
-		//		if(!ignoreCache) probCache[lookup] = p_bcd;
-			} else
-			{
-				p_bcd = i_bcd->second;
-			}
+                        auto it = backoff.p.find(lookup.reverse());
+                        if (it == backoff.p.end())
+                        {
+                            L_S << "LanguageModel: probLS4: bc NOT in model --> backoff \n";
+                            p_bcd = backoffProb;
+                        } else
+                        {
+                            if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
+                            {
+                                    L_S << "LanguageModel: probLS4: bcd in model --> no backoff \n";
+                                    p_bcd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, bs, is, normalisationCache, vocabSize));
+                            }
+                            else // we have not seen uw, but seen u -> backoff
+                            {
+                                    L_S << "LanguageModel: probLS4: bc* in model --> backoff \n";
+                                    p_bcd = it->second.prob(w, backoffProb);
+                            }
+                        }
+                        bs->addToCache(lookup+w, p_bcd);
+                    } else
+                    {
+                        p_bcd = optionalValue.value();
+                    }
 
-			w_bcd = is->get(lookup);
+                    w_bcd = is->get(lookup);
 		}
 
 		double w_a_cd;
 		double p_a_cd;
 		{
-			Pattern lookup = context.addskip(std::pair<int, int>(1,1));
+                    Pattern lookup = context.addskip(std::pair<int, int>(1,1));
 
-			auto i_a_cd = probCache.find(lookup);
-			if(i_a_cd == probCache.end())
-			{
-				double backoffProb = (w_cd*p_cd + w_a__d*p_a__d)/(w_cd + w_a__d);
+                    std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                    if(!optionalValue)
+                    {
+                        double backoffProb = (w_cd*p_cd + w_a__d*p_a__d)/(w_cd + w_a__d);
 
-				auto it = p.find(lookup.reverse());
-				if (it == p.end())
-				{
-					L_S << "LanguageModel: probLS4: a_c NOT in model --> backoff \n";
-					p_a_cd = backoffProb;
-				} else
-				{
-					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
-					{
-						L_S << "LanguageModel: probLS4: a_cd in model --> no backoff \n";
-						p_a_cd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
-					}
-					else // we have not seen uw, but seen u -> backoff
-					{
-						L_S << "LanguageModel: probLS4: a_c* in model --> backoff \n";
-						p_a_cd = it->second.prob(w, backoffProb);
-					}
-				}
-		//		if(!ignoreCache) probCache[lookup] = p_a_cd;
-			} else
-			{
-				p_a_cd = i_a_cd->second;
-			}
+                        auto it = p.find(lookup.reverse());
+                        if (it == p.end())
+                        {
+                            L_S << "LanguageModel: probLS4: a_c NOT in model --> backoff \n";
+                            p_a_cd = backoffProb;
+                        } else
+                        {
+                            if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
+                            {
+                                L_S << "LanguageModel: probLS4: a_cd in model --> no backoff \n";
+                                p_a_cd = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, bs, is, normalisationCache, vocabSize));
+                            }
+                            else // we have not seen uw, but seen u -> backoff
+                            {
+                                L_S << "LanguageModel: probLS4: a_c* in model --> backoff \n";
+                                p_a_cd = it->second.prob(w, backoffProb);
+                            }
+                        }
+                        bs->addToCache(lookup+w, p_a_cd);
+                    } else
+                    {
+                        p_a_cd = optionalValue.value();
+                    }
 
-			w_a_cd = is->get(lookup);
+                    w_a_cd = is->get(lookup);
 		}
 
 		double w_ab_d;
 		double p_ab_d;
 		{
-			Pattern lookup = context.addskip(std::pair<int, int>(2,1));
+                    Pattern lookup = context.addskip(std::pair<int, int>(2,1));
 
-			auto i_ab_d = probCache.find(lookup);
-			if(i_ab_d == probCache.end())
-			{
-				double backoffProb = (w_b_d*p_b_d + w_a__d*p_a__d)/(w_b_d + w_a__d);
+                    std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+                    if(!optionalValue)
+                    {
+                        double backoffProb = (w_b_d*p_b_d + w_a__d*p_a__d)/(w_b_d + w_a__d);
 
-				auto it = p.find(lookup.reverse());
-				if (it == p.end())
-				{
-					L_S << "LanguageModel: probLS4: ab_ NOT in model --> backoff \n";
-					p_ab_d = backoffProb;
-				} else
-				{
-					if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
-					{
-						L_S << "LanguageModel: probLS4: ab_d in model --> no backoff \n";
-						p_ab_d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, is, probCache, normalisationCache, vocabSize));
-					}
-					else // we have not seen uw, but seen u -> backoff
-					{
-						L_S << "LanguageModel: probLS4: a_* in model --> backoff \n";
-						p_ab_d = it->second.prob(w, backoffProb);
-					}
-				}
-		//		if(!ignoreCache) probCache[lookup] = p_ab_d;
-			} else
-			{
-				p_ab_d = i_ab_d->second;
-			}
+                        auto it = p.find(lookup.reverse());
+                        if (it == p.end())
+                        {
+                            L_S << "LanguageModel: probLS4: ab_ NOT in model --> backoff \n";
+                            p_ab_d = backoffProb;
+                        } else
+                        {
+                            if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
+                            {
+                                L_S << "LanguageModel: probLS4: ab_d in model --> no backoff \n";
+                                p_ab_d = it->second.prob(w, getNormalisationFactor(lookup, context, it->second, bs, is, normalisationCache, vocabSize));
+                            }
+                            else // we have not seen uw, but seen u -> backoff
+                            {
+                                L_S << "LanguageModel: probLS4: a_* in model --> backoff \n";
+                                p_ab_d = it->second.prob(w, backoffProb);
+                            }
+                        }
+                        bs->addToCache(lookup+w, p_ab_d);
+                    } else
+                    {
+                        p_ab_d = optionalValue.value();
+                    }
 
-			w_ab_d = is->get(lookup);
+                    w_ab_d = is->get(lookup);
 		}
 //
 //		//////
 //
 		double p_abcd;
-		auto i_abcd =  ignoreCache ? probCache.end() : probCache.find(context+w);
-		if(i_abcd == probCache.end())
+		std::experimental::optional<double> optionalValue = bs->getFromCache(context+w);
+                if(!optionalValue)
 		{
-			double backoffProb = (w_bcd*p_bcd + w_a_cd*p_a_cd + w_ab_d*p_ab_d)/(w_bcd + w_a_cd + w_ab_d);
+                    double backoffProb = (w_bcd*p_bcd + w_a_cd*p_a_cd + w_ab_d*p_ab_d)/(w_bcd + w_a_cd + w_ab_d);
 
-			auto it = p.find(context.reverse());
-			if (it == p.end())
-			{
-				L_S << "LanguageModel: probLS4: abc NOT in model --> backoff \n";
-				p_abcd = backoffProb;
-			} else
-			{
-				if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
-				{
-					L_S << "LanguageModel: probLS4: abcd in model --> no backoff \n";
-					p_abcd = it->second.prob(w, getNormalisationFactor(context, context, it->second, is, probCache, normalisationCache, vocabSize));
-				}
-				else // we have not seen uw, but seen u -> backoff
-				{
-					L_S << "LanguageModel: probLS4: abc* in model --> backoff \n";
-					p_abcd = it->second.prob(w, backoffProb);
-				}
-			}
-		//	if(!ignoreCache) probCache[context] = p_abcd;
+                    auto it = p.find(context.reverse());
+                    if (it == p.end())
+                    {
+                        L_S << "LanguageModel: probLS4: abc NOT in model --> backoff \n";
+                        p_abcd = backoffProb;
+                    } else
+                    {
+                        if(it->second.num_customers(w)) // we have seen the pattern uw -> no backoff
+                        {
+                            L_S << "LanguageModel: probLS4: abcd in model --> no backoff \n";
+                            p_abcd = it->second.prob(w, getNormalisationFactor(context, context, it->second, bs, is, normalisationCache, vocabSize));
+                        }
+                        else // we have not seen uw, but seen u -> backoff
+                        {
+                            L_S << "LanguageModel: probLS4: abc* in model --> backoff \n";
+                            p_abcd = it->second.prob(w, backoffProb);
+                        }
+                    }
+                    bs->addToCache(context+w, p_abcd);
 		} else
 		{
-			p_abcd = i_abcd->second;
+                    p_abcd = optionalValue.value();
 		}
 
 		return p_abcd;
@@ -953,14 +942,14 @@ double LanguageModel::getProb4(const Pattern& focus, const Pattern& context)
 	return lm.prob4(focus, context);
 }
 
-double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, bool ignoreCache)
+double LanguageModel::getProbS4(const Pattern& focus, const Pattern& context, SLM::BackoffStrategy* backoffStrategy, SLM::InterpolationStrategy* interpolationStrategy)
 {
-	return lm.probS4(focus, context, interpolationStrategy, cache, ignoreCache);
+	return lm.probS4(focus, context, backoffStrategy, interpolationStrategy);
 }
 
-double LanguageModel::getProbLS4(const Pattern& focus, const Pattern& context, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& cache, std::unordered_map<Pattern, double>& normalisationCache, bool ignoreCache)
+double LanguageModel::getProbLS4(const Pattern& focus, const Pattern& context, SLM::BackoffStrategy* backoffStrategy, SLM::InterpolationStrategy* interpolationStrategy, std::unordered_map<Pattern, double>& normalisationCache)
 {
-	return lm.probLS4(focus, context, interpolationStrategy, cache, normalisationCache, getVocabularySize(), ignoreCache);
+	return lm.probLS4(focus, context, backoffStrategy, interpolationStrategy, normalisationCache, getVocabularySize());
 }
 
 unsigned LanguageModel::getVocabularySize()

@@ -11,6 +11,7 @@
 #include <fstream>
 
 #include <pattern.h>
+#include <experimental/optional>
 
 #include "LanguageModel.h"
 
@@ -38,6 +39,7 @@ public:
 	unsigned long long getTotalOovs() const;
 
         virtual bool addToCache(const Pattern& pattern, double val) = 0;
+        virtual std::experimental::optional<double> getFromCache(const Pattern& pattern) = 0;
 protected:
 	BackoffStrategy(SLM::LanguageModel& languageModel, const std::string& baseFileName);
 

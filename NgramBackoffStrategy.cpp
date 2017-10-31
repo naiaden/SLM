@@ -36,6 +36,11 @@ bool NgramBackoffStrategy::addToCache(const Pattern& pattern, double val)
     return false;
 }
 
+std::experimental::optional<double> NgramBackoffStrategy::getFromCache(const Pattern& pattern)
+{
+    return std::experimental::nullopt;
+}
+
 double NgramBackoffStrategy::prob(const Pattern& context, const Pattern& focus, bool isOOV)
 {
 	L_S << "NgramBackoffStrategy: Estimating prob for " << languageModel.toString(context)

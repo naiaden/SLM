@@ -30,6 +30,7 @@ public:
 	double prob(const Pattern& context, const Pattern& focus, bool isOOV);
 
         bool addToCache(const Pattern& pattern, double val);
+        std::experimental::optional<double> getFromCache(const Pattern& pattern);
 	bool setIgnoreCache(bool setting);
 protected:
 
