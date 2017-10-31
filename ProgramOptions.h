@@ -50,6 +50,8 @@ public:
 	double getNpref() const;
         bool isDisableProgress() const;
 
+        bool addSentenceMarkers() const;
+
         bool isServerMode() const;
 private:
 	cmdline::parser clp;
@@ -85,6 +87,8 @@ private:
 
 	double npref;
         bool disableProgress;
+
+        bool sentenceMarkers = false;
 
         bool serverMode = false;
 };

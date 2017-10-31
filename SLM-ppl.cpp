@@ -37,8 +37,10 @@ int main(int argc, char** argv) {
 		std::string retrievedString;
 		while(std::getline(file, retrievedString))
 		{
-			// hack
-//			retrievedString = "<s> <s> <s> " + retrievedString;
+		        if(po.addSentenceMarkers())
+                        {
+                            retrievedString = "<s> <s> " + retrievedString;
+                        }
 			bo.nextLine();
 //			pt.nextLine();
 
@@ -53,14 +55,21 @@ int main(int argc, char** argv) {
 					contextStream << " " << words[i-(4-1)+ii];
 				}
 
-				Pattern context = lm.toPattern(contextStream.str());
-				Pattern focus = lm.toPattern(words[i]);
+                                try
+                                {
+                                    Pattern context = lm.toPattern(contextStream.str());
+                                    Pattern focus = lm.toPattern(words[i]);
 
-				L_P << "SLM: [" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
-				bo.prob(context, focus, lm.isOOV(focus));
-//				pt.nextPattern();
+                                    L_P << "SLM: [" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
+                                    bo.prob(context, focus, lm.isOOV(focus));
+    //				pt.nextPattern();
 
-//				pt.toString();
+    //				pt.toString();
+                                } catch (const UnknownTokenError &e)
+                                {
+                                    std::cerr << "Unknown token error: " << contextStream.str() << " " << words[i] << std::endl;
+                                    continue;
+                                }
 			}
 		}
 

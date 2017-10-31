@@ -18,6 +18,8 @@ void sigintHandler(int sigNum)
     std::cerr << "(Use exit to terminate the program)" << std::endl;
 }
 
+enum class ProgramMode { SENTENCE, PATTERN };
+
 int main(int argc, char** argv) 
 {
     signal(SIGINT, sigintHandler);
@@ -27,7 +29,10 @@ int main(int argc, char** argv)
 
     std::cout << "W=" << lm.getVocabularySize() << std::endl;
 
-    std::cout << "Format: backoffstrategy history1 history2 history3 focus" << std::endl;
+    ProgramMode pm = ProgramMode::SENTENCE;
+    bool ignoreInput = false;
+
+    //std::cout << "Format: backoffstrategy history1 history2 history3 focus" << std::endl;
 
     std::map<std::string, SLM::BackoffStrategy*> backoffStrategyCache;
 
@@ -43,7 +48,13 @@ int main(int argc, char** argv)
         if (it != backoffStrategyCache.end())
         {
             bos = it->second;
-        } else 
+        } else if(words[0] == "setmode")
+        {   
+            if(words[1] == "sentence") { pm = ProgramMode::SENTENCE; std::cerr << "Mode set to sentence\n"; }
+            else if(words[1] == "pattern") { pm = ProgramMode::PATTERN; std::cerr << "Mode set to pattern\n"; }
+            else std::cerr << "Unknown setmode: try sentence or pattern" << std::endl;
+            ignoreInput = true;
+        } else
         {
             if(words[0] == "ngram")
             {
@@ -56,22 +67,48 @@ int main(int argc, char** argv)
             backoffStrategyCache[words[0]] = bos;
         }
 
-        if(bos)
+        if(bos && !ignoreInput)
         {
-            std::stringstream contextStream;
-            contextStream << words[1];
-            contextStream << " " << words[2];
-            contextStream << " " << words[3];
+            if(pm == ProgramMode::PATTERN)
+            {
+                std::stringstream contextStream;
+                contextStream << words[1];
+                contextStream << " " << words[2];
+                contextStream << " " << words[3];
 
-            Pattern context = lm.toPattern(contextStream.str(), true);
-            Pattern focus = lm.toPattern(words[4], true);
+                Pattern context = lm.toPattern(contextStream.str(), true);
+                Pattern focus = lm.toPattern(words[4], true);
 
-            std::cout << (lm.isOOV(focus) ? "!" : "") << "[" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
-            std::cout << bos->prob(context, focus, false) << std::endl;
+                std::cout << (lm.isOOV(focus) ? "!" : "") << "[" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
+                std::cout << bos->prob(context, focus, false) << std::endl;
+            } else
+            {
+                for(int i = 4; i < words.size(); ++i)
+                {
+                    std::stringstream contextStream;
+                    //contextStream << words[i-(4-1)];
+
+                    for(int ii = 1; ii < 4; ++ii)
+                    {
+                        //std::cout << "." << words[i-4+ii] << std::endl;
+                        contextStream << " " << words[i-4+ii];
+                    }
+
+                    Pattern context = lm.toPattern(contextStream.str(), true);
+                    Pattern focus = lm.toPattern(words[i], true);
+                
+                    //std::cout << (lm.isOOV(focus) ? "!" : "") << lm.toString(focus) << std::endl;
+
+                    std::cout << (lm.isOOV(focus) ? "!" : "") << "[" << lm.toString(context) << "] " << lm.toString(focus) << "\n";
+                    std::cout << bos->prob(context, focus, false) << std::endl;
+                }
+            }
         } else
         {
             std::cerr << "Invalid backoff strategy (for now,... only ngram and fulluni)\n";
         }
+
+        ignoreInput = false;
 
    }
 

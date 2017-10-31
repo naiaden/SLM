@@ -96,7 +96,10 @@ int main(int argc, char** argv) {
                         }
 
 			// hack
-			sentenceString = "<s> <s> " + sentenceString;
+			if(po.addSentenceMarkers())
+                        {
+                            sentenceString = "<s> <s> " + sentenceString;
+                        }
 
 			std::vector<std::string> tokens = whitespaceTokeniser(sentenceString);
 			std::vector<std::string> words = cgnTP.removeFillers(tokens);

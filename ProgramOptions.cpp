@@ -49,6 +49,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 
 	clp.add<std::string>("backoff", 'B', "backoff method", false);
 	clp.add("ignorecache", '\0', "ignore cache");
+        clp.add("addsentencemarkers", '\0', "Add <s> <s> to the beginning (for now it is fixed..)");
 	clp.add<std::string>("debug", '\0', "debug setting", false, "none");
         clp.add("disableprogress", '\0', "disable progress counter");
 	clp.parse_check(argc, argv);
@@ -76,6 +77,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 
 	npref = clp.get<double>("npref");
 	ignoreCache = clp.exist("ignorecache");
+        sentenceMarkers = clp.exist("addsentencemarkers");
         disableProgress = clp.exist("disableprogress");
 
 	char hostname[128];
@@ -126,6 +128,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 			<< "\n"
 			<< std::setw(30) << "Backoff strategies: " << backoffOptions << "\n"
 			<< std::setw(30) << "Ignore cache: " << (ignoreCache ? "Yes" : "No") << "\n"
+			<< std::setw(30) << "Add sentence markers: " << (sentenceMarkers ? "Yes" : "No") << "\n"
 			<< std::setw(30) << "Npref ratio: " << npref << "\n";
 
 	//
@@ -203,6 +206,11 @@ int ProgramOptions::getOrder() const
 bool ProgramOptions::isIgnoreCache() const
 {
 	return ignoreCache;
+}
+
+bool ProgramOptions::addSentenceMarkers() const
+{
+    return sentenceMarkers;
 }
 
 bool ProgramOptions::isDisableProgress() const
