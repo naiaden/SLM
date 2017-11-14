@@ -8,6 +8,8 @@
 #ifndef PROGRAMOPTIONS_H_
 #define PROGRAMOPTIONS_H_
 
+#include "ValueInterpolationStrategy.h"
+
 #include <string>
 #include <vector>
 
@@ -48,6 +50,7 @@ public:
 	std::string getBackoffOptions() const;
 
 	double getNpref() const;
+        SLM::ValueInterpolationWeights& getValues();
         bool isDisableProgress() const;
 
         bool addSentenceMarkers() const;
@@ -86,11 +89,14 @@ private:
 	std::string hostName;
 
 	double npref;
+        SLM::ValueInterpolationWeights viWeights;
         bool disableProgress;
 
         bool sentenceMarkers = false;
 
         bool serverMode = false;
+
+        SLM::ValueInterpolationWeights valuesFromString(const std::string& val);
 };
 
 } /* namespace SLM */

@@ -16,6 +16,7 @@
 
 #include "Logging.h"
 #include "ProgramOptions.h"
+#include "Utils.h"
 
 
 namespace SLM {
@@ -46,6 +47,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	clp.add<std::string>("testoutputdirectory", 'O', "test output directory", true);
 
 	clp.add<double>("npref", '\0', "npref value", false, 2.0);
+        clp.add<std::string>("interpolweights", '\0', "interpolation weights, d-0.5:ab_d-0.1:a_cd-5", false, "");
 
 	clp.add<std::string>("backoff", 'B', "backoff method", false);
 	clp.add("ignorecache", '\0', "ignore cache");
@@ -76,6 +78,7 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 	backoffOptions = clp.get<std::string>("backoff");
 
 	npref = clp.get<double>("npref");
+        valuesFromString(clp.get<std::string>("interpolweights"));
 	ignoreCache = clp.exist("ignorecache");
         sentenceMarkers = clp.exist("addsentencemarkers");
         disableProgress = clp.exist("disableprogress");
@@ -129,7 +132,9 @@ ProgramOptions::ProgramOptions(int argc, char** argv) {
 			<< std::setw(30) << "Backoff strategies: " << backoffOptions << "\n"
 			<< std::setw(30) << "Ignore cache: " << (ignoreCache ? "Yes" : "No") << "\n"
 			<< std::setw(30) << "Add sentence markers: " << (sentenceMarkers ? "Yes" : "No") << "\n"
+                        << std::setw(30) << "Interpolation weights: " << viWeights.toString() << "\n"
 			<< std::setw(30) << "Npref ratio: " << npref << "\n";
+
 
 	//
 
@@ -231,6 +236,34 @@ std::string ProgramOptions::getBackoffOptions() const
 double ProgramOptions::getNpref() const
 {
 	return npref;
+}
+
+SLM::ValueInterpolationWeights ProgramOptions::valuesFromString(const std::string& vals)
+{   // d - cd - bcd - b_d - abcd - a_cd - ab_d - a__d
+    std::vector<std::string> tokens = delimiterTokeniser(vals, ':');
+
+    for(std::string token : tokens)
+    {
+        std::vector<std::string> keyval = delimiterTokeniser(token, '-');
+        if(keyval.size() != 2 )
+            continue;
+    
+        if(keyval[0] == "d") { viWeights.w_d = std::stod(keyval[1]); }
+        if(keyval[0] == "cd") { viWeights.w_cd = std::stod(keyval[1]); }
+        if(keyval[0] == "b_d") { viWeights.w_b_d = std::stod(keyval[1]); }
+        if(keyval[0] == "abcd") { viWeights.w_abcd = std::stod(keyval[1]); }
+        if(keyval[0] == "a_cd") { viWeights.w_a_cd = std::stod(keyval[1]); }
+        if(keyval[0] == "ab_d") { viWeights.w_ab_d = std::stod(keyval[1]); }
+        if(keyval[0] == "a__d") { viWeights.w_a__d = std::stod(keyval[1]); }
+        if(keyval[0] == "bcd") { viWeights.w_bcd = std::stod(keyval[1]); }
+    }
+
+    return viWeights;
+}
+
+SLM::ValueInterpolationWeights& ProgramOptions::getValues()
+{
+        return viWeights;
 }
 
 } /* namespace SLM */

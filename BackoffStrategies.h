@@ -21,7 +21,7 @@ class InterpolationStrategy;
 class BackoffStrategies
 {
 public:
-	BackoffStrategies(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
+	BackoffStrategies(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
 	virtual ~BackoffStrategies();
 
 	void prob(const Pattern& context, const Pattern& focus, bool isOOV);
@@ -37,10 +37,10 @@ private:
 class BackoffStrategiesFactory
 {
 public:
-	static std::vector<BackoffStrategy*> fromProgramOptions(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
-	static BackoffStrategy* createNgramBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
-	static BackoffStrategy* createLimitedBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy);
-	static BackoffStrategy* createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy);
+	static std::vector<BackoffStrategy*> fromProgramOptions(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
+	static BackoffStrategy* createNgramBackoffStrategy(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm);
+	static BackoffStrategy* createLimitedBackoffStrategy(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy);
+	static BackoffStrategy* createFullBackoffStrategy(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy);
 };
 
 } /* namespace SLM */

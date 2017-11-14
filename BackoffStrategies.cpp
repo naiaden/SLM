@@ -18,17 +18,18 @@
 #include "RandomInterpolationStrategy.h"
 #include "NprefInterpolationStrategy.h"
 #include "PerplexityInterpolationStrategy.h"
+#include "ValueInterpolationStrategy.h"
 
 
 
 namespace SLM {
 
 enum BackoffLevel { NGRAM, LIMITED, FULL };
-enum InterpolationFactor { UNIFORM, MLE, ENTROPY, COUNT, RANDOM, NPREF, PERPLEXITY, FAKENGRAM };
+enum InterpolationFactor { UNIFORM, MLE, ENTROPY, COUNT, RANDOM, NPREF, PERPLEXITY, FAKENGRAM, VALUE };
 
 
 
-BackoffStrategies::BackoffStrategies(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
+BackoffStrategies::BackoffStrategies(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
 {
 	backoffStrategies = BackoffStrategiesFactory::fromProgramOptions(programOptions, lm);
 }
@@ -95,6 +96,8 @@ std::string toString(InterpolationFactor is)
 			return "ppl";
 		case SLM::InterpolationFactor::FAKENGRAM:
 			return "fakengram";
+                case SLM::InterpolationFactor::VALUE:
+                        return "value";
 	}
 }
 
@@ -119,7 +122,8 @@ InterpolationFactor stringToInterpolationStrategy(const std::string& is)
 	if(is == "random")	return SLM::InterpolationFactor::RANDOM;
 	if(is == "npref")	return SLM::InterpolationFactor::NPREF;
 	if(is == "ppl")		return SLM::InterpolationFactor::PERPLEXITY;
-	if(is == "fakengram") return SLM::InterpolationFactor::FAKENGRAM;
+	if(is == "fakengram")   return SLM::InterpolationFactor::FAKENGRAM;
+        if(is == "value")       return SLM::InterpolationFactor::VALUE;
 
 	return SLM::InterpolationFactor::UNIFORM;
 }
@@ -133,7 +137,7 @@ BackoffLevel stringToBackoffLevel(const std::string& bl)
 	return SLM::BackoffLevel::NGRAM;
 }
 
-std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
+std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
 {
 	std::vector<BackoffStrategy*> backoffStrategies;
 
@@ -166,10 +170,13 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			} else if(endsWith(token, "ppl"))
 			{
 				is = new PerplexityInterpolationStrategy(lm);
-			} else
+			} else if(endsWith(token, "value"))
+                        {
+                                is = new ValueInterpolationStrategy(programOptions.getValues());
+                        } else
 			{
 				is = new UniformInterpolationStrategy();
-			}
+			} 
 
 			BackoffStrategy* bos = createFullBackoffStrategy(programOptions, lm, is);
 			if(bos) backoffStrategies.push_back(bos);
@@ -196,7 +203,10 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 			} else if(endsWith(token, "ppl"))
 			{
 				is = new PerplexityInterpolationStrategy(lm);
-			} else
+			} else if(endsWith(token, "value"))
+                        {
+                                is = new ValueInterpolationStrategy(programOptions.getValues());
+                        } else
 			{
 				is = new UniformInterpolationStrategy();
 			}
@@ -210,7 +220,7 @@ std::vector<BackoffStrategy*> BackoffStrategiesFactory::fromProgramOptions(const
 	return backoffStrategies;
 }
 
-BackoffStrategy* BackoffStrategiesFactory::createNgramBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
+BackoffStrategy* BackoffStrategiesFactory::createNgramBackoffStrategy(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm)
 {
 	// ngram cache option in program options?
 	NgramBackoffStrategy* nbs = new NgramBackoffStrategy(lm, programOptions.getTestModelName());
@@ -218,7 +228,7 @@ BackoffStrategy* BackoffStrategiesFactory::createNgramBackoffStrategy(const SLM:
 	return nbs;
 }
 
-BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
+BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
 {
 	// limited cache option in program options?
 	LimitedBackoffStrategy* lbs = new LimitedBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy, programOptions.isIgnoreCache());
@@ -227,7 +237,7 @@ BackoffStrategy* BackoffStrategiesFactory::createLimitedBackoffStrategy(const SL
 	return lbs;
 }
 
-BackoffStrategy* BackoffStrategiesFactory::createFullBackoffStrategy(const SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
+BackoffStrategy* BackoffStrategiesFactory::createFullBackoffStrategy(SLM::ProgramOptions& programOptions, SLM::LanguageModel& lm, SLM::InterpolationStrategy* interpolationStrategy)
 {
 	// full cache option in program options?
 	FullBackoffStrategy* fbs = new FullBackoffStrategy(lm, programOptions.getTestModelName(), interpolationStrategy);

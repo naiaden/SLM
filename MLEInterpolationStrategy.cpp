@@ -54,13 +54,17 @@ double MLEInterpolationStrategy::get(const Pattern& context)
 		std::vector<unsigned int> occurrenceCounts = lm->getCounts(contextContext);
 		unsigned int sum = std::accumulate ( occurrenceCounts.begin( ) , occurrenceCounts.end( ) , 0 ) ;
 		double mle = (1.0*lm->getCount(contextFocus, contextContext))/(1.0*sum);
+                if(lm->toString(contextFocus) == "{*}")
+		    mle = (1.0*(sum-1))/(2.0*sum);
+                    
+
 		if(!std::isnormal(mle))
 		{
-			mle = 0.0000001;
+			mle = 0.000000000000001;
 		}
-		mle = std::max(0.0000001, mle);
+		mle = std::max(0.000000000000001, mle);
 
-		L_S << "MLEi: get(" << contextSize << ") sum:" << sum << " count:" << lm->getCount(contextFocus, contextContext) << " MLE:" << mle << "\n";
+		L_S << "MLEi: get(" << lm->toString(contextContext) << "," << lm->toString(contextFocus) << ") sum:" << sum << " count:" << lm->getCount(contextFocus, contextContext) << " MLE:" << mle << "\n";
 
 
 //		weights[context] = mle;

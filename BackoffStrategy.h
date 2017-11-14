@@ -32,6 +32,7 @@ public:
 
 	virtual double prob(const Pattern& context, const Pattern& focus, bool isOOV) = 0;
 	int nextFile();
+        double perplexityAndNextFile();
 	int nextLine();
 	void done();
 

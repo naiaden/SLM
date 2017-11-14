@@ -46,18 +46,20 @@ BackoffStrategy::~BackoffStrategy() {
 	sentsProbFile.close();
 }
 
-int BackoffStrategy::nextFile()
+double BackoffStrategy::perplexityAndNextFile()
 {
 	totalCount += fileCount;
 	totalOovs += fileOovs;
 	totalLLH += fileLLH;
 	totalSentences += sentences;
 
+        double filePerplexity = 0.0;
+
 	if(files)
 	{
 //		done();
 
-		double filePerplexity = pow(2, fileLLH/(fileCount/*-totalOovs*/));
+		filePerplexity = pow(2, fileLLH/(fileCount/*-totalOovs*/));
 		L_I << "BackoffStrategy: FILE (" << name() << ")\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
 		outputFile << "BackoffStrategy: FILE (" << name() << ")\tF" << sentences << "\tP" << filePerplexity << "\tC" << (fileCount/*-totalOovs*/) << "\tO" << fileOovs << "\tL" << fileLLH << std::endl;
 
@@ -82,6 +84,13 @@ int BackoffStrategy::nextFile()
 	sentOovs = 0;
 	sentLLH = 0.0;
 
+        return filePerplexity;
+    
+}
+
+int BackoffStrategy::nextFile()
+{
+        perplexityAndNextFile();
 
 	return files;
 }
