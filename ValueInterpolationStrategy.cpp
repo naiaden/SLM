@@ -27,6 +27,7 @@ ValueInterpolationStrategy::~ValueInterpolationStrategy()
 
 double ValueInterpolationStrategy::get(const Pattern& context)
 {
+    //std::cout << "\t\t" << context.size() << "-" << weights.toString() << std::endl;
     int contextSize = context.size();
 
     if(contextSize == 0)
