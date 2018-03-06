@@ -30,6 +30,8 @@
 #include "cpyp/crp.h"
 #include "cpyp/tied_parameter_resampler.h"
 
+#include <boost/dynamic_bitset.hpp>
+
 #include "uvector.h"
 #include "uniform_vocab.h"
 
@@ -103,6 +105,9 @@ template<unsigned N> struct PYPLM {
 			backoff.decrement(w, context, eng);
 		}
 	}
+
+	std::pair <double,double> prob_recursive(const Pattern& w, const Pattern& originalContext, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is, const boost::dynamic_bitset<>& skipPattern) const;
+        double getProb(const Pattern& w, const Pattern& context, double backoffProb, int level) const;
 
 	std::pair <double,double> prob_() const;
 	std::pair <double,double> prob_d(const Pattern& w, SLM::InterpolationStrategy* is) const;

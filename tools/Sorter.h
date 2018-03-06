@@ -28,6 +28,17 @@ protected:
 	bool reverse;
 };
 
+class NoSorter : public Sorter {
+public:
+	NoSorter(bool reverse = false);
+	virtual ~NoSorter();
+
+	SLM::Hypothesis sort(const SLM::AllHypotheses& nBestList) const;
+	bool compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const;
+
+	std::string getName() const;
+};
+
 class AcousticSorter : public Sorter {
 public:
 	AcousticSorter(bool reverse = false);

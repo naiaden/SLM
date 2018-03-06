@@ -33,6 +33,7 @@ std::string exec(const char* cmd) {
     return result;
 }
 
+/*
 LevenshteinInfo levenshtein(const std::vector<std::string> &ref, const std::vector<std::string> &hyp)
 {
     LevenshteinInfo li;
@@ -54,6 +55,32 @@ LevenshteinInfo levenshtein(const std::vector<std::string> &ref, const std::vect
     li.wer = 100*( (li.sub+li.ins+li.del) / (double) ref.size());
 
     return li;
+}
+*/
+LevenshteinInfo levenshtein(const std::vector<std::string> & ref, const std::vector<std::string>& hyp)
+{
+    LevenshteinInfo li;
+
+    std::string sRef = "\"" + join(ref, " ") + "\"";
+    std::string sHyp = "\"" + join(hyp, " ") + "\"";
+
+    std::string externalEditops = "PYTHONPATH=/home/lonrust/local/lib/python2.7/site-packages python ~/Software/python-Levenshtein/editops1.py";
+    std::string space = " ";
+
+    std::string functionCall = externalEditops + space + sRef + space + sHyp;
+    std::string result = exec(functionCall.c_str());
+
+    // eqs del ins sub
+    auto tokens = delimiterTokeniser(result, ',');
+    li.sub = std::stoul(tokens[3]);
+    li.ins = std::stoul(tokens[2]);
+    li.del = std::stoul(tokens[1]);
+    li.eqs = std::stoul(tokens[0]);
+
+    li.wer = 100 * ( (li.sub + li.del + li.ins) / (double) ref.size());
+
+    return li;
+
 }
 
 // https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#C.2B.2B

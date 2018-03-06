@@ -49,6 +49,8 @@ WeightMode weightFromString(const std::string& s)
 		return WeightMode::LANGUAGE;
 	if(s == "powerweighted")
 		return WeightMode::POWERWEIGHTED;
+        if(s == "order")
+                return WeightMode::ORDER;
 
 	return WeightMode::WEIGHTED;
 }
@@ -62,6 +64,8 @@ std::string toString(WeightMode mode)
 			return "language";
 		case WeightMode::POWERWEIGHTED:
 			return "powerweighted";
+                case WeightMode::ORDER:
+                        return "order";
 		default:
 			return "weighted";
 	}
@@ -77,7 +81,7 @@ ToolProgramOptions::ToolProgramOptions(int argc, char** argv) {
 	clp.add<std::string>("vocabulary", 'v', "vocabulary file (only for oov counting)", false);
 
 	clp.add<std::string>("mode", 'm', "program mode: ceiling, best, bestinfo, search", false);
-	clp.add<std::string>("weighting", 'w', "weighting mode: acoustic, language, (power,)weighted (-a -l)", false);
+	clp.add<std::string>("weighting", 'w', "weighting mode: acoustic, language, (power,)weighted (-a -l), order", false);
 	clp.add("reverse", '\0', "reverse the sort mode");
 	clp.add("padding", '\0', "adds 2 bos markers ('<s>') to the start of the hypothesis");
 
@@ -215,6 +219,8 @@ SLM::Sorter* ToolProgramOptions::getSorter()
 			return new LanguageModelSorter(reverse);
 		case WeightMode::POWERWEIGHTED:
 			return new PowerWeightedSorter(aW, lW, offset, reverse);
+                case WeightMode::ORDER:
+                        return new NoSorter(reverse);
 		default:
 			return new WeightedSorter(aW, lW, offset, reverse);
 	}

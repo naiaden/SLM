@@ -18,6 +18,8 @@
 #include "ProgramOptions.h"
 #include "Utils.h"
 
+#include "ValueInterpolationStrategy.h"
+
 
 namespace SLM {
 
@@ -240,7 +242,7 @@ double ProgramOptions::getNpref() const
 
 SLM::ValueInterpolationWeights ProgramOptions::valuesFromString(const std::string& vals)
 {   // d - cd - bcd - b_d - abcd - a_cd - ab_d - a__d
-    std::vector<std::string> tokens = delimiterTokeniser(vals, ':');
+    std::vector<std::string> tokens = delimiterTokeniser(vals, '@');
 
     for(std::string token : tokens)
     {

@@ -15,6 +15,8 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 
+#include <boost/dynamic_bitset.hpp>
+
 #include "Logging.h"
 #include <experimental/optional>
 #include "BackoffStrategy.h"
@@ -331,6 +333,148 @@ namespace cpyp
 
 		return std::pair <double,double> (1.0, p_abcd);
 	}
+
+/////////////////////////////////////////////////////////////////////
+
+//        template<size_t s>
+//        struct bitset_comparer
+//        {
+//            bool operator() (const boost::dynamic_bitset<s>& lhs, const boost::dynamic_bitset<s>& rhs) const
+//            {
+//                return lhs.to_ulong() < rhs.to_ulong();
+//            }
+//        };
+
+        
+        template<unsigned N>
+        double cpyp::PYPLM<N>::getProb(const Pattern& w, const Pattern& context, double bprob, int level) const
+        {
+            if(level == 0)
+            {
+                auto it = p.find(context);
+                if (it == p.end()) 
+                    return bprob;
+                return it->second.prob(w, bprob);
+            }
+
+            if(N == 1)
+            {
+                return backoff.p0;
+            }
+
+           return backoff.getProb(w, context, bprob, level-1);
+        }
+
+        double toBackoffProbs(const std::vector<std::pair<double, double>>& pairs)
+        {
+            double numerator = 0.0;
+            double denominator = 0.0;
+            for(std::pair<double, double> pair : pairs)
+            {
+                numerator += pair.first * pair.second;
+                denominator += pair.first;
+            }
+
+            return numerator/denominator;
+        }
+/*
+        Pattern maskContext(const Pattern& context, const boost::dynamic_bitset<>& skipPattern)
+        {
+            Pattern result = context;
+
+            unsigned int iter = 0;
+            for(std::size_t i = 0; i < skipPattern.size() && i < context.size(); ++i)
+            {
+                if(skipPattern.test(i))
+                {
+                    result.set_skip(result.size() - i);
+                }
+            }
+        }
+*/
+//
+        template<unsigned N>
+        std::pair<double, double> cpyp::PYPLM<N>::prob_recursive(const Pattern& w, const Pattern& context, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is, const boost::dynamic_bitset<>& skipPattern) const
+        {
+            if(skipPattern.none())
+            {
+                double p = getProb(w, context, 1.0, N);
+                return std::pair<double, double> (1.0, p);
+            }
+
+            if(skipPattern.to_ulong() == 1)
+            {
+                double bp = prob_recursive(w, context, bs, is, boost::dynamic_bitset<>()).second;
+                double p = getProb(w, Pattern(), bp, N-1);
+
+                double w = is->get(Pattern());
+                return std::pair<double, double>( w, p);
+            }
+//
+//            double p;
+//
+//            Pattern lookup = maskContext(originalContext, skipPattern);
+//
+//            std::experimental::optional<double> optionalValue = bs->getFromCache(lookup+w);
+//            if(!optionalValue)
+//            {
+//
+//                std::vector<std::pair<double,double>> pairs;
+//                std::set<std::bitset<s>, bitset_comparer<s>> backoffs;
+//
+//                std::size_t fi = 0;
+//                std::size_t i = 0;
+//                for(i = bs.size() - 1; i >= 0; --i)
+//                {
+//                    if(bs.test(i))
+//                    {
+//                        fi = i;
+//                        break;
+//                    }
+//                }
+//
+//                {
+//                    std::bitset<s> nbs = bs;
+//                    nbs.reset(i);
+//                    pairs.push_back(prob_recursive(w, context, bs, is, nbs));
+//                }
+//                
+//                for(fi = i-1; fi >= 1; --fi)
+//                {
+//                    std::bitset<s> nbs = bs;
+//                    nbs.reset(fi);
+//                    if(backoffs.count(nbs) == 0 && nbs != bs)
+//                    {
+//                        pairs.push_back(prob_recursive(w, context, bs, is, nbs));
+//                    }
+//                    backoffs.insert(nbs);
+//                }
+//
+//                double backoffProb = toBackoffProb(pairs);
+//
+//                auto it = p.find(context.reverse());
+//                if(it == p.end())
+//                {
+//                    p = backoffProb;
+//                } else
+//                {
+//                    p = it->second.prob(w, backoffProb);
+//                }
+//                bs->addToCache(context+w, p);
+//            } else
+//            {
+//                p = optionalValue.value();
+//            }
+//
+//            L_A << skipPattern.to_ulong() << "\t" << p << "\n";
+//
+//            double w = is->get(lookup);
+//            return std::pair<double, double> (w, p);
+            return std::pair<double, double>(1.0, 1.0);
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	template<unsigned N>
 	double cpyp::PYPLM<N>::probS4(const Pattern& w, const Pattern& context, SLM::BackoffStrategy* bs, SLM::InterpolationStrategy* is) 

@@ -17,6 +17,7 @@
 #include "BackoffStrategies.h"
 #include "LanguageModel.h"
 #include "FullBackoffStrategy.h"
+#include "LimitedBackoffStrategy.h"
 #include "ValueInterpolationStrategy.h"
 #include "Utils.h"
 
@@ -32,6 +33,7 @@ class ParamSearcher
         double currentPPL = 100000;
         double lowestPPL = 100000;
         double factor = 1;
+        unsigned int iterations = 0;
 
         double updatePPL(double ppl)
         {
@@ -52,11 +54,12 @@ class ParamSearcher
 
             lowestPPL = std::min(lowestPPL, currentPPL);
 
-            std::cout << viw.toString() << "\t--->\tcurrent: " << currentPPL << "\tprevious: " << previousPPL << "\tlowest: " << lowestPPL << std::endl;
+            std::cout << iterations << "\t["<< iterationsSinceChange << "]\t" << viw.toString() << "\t--->\tcurrent: " << currentPPL << "\tprevious: " << previousPPL << "\tlowest: " << lowestPPL << std::endl;
             return previousPPL;
         }
 
         bool lastIterWasDecrease = false;
+        unsigned iterationsSinceChange = 0;
         SLM::ValueInterpolationWeights& viw;
 
         virtual int updateParam() = 0;
@@ -71,16 +74,47 @@ class GridParamSearcher : public ParamSearcher
         virtual ~GridParamSearcher() {} 
 
         double increment = 1;
-        double range = 10;
-        double min = 0.5;
+        int range = 10;
+        int min = 1;
 
         bool inRange(double val) const
         {
             return val < range && val > 0;
         }
+        
+        double getRandom()
+        {
+            return rand() % (range-min) + min;
+        }
+
 
         int updateParam()
         {
+            ++iterations;
+
+            if(iterationsSinceChange > 25)
+            {
+                best_d =    getRandom();
+                best_cd =   getRandom();
+                best_bcd =  getRandom();
+                best_b_d =  getRandom();
+                best_abcd = getRandom();
+                best_a_cd = getRandom();
+                best_ab_d = getRandom();
+                best_a__d = getRandom();
+                viw.w_d =    getRandom();
+                viw.w_cd =   getRandom();
+                viw.w_bcd =  getRandom();
+                viw.w_b_d =  getRandom();
+                viw.w_abcd = getRandom();
+                viw.w_a_cd = getRandom();
+                viw.w_ab_d = getRandom();
+                viw.w_a__d = getRandom();
+                iterationsSinceChange = 0; 
+            }
+
+            ++iterationsSinceChange;
+
             if(currentParam == 0)
             {
                 if(!inRange(viw.w_d))
@@ -95,6 +129,7 @@ class GridParamSearcher : public ParamSearcher
                     {
                         tempPPL = currentPPL;
                         best_d = viw.w_d;
+                        iterationsSinceChange=0;
                     }
                     viw.w_d += increment*factor;
                 }
@@ -114,6 +149,7 @@ class GridParamSearcher : public ParamSearcher
                     {
                         tempPPL = currentPPL;
                         best_cd = viw.w_cd;
+                        iterationsSinceChange=0;
                     }
                     viw.w_cd += increment*factor;
                 }
@@ -133,6 +169,7 @@ class GridParamSearcher : public ParamSearcher
                     {
                         tempPPL = currentPPL;
                         best_b_d = viw.w_b_d;
+                        iterationsSinceChange=0;
                     }
                     viw.w_b_d += increment*factor;
                 }
@@ -152,6 +189,7 @@ class GridParamSearcher : public ParamSearcher
                     {
                         tempPPL = currentPPL;
                         best_bcd = viw.w_bcd;
+                        iterationsSinceChange=0;
                     }
                     viw.w_bcd += increment*factor;
                 }
@@ -171,6 +209,7 @@ class GridParamSearcher : public ParamSearcher
                     {
                         tempPPL = currentPPL;
                         best_a__d = viw.w_a__d;
+                        iterationsSinceChange=0;
                     }
                     viw.w_a__d += increment*factor;
                 }
@@ -190,6 +229,7 @@ class GridParamSearcher : public ParamSearcher
                     {
                         tempPPL = currentPPL;
                         best_ab_d = viw.w_ab_d;
+                        iterationsSinceChange=0;
                     }
                     viw.w_ab_d += increment*factor;
                 }
@@ -209,6 +249,7 @@ class GridParamSearcher : public ParamSearcher
                     {
                         tempPPL = currentPPL;
                         best_a_cd = viw.w_a_cd;
+                        iterationsSinceChange=0;
                     }
                     viw.w_a_cd += increment*factor;
                 }
@@ -228,6 +269,7 @@ class GridParamSearcher : public ParamSearcher
                     {
                         tempPPL = currentPPL;
                         best_abcd = viw.w_abcd;
+                        iterationsSinceChange=0;
                     }
                     viw.w_abcd += increment*factor;
                 }
@@ -255,7 +297,8 @@ int main(int argc, char** argv) {
 
         SLM::ValueInterpolationWeights viWeights = po.getValues();
         SLM::ValueInterpolationStrategy* viStrategy = new SLM::ValueInterpolationStrategy(viWeights);
-        SLM::FullBackoffStrategy fbs(lm, po.getTestModelName(), viStrategy);
+        //SLM::FullBackoffStrategy fbs(lm, po.getTestModelName(), viStrategy);
+        SLM::LimitedBackoffStrategy fbs(lm, po.getTestModelName(), viStrategy);
         fbs.setIgnoreCache(true);
 
         GridParamSearcher gps(viWeights);

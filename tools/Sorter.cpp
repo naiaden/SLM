@@ -38,6 +38,35 @@ Sorter::~Sorter() {
 
 ////////////////////////
 
+NoSorter::NoSorter(bool reverse) : Sorter(reverse) {
+	// TODO Auto-generated constructor stub
+
+}
+
+NoSorter::~NoSorter() {
+	// TODO Auto-generated destructor stub
+}
+
+bool NoSorter::compare(std::shared_ptr<SLM::PartialHypothesis> l, std::shared_ptr<SLM::PartialHypothesis> r) const
+{
+    return true;
+}
+
+SLM::Hypothesis NoSorter::sort(const SLM::AllHypotheses& nBestList) const
+{
+	std::vector<std::shared_ptr<SLM::Hypothesis>> hypotheses = nBestList.getHypotheses();
+        if(reverse) std::reverse(hypotheses.begin(), hypotheses.end());
+	return *(hypotheses.front());
+}
+
+std::string NoSorter::getName() const
+{
+	return std::string(reverse ? "reverse-" : "") + "order";
+}
+
+
+////////////////////////
+
 AcousticSorter::AcousticSorter(bool reverse) : Sorter(reverse) {
 	// TODO Auto-generated constructor stub
 

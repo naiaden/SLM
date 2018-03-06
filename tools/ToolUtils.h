@@ -20,6 +20,7 @@ struct LevenshteinInfo
     unsigned long ins;
     unsigned long del;
     double wer;
+    unsigned long eqs;
 };
 
 double WER(const std::vector<std::string> &ref, const std::vector<std::string> &hyp);
